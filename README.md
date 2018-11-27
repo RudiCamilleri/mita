@@ -1,4 +1,4 @@
-# Project Title
+# MITA | Smart Contract
 
 One Paragraph of project description goes here
 
