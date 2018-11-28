@@ -39,7 +39,9 @@
         Write-only (using call):    TenderApi.owner.call()
 
 Read-only executes the function and reads the return value of functions, but does not modify the state of the contract.
+
 Write-only executes the function, modifying the state if the function does so, but return value is not computed.
+
 In this smart contract, calls are to be made through TenderApi.
 
 To exit truffle console, press Ctrl+C twice.
