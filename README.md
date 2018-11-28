@@ -1,4 +1,4 @@
-# MITA | Smart Contract
+# MITA Smart Contract
 
 ## To set up local development environment and testing of Ethereum smart contracts:
 
@@ -16,7 +16,7 @@
 
 5. Open the main folder in Visual Studio Code
 
-** Running the smart contract: **
+## Running the smart contract:
 
 6. First open command prompt window and write "ganache-cli" and press enter.
 
