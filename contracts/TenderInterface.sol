@@ -5,5 +5,5 @@ pragma solidity ^0.5.0;
 //This is meant to be set in stone as much as possible after completion
 interface TenderInterface {
 	//Increments value
-	function incrementValue() external returns (uint8);
+	function createContract() external returns (uint8);
 }

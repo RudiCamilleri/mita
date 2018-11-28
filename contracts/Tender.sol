@@ -10,7 +10,11 @@ contract Tender is TenderInterface {
 	uint8 public value;
 
 	//Initializes the smart contract
-	constructor(address apiAddress, uint8 initialValue) public {
+	constructor(address apiAddress,
+		uint256 smallServerPrice, uint256 mediumServerPrice, uint256 largeServerPrice,
+		uint16 min, uint16 max, uint16 daysForDelivery, uint256 penaltyPerDay, uint256 penaltyCap,
+		uint256 maximumCostofExtras, uint64 dateOfExpiry, 
+	) public {
 		owner = apiAddress;
 		value = initialValue;
 	}
