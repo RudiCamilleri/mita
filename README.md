@@ -52,10 +52,11 @@ To exit truffle console, press Ctrl+C twice.
 
 Useful Commands:
 
-    git pull                             #pull updates
+    git pull                           #pull updates
 
-    git add * :/                         #loads all file changes since last pull or commit
-    git commit -m "Changed A, B, C"      #commits the changes under the specified message
+    git add * :/                       #loads all file changes since last pull or commit
+    git commit -m "Changed A, B, C"    #commits the changes under the specified message
     git push
 
-    git reset --hard                     #removes changes from last pull or commit
+    git reset --hard                   #removes changes from last pull or commit
+    git mergetool                      #to fix merge conflicts (install TortoiseSVN)
