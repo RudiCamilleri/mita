@@ -12,13 +12,13 @@
 3. Install Visual Studio Code, and download the Solidity plugin.
 
 4. Install Git and run the following command to obtain the latest development files:
-    git clone https://github.com/RudiCamilleri/mita.git
+    git clone https://github.com/mathusummut/tender.git
 
 5. Open the main folder in Visual Studio Code
 
 ## Running the smart contract:
 
-6. First open command prompt window and write "ganache-cli" and press enter.
+6. Open command prompt window and write "ganache-cli" and press enter.
 
 7. In the ganache-cli output under "Available Accounts", copy the address at (0) and paste it
    in the "truffle-config.js" file next to the "from" key
