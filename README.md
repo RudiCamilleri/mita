@@ -23,7 +23,7 @@
 
 7. In the ganache-cli output under `Available Accounts`, copy the address at (0) and paste it in the `truffle-config.js` file next to the `from` key
 
-8.In the "Terminal" tab in VS Code, enter the following:
+8. In the "Terminal" tab in VS Code, enter the following:
 
     truffle m --reset      //m stands for migrate
     truffle con            //con stands for console
