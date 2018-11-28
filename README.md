@@ -6,15 +6,15 @@
 
 2. Install required global packages:
 
-        npm install -g windows-build-tools
-        npm install -g truffle
-        npm install -g ganache-cli
+       npm install -g windows-build-tools
+       npm install -g truffle
+       npm install -g ganache-cli
 
 3. Install Visual Studio Code, and download the Solidity plugin.
 
 4. Install Git and run the following command to obtain the development files:
 
-        git clone https://github.com/mathusummut/tender.git
+       git clone https://github.com/mathusummut/tender.git
 	
 	Any time you need to update the files, launch command prompt in the project directory and write `git pull`.
 
