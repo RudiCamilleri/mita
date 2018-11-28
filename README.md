@@ -1,87 +1,43 @@
 # MITA | Smart Contract
 
-One Paragraph of project description goes here
+## To set up local development environment and testing of Ethereum smart contracts:
 
-## Getting Started
+1. Install nodejs
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+2. Install required global packages:
+	npm install -g windows-build-tools
+	npm install -g truffle
+	npm install -g ganache-cli
 
-### Prerequisites
+3. Install Visual Studio Code, and download the Solidity plugin.
 
-What things you need to install the software and how to install them
+4. Install Git and run the following command to obtain the latest development files:
+    git clone https://github.com/RudiCamilleri/mita.git
 
-```
-Give examples
-```
+5. Open the main folder in Visual Studio Code
 
-### Installing
+** Running the smart contract: **
 
-A step by step series of examples that tell you how to get a development env running
+6. First open command prompt window and write "ganache-cli" and press enter.
 
-Say what the step will be
+7. In the ganache-cli output under "Available Accounts", copy the address at (0) and paste it
+   in the "truffle-config.js" file next to the "from" key
 
-```
-Give the example
-```
+8.In the "Terminal" tab in VS Code, enter the following:
+	truffle m --reset      //m stands for migrate
+	truffle con            //con stands for console
 
-And repeat
+9. Copy and paste the following line into the truffle console and press enter (output should be "undefined"):
+TenderApi.deployed().then(a=>{TenderApi=a;Tender.deployed().then(t=>{Tender=t;TenderApi.setCurrentAddress(Tender.address)})})
 
-```
-until finished
-```
+10. In Truffle there are two ways to call a function:
+	Read-only (not using call): TenderApi.owner()
+	Write-only (using call):    TenderApi.owner.call()
 
-End with an example of getting some data out of the system or using it for a little demo
+Read-only executes the function and reads the return value of functions, but does not modify the state of the contract
+Write-only executes the function, modifying the state if the function does so,
+but return value is not computed. In this smart contract, calls are to be made through TenderApi.
 
-## Running the tests
+To exit truffle console, press Ctrl+C twice.
 
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
-
-## Authors
-
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+Enjoy!
