@@ -37,8 +37,8 @@
 
 10. In Truffle there are two ways to call a function:
 
-        Read-only (not using call): TenderApi.owner()
-        Write-only (using call):    TenderApi.owner.call()
+       Read-only (not using call): TenderApi.owner()
+       Write-only (using call):    TenderApi.owner.call()
 
 Read-only executes the function and reads the return value of functions, but does not modify the state of the contract.
 

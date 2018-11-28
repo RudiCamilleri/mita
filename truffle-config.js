@@ -5,7 +5,7 @@ module.exports = {
 	//to customize Truffle configuration
 	networks: {
 		development: {
-			from: "0xdf4d0a48bf45ceb8fdc6227cb29125e1fbfd95c9", //address of TenderApi owner
+			from: "0xd24e1a4bc871da9e9ea1fc470c53ec14cf6f4089", //address of TenderApi owner
 			host: "127.0.0.1", //localhost
 			port: 8545,
 			network_id: "*", //match any network id
