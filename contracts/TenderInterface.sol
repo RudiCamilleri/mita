@@ -21,9 +21,9 @@ interface TenderInterface {
 	//to reject the extension
 	function rejectOrderDeadlineExtension(uint32 orderNumber) external; // uint32 - Order number
 	//accepts deadline manually
-	function acceptOrderDeadlineExtension(uint32 orderNumber, uint16 dateExtension) external; // uint32 - Order number, uint 16 is checking date of extension.
+	function acceptOrderDeadlineExtension(uint32 orderNumber, uint64 dateExtension) external; // uint32 - Order number, uint 64 is checking date of extension.
 	//requests an extension of a deadline
-	function requestOrderDeadlineExtension(uint32 orderNumber,bytes32 reason, uint16 dateExtension) external;//bytes 32 to store explanation //uint 16 is checking date of extension.
+	function requestOrderDeadlineExtension(uint32 orderNumber,bytes32 reason, uint64 dateExtension ) external;//bytes 32 to store explanation //uint 64 is checking date of extension.
 	//cancels order
 	function cancelOrder(uint32 orderNumber) external; // uint32 - Order number
 	//creates order
