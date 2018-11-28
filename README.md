@@ -12,9 +12,11 @@
 
 3. Install Visual Studio Code, and download the Solidity plugin.
 
-4. Install Git and run the following command to obtain the latest development files:
+4. Install Git and run the following command to obtain the development files:
 
         git clone https://github.com/mathusummut/tender.git
+	
+	Any time you need to update the files, launch command prompt in the project directory and write `git pull`.
 
 5. Open the main folder in Visual Studio Code
 
@@ -26,12 +28,12 @@
 
 8. In the `Terminal` tab in VS Code, enter the following:
 
-        truffle m --reset      //m stands for migrate
-        truffle con            //con stands for console
+      truffle m --reset      #m stands for migrate
+      truffle con            #con stands for console
 
 9. Copy and paste the following line into the truffle console and press enter (output should be `undefined`):
 
-        TenderApi.deployed().then(a=>{TenderApi=a;Tender.deployed().then(t=>{Tender=t;TenderApi.setCurrentAddress(Tender.address)})})
+      TenderApi.deployed().then(a=>{TenderApi=a;Tender.deployed().then(t=>{Tender=t;TenderApi.setCurrentAddress(Tender.address)})})
 
 10. In Truffle there are two ways to call a function:
 
@@ -46,4 +48,14 @@ In this smart contract, calls are to be made through TenderApi.
 
 To exit truffle console, press Ctrl+C twice.
 
-Enjoy!
+## Git cheat sheet
+
+Commands:
+
+    git pull                                                                #pull updates
+
+    git add * :/                                                            #loads all file changes since last pull or commit
+    git commit -m "Changed A, B, C"                                         #commits the changes under the specified message
+    git push
+
+    git reset --hard                                                        #removes changes from last pull or commit
