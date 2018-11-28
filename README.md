@@ -18,7 +18,7 @@
 
 ## Running the smart contract:
 
-6. Open command prompt window and write "ganache-cli" and press enter.
+6. Launch command prompt window and write "ganache-cli" and press enter.
 
 7. In the ganache-cli output under "Available Accounts", copy the address at (0) and paste it
    in the "truffle-config.js" file next to the "from" key
