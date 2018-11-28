@@ -28,12 +28,12 @@
 
 8. In the `Terminal` tab in VS Code, enter the following:
 
-      truffle m --reset      #m stands for migrate
-      truffle con            #con stands for console
+       truffle m --reset      #m stands for migrate
+       truffle con            #con stands for console
 
 9. Copy and paste the following line into the truffle console and press enter (output should be `undefined`):
 
-      TenderApi.deployed().then(a=>{TenderApi=a;Tender.deployed().then(t=>{Tender=t;TenderApi.setCurrentAddress(Tender.address)})})
+       TenderApi.deployed().then(a=>{TenderApi=a;Tender.deployed().then(t=>{Tender=t;TenderApi.setCurrentAddress(Tender.address)})})
 
 10. In Truffle there are two ways to call a function:
 
