@@ -2,7 +2,7 @@ pragma solidity ^0.5.0;
 
 import "./TenderInterface.sol";
 
-//Version 0.01
+//Version 0.02
 //This is the contract functionality implementation
 //This contract is upgradeable as long as it keeps the same TenderInterface implementation
 contract Tender is TenderInterface {
