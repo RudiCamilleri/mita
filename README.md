@@ -48,9 +48,9 @@ In this smart contract, calls are to be made through TenderApi.
 
 To exit truffle console, press Ctrl+C twice.
 
-## Git cheat sheet
+## Git Cheat Sheet
 
-Commands:
+Useful Commands:
 
     git pull                                                                #pull updates
 
