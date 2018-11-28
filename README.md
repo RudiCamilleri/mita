@@ -15,14 +15,14 @@
 4. Install Git and run the following command to obtain the development files:
 
        git clone https://github.com/mathusummut/tender.git
-	
+
 	Any time you need to update the files, launch command prompt in the project directory and write `git pull`.
 
 5. Open the main folder in Visual Studio Code
 
 ## Running the smart contract:
 
-6. Launch command prompt window and write `ganache-cli` and press enter.
+6. Run `start-ganache-cli.bat`.
 
 7. In the ganache-cli output under `Available Accounts`, copy the address at (0) and paste it in the `truffle-config.js` file next to the `from` key
 
