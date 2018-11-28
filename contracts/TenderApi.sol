@@ -2,7 +2,7 @@ pragma solidity ^0.5.0;
 
 import "./TenderInterface.sol";
 
-//Version 0.01
+//Version 0.1
 //This is the main contract that expose functionality to the public and handles versioning
 //This is meant to be set in stone as much as possible after completion
 contract TenderApi is TenderInterface {
