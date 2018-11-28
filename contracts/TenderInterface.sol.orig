@@ -4,6 +4,11 @@ pragma solidity ^0.5.0;
 //This interface serves to expose and document main contract functionality
 //This is meant to be set in stone as much as possible after completion
 interface TenderInterface {
+	//Increments value
+<<<<<<< HEAD
+	function createContract() external returns (uint8);
+=======
+	function incrementValue() external returns (uint8);
 	//Ends the contract
 	function endContract() external;
 	//passes refundable deposit.
@@ -32,4 +37,5 @@ interface TenderInterface {
 
 	
 
+>>>>>>> fd4d10b3ac60c9eb9685429a26a5d07c458b473f
 }
