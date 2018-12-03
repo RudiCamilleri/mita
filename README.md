@@ -1,5 +1,7 @@
 # MITA Smart Contract
 
+Website repository can be found here: https://github.com/mathusummut/tender-website
+
 ## To set up local development environment and testing of Ethereum smart contracts:
 
 1. Install nodejs
