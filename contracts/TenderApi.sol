@@ -27,4 +27,72 @@ contract TenderApi is TenderInterface {
 	function incrementValue() external returns (uint8) {
 		return current.incrementValue();
 	}
+
+		//Ends the contract
+	function endContract() external{
+		return current.endContract();
+	}
+	//passes refundable deposit.
+	function topUpPerformanceGuarantee() external{
+		return current.topUpPerformanceGuarantee();
+	}
+
+	//stops the contract if payment isnt made.
+	function stopOrder(uint32 orderNumber, uint8 penalty) external{
+		// uint32 - Order number, uint8 - Penalty to be taken
+		return current.stopOrder(orderNumber, penalty);
+	}
+
+    //if order was delivered proceed
+	function deliveryAcceptance(uint32 orderNumber, uint16 serverAmount) external{
+		// uint32 - Order number, unit16 server amount as a whole
+		return current.deliveryAcceptance(orderNumber, serverAmount);
+	}
+
+	//to confirm order is delivered
+	function markDelivered(uint32 orderNumber) external{
+		// uint32 - Order number
+		return current.markDelivered(orderNumber);
+	}
+
+	//automatically accepts extension
+	function defaultAcceptanceOfOrderDeadlineExtension(uint32 orderNumber) external{
+		// uint32 - Order number
+		return current.defaultAcceptanceOfOrderDeadlineExtension(orderNumber);
+	} 
+
+	//to reject the extension
+	function rejectOrderDeadlineExtension(uint32 orderNumber) external{
+		// uint32 - Order number
+		return current.rejectOrderDeadlineExtension(orderNumber);
+	}
+
+	//accepts deadline manually
+	function acceptOrderDeadlineExtension(uint32 orderNumber, uint64 dateExtension) external{
+		// uint32 - Order number, uint 64 is checking date of extension.
+		return current.acceptOrderDeadlineExtension(orderNumber, dateExtension);
+	} 
+
+	//requests an extension of a deadline
+	function requestOrderDeadlineExtension(uint32 orderNumber,bytes32 reason, uint64 dateExtension ) external{
+		//bytes 32 to store explanation //uint 64 is checking date of extension.
+		return current.requestOrderDeadlineExtension(orderNumber, reason, dateExtension);
+	}
+
+	//cancels order
+	function cancelOrder(uint32 orderNumber) external{
+		// uint32 - Order number
+		return current.cancelOrder(orderNumber);
+	} 
+	
+	//creates order
+	function createOrder(uint32 orderNumber, uint16 serverAmount, bytes32 costDescription) external{
+		// uint32 - Order number, uint16 server amoutn as a whole , bytes32 description of total price.
+		return current.createOrder(orderNumber, serverAmount, costDescription);
+	}
+	 
+	function acceptContract() external{
+		return current.acceptContract();
+	}
+
 }

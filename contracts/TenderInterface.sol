@@ -22,7 +22,7 @@ interface TenderInterface {
 	function acceptOrderDeadlineExtension(uint32 orderNumber, uint64 dateExtension) external; // uint32 - Order number, uint 64 is checking date of extension.
 	//requests an extension of a deadline
 	function requestOrderDeadlineExtension(uint32 orderNumber,bytes32 reason, uint64 dateExtension ) external;//bytes 32 to store explanation //uint 64 is checking date of extension.
-	//cancels order
+	//cancels orders
 	function cancelOrder(uint32 orderNumber) external; // uint32 - Order number
 	//creates order
 	function createOrder(uint32 orderNumber, uint16 serverAmount, bytes32 costDescription) external; // uint32 - Order number, uint16 server amoutn as a whole , bytes32 description of total price.
