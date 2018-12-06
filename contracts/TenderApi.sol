@@ -24,10 +24,6 @@ contract TenderApi is TenderInterface {
 	//== PUBLIC API FUNCTIONALITY IS TO BE INSERTED BELOW ==
 	//======================================================
 
-	function incrementValue() external returns (uint8) {
-		return current.incrementValue();
-	}
-
 		//Ends the contract
 	function endContract() external{
 		return current.endContract();
