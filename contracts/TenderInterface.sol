@@ -26,10 +26,6 @@ interface TenderInterface {
 	function cancelOrder(uint32 orderNumber) external; // uint32 - Order number
 	//creates order
 	function createOrder(uint32 orderNumber, uint16 serverAmount, bytes32 costDescription) external; // uint32 - Order number, uint16 server amoutn as a whole , bytes32 description of total price.
+	//accepts contract
 	function acceptContract() external;
-
-
-
-	
-
 }
