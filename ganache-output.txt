@@ -1,0 +1,51 @@
+Starting Ganache...
+
+Ganache CLI v6.1.8 (ganache-core: 2.2.1)
+
+Available Accounts
+==================
+(0) 0x9b238200b5b6aeb662b58384f55778d9356bce9a (~100 ETH)
+(1) 0x087fe6e41b170d822cf57f73d65e6802f107e731 (~100 ETH)
+(2) 0xed6988586f1e47e25b38ff531446c2a211511abc (~100 ETH)
+(3) 0x474ae42792b96281173d7e888f01b1093593488b (~100 ETH)
+(4) 0xe165b03e2e47f79d6f89aedc275e232a587323b2 (~100 ETH)
+(5) 0xdde8f8930c8267677263a91f764ed9097e56a7e4 (~100 ETH)
+(6) 0xe4a2990bb53bf6a9c220ff7c233a515a148a9806 (~100 ETH)
+(7) 0x82f14c49240270e6ec86eb80895cd20c6f557f39 (~100 ETH)
+(8) 0x7f49dd7fa335656515378b225919c883793bac44 (~100 ETH)
+(9) 0x5adb38f39aec3c8ce6bde461a9043c85849b9559 (~100 ETH)
+
+Private Keys
+==================
+(0) 0xe3bd6b8faf722585e5541f30747b98055614f3ee8f6e40bea1f700c68448deeb
+(1) 0x5119dc7333fa46d15243f8f51367b3cdf806776e2e54aa4ef4f6dd36bd499c39
+(2) 0xddefbb44879cf0a65eb032d3614b57cf57320f45a801240ddd1edcd2f1d2e7b0
+(3) 0x4545c994cb24573fc0765ebfa693f7a58959c4e2dd5c290a1ec3cda967e2e0f4
+(4) 0x25cd4f6c8dfd94909af97fa94c9f57f97d95f105067a644194d9c5b9ee9f2d3f
+(5) 0xbc586184bca0b4c5d20ea5073ba02b0c15f38eb311a9d25e2b60d8799c0d3cf7
+(6) 0x4886ab3240487e64189bc0bfad23b04c6e6fb7dee1006f5df0dffe2d59e38bad
+(7) 0xde6fc2e505337bd85c8f9f04a9bc487e4af3efde98cd92fc445fb991d94d82db
+(8) 0xb252203b357af32993b36e87f6334c90f0f6b7cdaa4232030a7074a16cb2e0c0
+(9) 0x89acdbf694b87c290cb7604beb568d1a2f829611a284ee538241961f66b69e6d
+
+HD Wallet
+==================
+Mnemonic:      fossil pause lesson gap where drama sniff bird various ladder chest wild
+Base HD Path:  m/44'/60'/0'/0/{account_index}
+
+Gas Price
+==================
+20000000000
+
+Gas Limit
+==================
+6721975
+
+Listening on 127.0.0.1:8545
+rpc_modules
+web3_clientVersion
+eth_coinbase
+eth_blockNumber
+eth_blockNumber
+eth_getBlockByNumber
+rpc_modules
