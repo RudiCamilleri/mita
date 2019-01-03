@@ -1,42 +1,36 @@
 Starting Ganache...
 
 Ganache CLI v6.1.8 (ganache-core: 2.2.1)
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
 
 Available Accounts
 ==================
-(0) 0xa4f6785cab44f4f3b086b9eb9bce6e27086cc9d8 (~100 ETH)
-(1) 0x503c005ea1c73e82a759b3917245c3e428219186 (~100 ETH)
-(2) 0xa72520231d1eb49e2f70fe4773450980314fe686 (~100 ETH)
-(3) 0x0a48d7f8ccf0388ea43478cc16bfecd37f830d66 (~100 ETH)
-(4) 0xcfa4956f62060cf785aa09dcf0d896a79b76c05e (~100 ETH)
-(5) 0x0b179867ea6238610f37e8fecd62e85ebc5d9e81 (~100 ETH)
-(6) 0x3cf75b34d69a5cb52b5cc9c775bfcf7688b379d8 (~100 ETH)
-(7) 0x6803f4a2ffe3231e4546eb0079a2241e3f8d89d9 (~100 ETH)
-(8) 0xe2f395e8279b412fa4414a978903cc4e3da38052 (~100 ETH)
-(9) 0xdf1cb116d91e6eda6f85a8775ca9ff844046a2fc (~100 ETH)
+(0) 0x33f6a2dad72ec5813957a8641912a4ec9ca8052e (~100 ETH)
+(1) 0xee7fd1d2f2019ae01b85e5ff05ddb012a4187f82 (~100 ETH)
+(2) 0x34b3cd3841f6b7f31b224189391a82d35fd249a1 (~100 ETH)
+(3) 0x82589b20cca1ca51119cc21b923c0dd32adaaf8a (~100 ETH)
+(4) 0xf55826214fa5426ffc1d0dceabb2699ba15b0b85 (~100 ETH)
+(5) 0x16817bfbfbc320fec6bd27366ef99468a2240846 (~100 ETH)
+(6) 0xe20013c302a1c890a1e79f0c63f6c990f27b4e4d (~100 ETH)
+(7) 0x129cb4f80bfc204357525772e3ac195d6bd0a45f (~100 ETH)
+(8) 0x93b49260a3c8eb4ac667ef8c6316a483ebca0828 (~100 ETH)
+(9) 0x43dc128d3a9d5b7429f5b61e6a24f5eecc5b1d72 (~100 ETH)
 
 Private Keys
 ==================
-(0) 0x16392c8812b34e0d3e08aeda17c230101502ee50276da22f1a1d74d54ab52c57
-(1) 0xd8be42444e798b6ae66503bf04f5a79b159b174bb5caf34846e9508e3639ceb9
-(2) 0xcb87d70287deafdc10ab4270df104e1a47ce2e3d1f7c8cb634d0e513a152be64
-(3) 0x64f773d02b3552739e3fa1ac0d579f7f1ed0d1b7e4a60d480014664a24405bf4
-(4) 0xc526938feb97267bfde7b0ded034faeee85200587cd9dfe6eda9af524bf191e5
-(5) 0x2fd26e38a8518ba494f652152270ebf6b465f8064e6a5c4566e94353d7473f96
-(6) 0x25a65956ce2bfc7c9af8154464e362bbf824819eedc522b91528cb061a8aa6ef
-(7) 0x9224c20fb7ac81a0a28732aacb97a98dd011dd288ee256a25af9e8419f2a52b3
-(8) 0x18d9b9b615ceb2a085da40098cf99f6a8cfa476af951df067b7d8fa1d35bf7f7
-(9) 0x25007b475d7aea429da44df453265681fed858c816b12bb99b2a8a819bd6627f
+(0) 0x1589db400859229a2d732d45a0532f571a129b366379dccec4dee881d132af3f
+(1) 0x3deb5fdca1339c1bf759a9037708f51e018da2e918a3251a300b148a31b03f53
+(2) 0x0b2427412305f7a307fe699b2cb2d713298537eb5c95cc517b8a5e28200ebf61
+(3) 0xd2fc64638648dd2504043144f0b12b5bea070a1fd4d946668ab0605a532f617a
+(4) 0x98a17e07e8d6cf0fe6ed2e9ee96c7277d3388c4e70d43c9973c9f84fc1a6f710
+(5) 0x47a9730d9170f8be52d61a294195965b3c34ffab5f7215746515e05b820949bb
+(6) 0x92019faea2094dd46125bdc741cc041760e7c6a4c2ba950f3e0e7f696227c0a3
+(7) 0x22c610694551ae8ef9a9721ea78950d13ef541f9f628d2958387af3acf850946
+(8) 0x47175cc7211166c4884a625b6a954bcd0329e1187c84e56dbd4ccac03f245377
+(9) 0x58ffff212730319edb864b685f6856b5671f003fabb9038fbaa6f36923c8742b
 
 HD Wallet
 ==================
-Mnemonic:      buzz zoo cigar clip already average normal bargain toast cotton erosion setup
+Mnemonic:      crunch success crouch treat comic trap asthma short talk ability silk example
 Base HD Path:  m/44'/60'/0'/0/{account_index}
 
 Gas Price
@@ -48,124 +42,27 @@ Gas Limit
 6721975
 
 Listening on 127.0.0.1:8545
-eth_getBlockByNumber
 net_version
+eth_getBalance
 eth_accounts
+eth_getBalance
+eth_getBalance
+eth_getBalance
+eth_getBalance
+eth_getBalance
+eth_getBalance
+eth_getBalance
+eth_getBalance
+eth_getBalance
 rpc_modules
-web3_clientVersion
-eth_coinbase
-eth_blockNumber
-eth_blockNumber
-eth_getBlockByNumber
-rpc_modules
-net_version
-eth_accounts
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-net_version
-eth_accounts
-eth_getBlockByNumber
-net_version
-eth_accounts
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-net_version
-eth_accounts
-net_version
-eth_accounts
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_accounts
-net_version
-eth_getBlockByNumber
-net_version
-eth_accounts
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-net_version
-eth_accounts
-eth_getBlockByNumber
-net_version
-eth_accounts
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-net_version
-eth_accounts
-net_version
-eth_accounts
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBlockByNumber
-net_version
-eth_accounts
-net_version
-eth_accounts
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
 eth_coinbase
 eth_sendTransaction
 
   Transaction: 0x44b277850300549bfa1c57fc711d3a11e1608a2b30f5d464e1746adcec4bf2f2
-  Contract created: 0x6df46d67f496f44eec2220b420e3239fb99ad4e2
+  Contract created: 0x2406b82be7d36cc8ec95f615612028395f3f6d92
   Gas usage: 53753
   Block Number: 1
-  Block Time: Thu Jan 03 2019 15:23:35 GMT+0100 (W. Europe Standard Time)
+  Block Time: Thu Jan 03 2019 15:49:11 GMT+0100 (W. Europe Standard Time)
 
 eth_newBlockFilter
 eth_getFilterChanges
@@ -175,55 +72,29 @@ eth_coinbase
 eth_sendTransaction
 
   Transaction: 0x824cc54d9f513cbedf436d1a3adc0f3f1bbcd689c23cce84d6b21b3b575eda53
-  Contract created: 0x997b61fe0b36f110b1163ea2cfdc6b7c771948bf
+  Contract created: 0x332a7b5a33acd112570c7e1a7c2d131713be74dd
   Gas usage: 53753
   Block Number: 2
-  Block Time: Thu Jan 03 2019 15:23:35 GMT+0100 (W. Europe Standard Time)
+  Block Time: Thu Jan 03 2019 15:49:11 GMT+0100 (W. Europe Standard Time)
 
 eth_newBlockFilter
-eth_getFilterChanges
-eth_getFilterChanges
-eth_getTransactionReceipt
-eth_getCode
-eth_uninstallFilter
-eth_getTransactionReceipt
-eth_getCode
-eth_uninstallFilter
-net_version
-eth_accounts
+web3_clientVersion
+eth_coinbase
+eth_blockNumber
+eth_blockNumber
 eth_getBlockByNumber
+rpc_modules
 net_version
 eth_accounts
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_getBalance
-eth_coinbase
-eth_mining
-eth_hashrate
-eth_syncing
-eth_gasPrice
-eth_accounts
-eth_blockNumber
-eth_protocolVersion
-eth_pendingTransactions
-eth_accounts
-eth_blockNumber
-eth_coinbase
-eth_gasPrice
-eth_hashrate
-eth_mining
-eth_pendingTransactions
-eth_protocolVersion
-eth_syncing
-net_version
-eth_accounts
+eth_getFilterChanges
+eth_getFilterChanges
+eth_getTransactionReceipt
+eth_getCode
+eth_uninstallFilter
+eth_getTransactionReceipt
+eth_getCode
+eth_uninstallFilter
+eth_getBlockByNumber
 net_version
 eth_accounts
 eth_getBalance
