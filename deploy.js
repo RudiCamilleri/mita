@@ -1,3 +1,7 @@
-var Tender = json object
-var Tender2 = web3.eth.contract(Tender.abi);
-var Tender3 = Tender2.new({from:eth.coinbase, data: Tender2.bytecode, gas: 1000000});
+loadScript("./build/contracts/Tender.js");
+var TenderAbi = web3.eth.contract(TenderBuild.abi);
+var Tender = TenderAbi.new({from:eth.coinbase, data: TenderAbi.bytecode, gas: 1000000});
+
+loadScript("./build/contracts/TenderApi.js");
+var TenderApiAbi = web3.eth.contract(TenderApiBuild.abi);
+var TenderApi = TenderAbi.new({from:eth.coinbase, data: TenderApiAbi.bytecode, gas: 1000000});

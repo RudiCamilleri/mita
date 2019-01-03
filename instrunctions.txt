@@ -1,1 +1,0 @@
-type `eth` to see what's available

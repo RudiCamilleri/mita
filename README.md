@@ -50,7 +50,10 @@ Write-only executes the function, modifying the state if the function does so, b
 
 In this smart contract, calls are to be made through TenderApi.
 
-To exit truffle console, press Ctrl+C twice.
+Type `eth` to see what's available.
+To exit geth console, press Ctrl+Break, then 'Y' and Enter.
+
+loadScript("deploy.js")
 
 ## Git Cheat Sheet
 
