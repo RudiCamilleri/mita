@@ -22,24 +22,35 @@ Website repository can be found here: https://github.com/mathusummut/tender-webs
        
 	Technical Note: If `windows-build-tools` or `ganache-cli` freezes or fails to install, install truffle and ganache-cli and try again. If the installation still does not work, then you have to add Python 2.7 to PATH and try again, installing both `windows-build-tools` or `ganache-cli`. If that does not work, try installing Python manually. The important thing is for `ganache-cli` to work.
 
-5. Open the project folder in Visual Studio Code.
+5. Install Geth from https://ethereum.github.io/go-ethereum/downloads/ (the Windows installer)
 
-## Running the smart contract:
+6. Open the project folder in Visual Studio Code.
 
-6. Run `start-ganache-cli.bat` in the project folder.
+## Running the smart contract using geth (new method):
 
-7. In the ganache-cli output under `Available Accounts` (scroll up), copy the address at (0) and paste it in the `truffle-config.js` file next to the `from` key
+7. Simply double-click `run-local-blockchain.bat`. To re-run, simply close the current console window and re-open, or
+press Ctrl+Break, then 'Y' and Enter.
 
-8. In the `Terminal` tab in Visual Studio Code, enter the following line by line (`m` stands for `migrate`, `con` stands for `console`):
+## Running the smart contract using truffle (old method):
+
+7. Run `start-ganache-cli.bat` in the project folder.
+
+8. In the ganache-cli output under `Available Accounts` (scroll up), copy the address at (0) and paste it in the `truffle-config.js` file next to the `from` key
+
+9. In the `Terminal` tab in Visual Studio Code, enter the following line by line (`m` stands for `migrate`, `con` stands for `console`):
 
        truffle m --reset
        truffle con
 
-9. Copy and paste the following line into the truffle console and press enter (output should be `undefined`):
+10. Copy and paste the following line into the truffle console and press enter (output should be `undefined`):
 
        TenderApi.deployed().then(a=>{TenderApi=a;Tender.deployed().then(t=>{Tender=t;TenderApi.setCurrentAddress(Tender.address)})})
 
-10. In Truffle there are two ways to call a function:
+11. Run console commands through Truffle, to close it simply close the console window or press Ctrl+C twice.
+
+## Additional Info
+
+In web3 there are two ways to call a function:
 
        Read-only (not using call): TenderApi.owner()
        Write-only (using call):    TenderApi.owner.call()
@@ -51,11 +62,9 @@ Write-only executes the function, modifying the state if the function does so, b
 In this smart contract, calls are to be made through TenderApi.
 
 Type `eth` to see what's available.
-To exit geth console, press Ctrl+Break, then 'Y' and Enter.
 
 Minimum gas amount to deploy contract: 53751
 
-loadScript("deploy.js")
 TenderAbi.at()
 
 ## Git Cheat Sheet
