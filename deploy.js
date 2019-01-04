@@ -35,4 +35,6 @@ var Tender = TenderAbi.new({from: eth.coinbase, data: TenderAbi.bytecode, gas: 2
 		console.log(e);
 });
 
+//TenderApi.setCurrentAddress(Tender.address);
+
 console.log("deploy.js execution completed\n");
