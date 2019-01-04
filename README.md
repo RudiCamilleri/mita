@@ -54,6 +54,7 @@ Type `eth` to see what's available.
 To exit geth console, press Ctrl+Break, then 'Y' and Enter.
 
 loadScript("deploy.js")
+TenderAbi.at()
 
 ## Git Cheat Sheet
 
