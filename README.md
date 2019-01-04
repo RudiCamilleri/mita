@@ -14,22 +14,21 @@ Website repository can be found here: https://github.com/mathusummut/tender-webs
 
 3. Install Nodejs from https://nodejs.org/en/download by clicking on `64-bit` next to `Windows Installer`.
 
-4. Press right-click on the Windows Start button and click "Windows PowerShell Admin", and enter the following commands line by line:
+4. Press right-click on the Windows Start button and click `Windows PowerShell Admin`, and enter the following commands line by line:
 
        npm install -g windows-build-tools
        npm install -g truffle
        npm install -g ganache-cli
        
-	Technical Note: If `windows-build-tools` or `ganache-cli` freezes or fails to install, install truffle and ganache-cli and try again. If the installation still does not work, then you have to add Python 2.7 to PATH and try again, installing both `windows-build-tools` or `ganache-cli`. If that does not work, try installing Python manually. The important thing is for `ganache-cli` to work.
+	Technical Note: If `windows-build-tools` or `ganache-cli` freezes or fails to install, install `truffle` and `ganache-cli` and try again. If the installation still does not work, then you have to add Python 2.7 to PATH and try again, installing both `windows-build-tools` or `ganache-cli`. If that does not work, try installing Python manually. The important thing is for `ganache-cli` to work.
 
-5. Install Geth from https://ethereum.github.io/go-ethereum/downloads/ (the Windows installer)
+5. Install Geth from https://ethereum.github.io/go-ethereum/downloads (the Windows installer)
 
 6. Open the project folder in Visual Studio Code.
 
 ## Running the smart contract using geth (new method):
 
-7. Simply double-click `run-local-blockchain.bat`. To re-run, simply close the current console window and re-open, or
-press Ctrl+Break, then 'Y' and Enter.
+7. Simply double-click `run-local-blockchain.bat`. To re-run, simply close the current console window (or press Ctrl+Break, then 'Y' and Enter) and re-open.
 
 ## Running the smart contract using truffle (old method):
 
@@ -44,7 +43,7 @@ press Ctrl+Break, then 'Y' and Enter.
 
 10. Copy and paste the following line into the truffle console and press enter (output should be `undefined`):
 
-       TenderApi.deployed().then(a=>{TenderApi=a;Tender.deployed().then(t=>{Tender=t;TenderApi.setCurrentAddress(Tender.address)})})
+        TenderApi.deployed().then(a=>{TenderApi=a;Tender.deployed().then(t=>{Tender=t;TenderApi.setCurrentAddress(Tender.address)})})
 
 11. Run console commands through Truffle, to close it simply close the console window or press Ctrl+C twice.
 
@@ -64,8 +63,6 @@ In this smart contract, calls are to be made through TenderApi.
 Type `eth` to see what's available.
 
 Minimum gas amount to deploy contract: 53751
-
-TenderAbi.at()
 
 ## Git Cheat Sheet
 
