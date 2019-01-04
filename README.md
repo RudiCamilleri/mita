@@ -53,6 +53,8 @@ In this smart contract, calls are to be made through TenderApi.
 Type `eth` to see what's available.
 To exit geth console, press Ctrl+Break, then 'Y' and Enter.
 
+Minimum gas amount to deploy contract: 53751
+
 loadScript("deploy.js")
 TenderAbi.at()
 
