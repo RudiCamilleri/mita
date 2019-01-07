@@ -2,3 +2,5 @@
 /.vs
 *.orig
 ganache-output.txt
+init-tenderapi-address.js
+init-tender-address.js

@@ -7,7 +7,7 @@ echo.
 echo Minifying Output...
 minify-json.exe build/contracts build/contracts
 echo.
-call ./generate-js.bat
+call ./generate-abi-js.bat
 start /b call ./start-ganache-cli.bat <NUL >ganache-output.txt
 title Running Local Blockchain...
 echo.
