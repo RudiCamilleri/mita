@@ -12,7 +12,7 @@ Website repository can be found here: https://github.com/mathusummut/tender-webs
 
 	Note: Any time you want to update the files, open the project folder in Visual Studio Code, and in the Terminal tab (you might have to click `Teminal -> New Terminal`) write `git pull`.
 
-3. Install Nodejs from https://nodejs.org/en/download by clicking on `64-bit` next to `Windows Installer`.
+3. Install Nodejs from https://nodejs.org/en by clicking on `64-bit` next to `Windows Installer`.
 
 4. Press right-click on the Windows Start button and click `Windows PowerShell Admin`, and enter the following commands line by line:
 
