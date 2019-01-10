@@ -35,7 +35,7 @@ Website repository can be found here: https://github.com/mathusummut/tender-webs
 
 9. Delete the files under the `browser` dropdown.
 
-9. Click the small chain icon top left (when hovering over it, it should be labelled "Connect to localhost"), and then click `Connect`.
+9. Click the small chain icon top left (when hovering over it, it should be labelled `Connect to localhost`), and then click `Connect`.
 
 10. Click the `Run` tab, and set `Environment` to `Web3 Provider`, and click `OK`, then `OK` again.
 
@@ -43,7 +43,7 @@ Website repository can be found here: https://github.com/mathusummut/tender-webs
 
 ** Warning: Deleting the files under `localhost` in Remix deletes the actual files permanently!! **
 
-12. You can compile and run at your own leisure.
+12. You can compile and run from Remix at your own leisure.
 
 ### ii. Running the smart contract using truffle (almost reliable method):
 
