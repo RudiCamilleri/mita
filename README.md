@@ -2,7 +2,7 @@
 
 Website repository can be found here: https://github.com/mathusummut/tender-website
 
-## To set up local development environment and testing of Ethereum smart contracts:
+## To set up local development environment for testing Solidity smart contracts:
 
 1. Install Visual Studio Code from https://aka.ms/win32-x64-user-stable and then install the Solidity extension by clicking the square icon on the left.
 
@@ -19,18 +19,33 @@ Website repository can be found here: https://github.com/mathusummut/tender-webs
        npm install -g windows-build-tools
        npm install -g truffle
        npm install -g ganache-cli
-       
+       npm install -g remixd
+
 	Technical Note: If `windows-build-tools` or `ganache-cli` freezes or fails to install, install `truffle` and `ganache-cli` and try again. If the installation still does not work, then you have to add Python 2.7 to PATH and try again, installing both `windows-build-tools` or `ganache-cli`. If that does not work, try installing Python manually. The important thing is for `ganache-cli` to work.
 
 5. Install Geth from https://ethereum.github.io/go-ethereum/downloads (the Windows installer)
 
 6. Open the project folder in Visual Studio Code.
 
-## Running the smart contract using geth (new method):
+### i. Running the smart contract locally using Remix IDE (recommended method)
 
-7. Simply double-click `run-local-blockchain.bat`. To re-run, simply close the current console window (or press Ctrl+Break, then 'Y' and Enter) and re-open.
+7. Start `run-remix.bat` in the project folder.
 
-## Running the smart contract using truffle (old method):
+8. Launch this URL in the browser: http://remix.ethereum.org/#optimize=true&version=soljson-v0.5.0+commit.1d4f565a.js
+
+9. Delete the files under the `browser` dropdown.
+
+9. Click the small chain icon top left (when hovering over it, it should be labelled "Connect to localhost"), and then click `Connect`.
+
+10. Click the `Run` tab, and set `Environment` to `Web3 Provider`, and click `OK`, then `OK` again.
+
+11. You can edit inside Remix or use Visual Studio Code to modify the files. Files should be updated automatically.
+
+** Warning: Deleting the files under `localhost` in Remix deletes the actual files permanently!! **
+
+12. You can compile and run at your own leisure.
+
+### ii. Running the smart contract using truffle (almost reliable method):
 
 7. Run `start-ganache-cli.bat` in the project folder.
 
@@ -46,6 +61,10 @@ Website repository can be found here: https://github.com/mathusummut/tender-webs
         TenderApi.deployed().then(a=>{TenderApi=a;Tender.deployed().then(t=>{Tender=t;TenderApi.setCurrentAddress(Tender.address)})})
 
 11. Run console commands through Truffle, to close it simply close the console window or press Ctrl+C twice.
+
+### iii. Running the smart contract using geth (not working):
+
+7. Simply double-click `run-local-blockchain.bat`. To re-run, simply close the current console window (or press Ctrl+Break, then 'Y' and Enter) and re-open.
 
 ## Additional Info
 
