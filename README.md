@@ -1,4 +1,4 @@
-# MITA Smart Contract
+# Smart Contract
 
 Website repository can be found here: https://github.com/mathusummut/tender-website
 
