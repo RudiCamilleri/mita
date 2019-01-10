@@ -41,7 +41,7 @@ Website repository can be found here: https://github.com/mathusummut/tender-webs
 
 12. You can edit inside Remix or use Visual Studio Code to modify the files. Files should be updated automatically.
 
-** Warning: Deleting the files under `localhost` in Remix deletes the actual files permanently!! **
+**Warning: Deleting the files under `localhost` in Remix deletes the actual files permanently!!**
 
 13. You can compile and run from Remix at your own leisure.
 
