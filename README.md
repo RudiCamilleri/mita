@@ -31,19 +31,17 @@ Website repository can be found here: https://github.com/mathusummut/tender-webs
 
 7. Start `run-remix.bat` in the project folder.
 
-8. Launch this URL in the browser: http://remix.ethereum.org/#optimize=true&version=soljson-v0.5.0+commit.1d4f565a.js
+8. When Remix loads in the browser, delete the files under the `browser` dropdown.
 
-9. Delete the files under the `browser` dropdown.
+9. Click the small chain icon top left (when hovering over it, it should be labelled `Connect to localhost`), and then click `Connect`.
 
-10. Click the small chain icon top left (when hovering over it, it should be labelled `Connect to localhost`), and then click `Connect`.
+10. Click the `Run` tab, and set `Environment` to `Web3 Provider`, and click `OK`, then `OK` again.
 
-11. Click the `Run` tab, and set `Environment` to `Web3 Provider`, and click `OK`, then `OK` again.
-
-12. You can edit inside Remix or use Visual Studio Code to modify the files. Files should be updated automatically.
+11. You can edit inside Remix or use Visual Studio Code to modify the files. Files should be updated automatically.
 
 **Warning: Deleting the files under `localhost` in Remix deletes the actual files permanently!!**
 
-13. You can compile and run from Remix at your own leisure.
+12. You can compile and run from Remix at your own leisure.
 
 ### ii. Running the smart contract using truffle (almost reliable method):
 
