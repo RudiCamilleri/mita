@@ -72,7 +72,7 @@ contract TenderApi is TenderInterface {
 	}
 
 	//requests an extension of a deadline
-	function requestOrderDeadlineExtension(uint32 orderNumber,bytes32 reason, uint64 dateExtension ) external {
+	function requestOrderDeadlineExtension(uint32 orderNumber,bytes32 reason, uint64 dateExtension) external {
 		//bytes 32 to store explanation //uint 64 is checking date of extension.
 		return current.requestOrderDeadlineExtension(orderNumber, reason, dateExtension);
 	}

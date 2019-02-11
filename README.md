@@ -25,7 +25,7 @@ Website repository can be found here: https://github.com/mathusummut/tender-webs
 
 5. Install Geth from https://ethereum.github.io/go-ethereum/downloads (the Windows installer)
 
-6. Open the project folder in Visual Studio Code.
+6. Run the following command in command prompt as well: `dotnet tool install -g dotnet-script`. Then open the project folder in Visual Studio Code.
 
 ### i. Running the smart contract locally using Remix IDE (recommended method)
 

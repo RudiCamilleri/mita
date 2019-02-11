@@ -9,21 +9,21 @@ interface TenderInterface {
 	//passes refundable deposit.
 	function topUpPerformanceGuarantee() external;
 	//stops the contract if payment isnt made.
-	function stopOrder(uint32 orderNumber, uint8 penalty) external; // uint32 - Order number, uint8 - Penalty to be taken
+	function stopOrder(uint32 _orderNumber, uint8 _penalty) external; //uint32 - Order number, uint8 - Penalty to be taken
     //if order was delivered proceed
-	function deliveryAcceptance(uint32 orderNumber, uint16 serverAmount) external; // uint32 - Order number, unit16 server amount as a whole
+	function deliveryAcceptance(uint32 _orderNumber, uint16 _serverAmount) external; //uint32 - Order number, unit16 server amount as a whole
 	//to confirm order is delivered
-	function markDelivered(uint32 orderNumber) external; // uint32 - Order number
+	function markDelivered(uint32 _orderNumber) external; //uint32 - Order number
 	//automatically accepts extension
-	function defaultAcceptanceOfOrderDeadlineExtension(uint32 orderNumber) external; // uint32 - Order number
+	function defaultAcceptanceOfOrderDeadlineExtension(uint32 _orderNumber) external; //uint32 - Order number
 	//to reject the extension
-	function rejectOrderDeadlineExtension(uint32 orderNumber) external; // uint32 - Order number
+	function rejectOrderDeadlineExtension(uint32 _orderNumber) external; //uint32 - Order number
 	//accepts deadline manually
-	function acceptOrderDeadlineExtension(uint32 orderNumber, uint64 dateExtension) external; // uint32 - Order number, uint 64 is checking date of extension.
+	function acceptOrderDeadlineExtension(uint32 _orderNumber, uint64 _dateExtension) external; //uint32 - Order number, uint 64 is checking date of extension
 	//requests an extension of a deadline
-	function requestOrderDeadlineExtension(uint32 orderNumber,bytes32 reason, uint64 dateExtension ) external;//bytes 32 to store explanation //uint 64 is checking date of extension.
+	function requestOrderDeadlineExtension(uint32 _orderNumber, bytes32 _reason, uint64 _dateExtension) external; //bytes 32 to store explanation, uint 64 is checking date of extension
 	//cancels orders
-	function cancelOrder(uint32 orderNumber) external; // uint32 - Order number
+	function cancelOrder(uint32 _orderNumber) external; //uint32 - Order number
 	//creates order
-	function createOrder(uint32 orderNumber, uint16 serverAmount, bytes32 costDescription) external; // uint32 - Order number, uint16 server amoutn as a whole , bytes32 description of total price.
+	function createOrder(uint32 _orderNumber, uint16 _serverAmount, bytes32 _costDescription) external; //uint32 - Order number, uint16 server amount as a whole, bytes32 description of total price
 }
