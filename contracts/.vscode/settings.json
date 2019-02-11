@@ -1,4 +1,4 @@
-var settingsBuild= {
+{
 	"editor.renderWhitespace": "all",
 	"solidity.soliumRules": {
 		"linebreak-style": "windows",
