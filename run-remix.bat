@@ -6,7 +6,7 @@ call truffle compile
 cd ..
 echo Minifying Output...
 call .\minify-json.exe build/contracts build/contracts
-start /b call .\start-ganache-cli.bat <NUL
+start /b call .\start-ganache-cli.bat <NUL >ganache-output.txt
 cd contracts
 title Running Remixd...
 echo Opening URL: http://remix.ethereum.org/#optimize=true^&version=soljson-v0.5.0+commit.1d4f565a.js
