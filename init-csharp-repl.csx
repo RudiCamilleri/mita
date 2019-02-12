@@ -3,4 +3,4 @@ using System;
 using System.Threading.Tasks;
 using Nethereum.Web3;
 var web3 = new Web3("http://localhost:8545");
-Console.WriteLine("'web3' object now loaded");
+Console.WriteLine("'web3' object now loaded using Nethereum, C# console loaded successfully.\n");

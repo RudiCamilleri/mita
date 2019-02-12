@@ -30,62 +30,62 @@ contract TenderApi is TenderInterface {
 		selfdestruct(owner);
 	}
 
-	//passes refundable deposit.
+	/*//passes refundable deposit.
 	function topUpPerformanceGuarantee() external {
 		return current.topUpPerformanceGuarantee();
 	}
 
 	//stops the contract if payment isnt made.
-	function stopOrder(uint32 orderNumber, uint8 penalty) external {
+	function stopOrder(uint32 _orderNumber, uint8 _penalty) external {
 		//uint32 - Order number, uint8 - Penalty to be taken
-		return current.stopOrder(orderNumber, penalty);
+		return current.stopOrder(_orderNumber, _penalty);
 	}
 
     //if order was delivered proceed
-	function deliveryAcceptance(uint32 orderNumber, uint16 serverAmount) external {
+	function deliveryAcceptance(uint32 _orderNumber, uint16 _serverAmount) external {
 		//uint32 - Order number, unit16 server amount as a whole
-		return current.deliveryAcceptance(orderNumber, serverAmount);
+		return current.deliveryAcceptance(_orderNumber, _serverAmount);
 	}
 
 	//to confirm order is delivered
-	function markDelivered(uint32 orderNumber) external {
+	function markDelivered(uint32 _orderNumber) external {
 		//uint32 - Order number
-		return current.markDelivered(orderNumber);
+		return current.markDelivered(_orderNumber);
 	}
 
 	//automatically accepts extension
-	function defaultAcceptanceOfOrderDeadlineExtension(uint32 orderNumber) external {
+	function defaultAcceptanceOfOrderDeadlineExtension(uint32 _orderNumber) external {
 		//uint32 - Order number
-		return current.defaultAcceptanceOfOrderDeadlineExtension(orderNumber);
+		return current.defaultAcceptanceOfOrderDeadlineExtension(_orderNumber);
 	}
 
 	//to reject the extension
-	function rejectOrderDeadlineExtension(uint32 orderNumber) external {
+	function rejectOrderDeadlineExtension(uint32 _orderNumber) external {
 		//uint32 - Order number
-		return current.rejectOrderDeadlineExtension(orderNumber);
+		return current.rejectOrderDeadlineExtension(_orderNumber);
 	}
 
 	//accepts deadline manually
-	function acceptOrderDeadlineExtension(uint32 orderNumber, uint64 dateExtension) external {
+	function acceptOrderDeadlineExtension(uint32 _orderNumber, uint64 _dateExtension) external {
 		//uint32 - Order number, uint 64 is checking date of extension.
-		return current.acceptOrderDeadlineExtension(orderNumber, dateExtension);
+		return current.acceptOrderDeadlineExtension(_orderNumber, _dateExtension);
 	}
 
 	//requests an extension of a deadline
-	function requestOrderDeadlineExtension(uint32 orderNumber,bytes32 reason, uint64 dateExtension) external {
+	function requestOrderDeadlineExtension(uint32 _orderNumber, bytes32 _reason, uint64 _dateExtension) external {
 		//bytes 32 to store explanation //uint 64 is checking date of extension.
-		return current.requestOrderDeadlineExtension(orderNumber, reason, dateExtension);
+		return current.requestOrderDeadlineExtension(_orderNumber, _reason, _dateExtension);
 	}
 
 	//cancels order
-	function cancelOrder(uint32 orderNumber) external {
+	function cancelOrder(uint32 _orderNumber) external {
 		//uint32 - Order number
-		return current.cancelOrder(orderNumber);
+		return current.cancelOrder(_orderNumber);
 	}
 
 	//creates order
-	function createOrder(uint32 orderNumber, uint16 serverAmount, bytes32 costDescription) external {
+	function createOrder(uint32 _orderNumber, uint16 _serverAmount, bytes32 _costDescription) external {
 		//uint32 - Order number, uint16 server amoutn as a whole , bytes32 description of total price.
-		return current.createOrder(orderNumber, serverAmount, costDescription);
-	}
+		return current.createOrder(_orderNumber, _serverAmount, _costDescription);
+	}*/
 }
