@@ -17,14 +17,14 @@ contract Tender is TenderInterface {
 	uint256 public penaltyCap;
 	uint256 public maximumCostofExtras;
 	uint64 public expiryDate;
-	bytes8 public operatorId;
+	uint32 public operatorId;
 	uint256 public guaranteeRequired;
 
 	//Initializes the smart contract
 	constructor(address payable _apiAddress,
 		uint256 _smallServerPrice, uint256 _mediumServerPrice, uint256 _largeServerPrice,
 		uint16 _min, uint16 _max, uint16 _daysForDelivery, uint256 _penaltyPerDay, uint256 _penaltyCap,
-		uint256 _maximumCostofExtras, uint64 _expiryDate, bytes8 _operatorId, uint256 _guaranteeRequired) public {
+		uint256 _maximumCostofExtras, uint64 _expiryDate, uint32 _operatorId, uint256 _guaranteeRequired) public {
 
 		owner = _apiAddress;
 		_smallServerPrice = smallServerPrice;
