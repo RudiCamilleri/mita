@@ -26,29 +26,54 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using Nethereum.ABI.FunctionEncoding.Attributes;
-//using Nethereum.Contracts;
-//using Nethereum.Contracts.CQS;
-//using Nethereum.Contracts.Extensions;
-//using Nethereum.Hex.HexConvertors.Extensions;
+using Nethereum.Contracts;
+using Nethereum.Contracts.CQS;
+using Nethereum.Contracts.Extensions;
+using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Util;
 using Nethereum.Web3;
 using Nethereum.Web3.Accounts;
 using Newtonsoft;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 var web3 = new Web3("http://localhost:8545");
 Console.WriteLine("\n'web3' object now loaded using Nethereum, C# console loaded successfully.\n");
 
-var senderAddress = "0x5fbf49e66af350556c6186cb5e053fc22eecbde4";
-var password = "password";
-var tenderApiAbi = Newtonsoft.Json.JsonConvert.DeserializeObject(File.ReadAllText(@"build\contracts\TenderApi.json"));
+Console.WriteLine("Loading wallet address...");
+string senderAddress;
 
-/*var senderAddress = "0x12890d2cce102216644c59daE5baed380d84830c";
-var password = "password";
-var abi = @"[{""constant"":false,""inputs"":[{""name"":""val"",""type"":""int256""}],""name"":""multiply"",""outputs"":[{""name"":""d"",""type"":""int256""}],""type"":""function""},{""inputs"":[{""name"":""multiplier"",""type"":""int256""}],""type"":""constructor""}]";
-var byteCode =
-	"0x60606040526040516020806052833950608060405251600081905550602b8060276000396000f3606060405260e060020a60003504631df4f1448114601a575b005b600054600435026060908152602090f3";
+while (true) {
+	var stream = new FileStream("ganache-output.txt", FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+	var reader = new StreamReader(stream);
+	var content = reader.ReadToEnd();
+	reader.Dispose();
+	stream.Dispose();
+	var search_string = "(0)";
+	var index = content.IndexOf(search_string);
+	if (index == -1) {
+		Thread.Sleep(1000);
+	} else {
+		index += search_string.Length + 1;
+		var end = index;
+		while ((end < content.Length) && !(string.IsNullOrWhiteSpace(content.Substring(end, 1)))) {
+			end++;
+		}
+		senderAddress = content.Substring(index, end - index).Trim();
+		break;
+	}
+}
 
-var multiplier = 7;
+Console.WriteLine("Wallet address detected at " + senderAddress + "\n");
+
+var password = "password";
+var tenderApiJson = Newtonsoft.Json.JsonConvert.DeserializeObject(File.ReadAllText(@"build\contracts\TenderApi.json"));
+var tenderApiAbi = ((JObject) tenderApiJson)["abi"];
+var tenderApiByteCode = ((JObject) tenderApiJson)["bytecode"];
+
+
+
+/*var multiplier = 7;
 
 var web3 = new Web3.Web3();
 var unlockAccountResult =

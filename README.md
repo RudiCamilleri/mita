@@ -37,7 +37,13 @@ Website repository can be found here: https://github.com/mathusummut/tender-webs
 
 Then (optionally) open the project folder in Visual Studio Code.
 
-### i. Running the smart contract locally using Remix IDE (recommended method)
+### i. Running the smart contract using Nethereum (recommended method)
+
+8. Run the `run-nethereum.bat` script in the project folder
+
+9. Call C# Nethereum commands directly from the command window
+
+### ii. Running the smart contract locally using Remix IDE
 
 8. Start `run-remix.bat` in the project folder.
 
@@ -53,7 +59,7 @@ Then (optionally) open the project folder in Visual Studio Code.
 
 13. You can compile and run from Remix at your own leisure.
 
-### ii. Running the smart contract using truffle (almost reliable method):
+### iii. Running the smart contract using truffle (almost reliable method):
 
 8. Run `start-ganache-cli.bat` in the project folder.
 
@@ -70,7 +76,7 @@ Then (optionally) open the project folder in Visual Studio Code.
 
 12. Run console commands through Truffle, to close it simply close the console window or press Ctrl+C twice.
 
-### iii. Running the smart contract using geth (not working):
+### iv. Running the smart contract using geth (not working):
 
 8. Simply double-click `run-local-blockchain.bat`. To re-run, simply close the current console window (or press Ctrl+Break, then 'Y' and Enter) and re-open.
 
