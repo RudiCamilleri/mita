@@ -65,25 +65,23 @@ while (true) {
 }
 
 Console.WriteLine("Wallet address detected at " + senderAddress + "\n");
-
 var password = "password";
 var tenderApiJson = Newtonsoft.Json.JsonConvert.DeserializeObject(File.ReadAllText(@"build\contracts\TenderApi.json"));
-var tenderApiAbi = ((JObject) tenderApiJson)["abi"];
-var tenderApiByteCode = ((JObject) tenderApiJson)["bytecode"];
+var tenderApiAbi = ((JObject) tenderApiJson)["abi"].ToString();
+var tenderApiByteCode = ((JObject) tenderApiJson)["bytecode"].ToString();
 
+Console.WriteLine("Unlocking wallet using password \"password\"...");
+var unlockAccountResult = web3.Personal.UnlockAccount.SendRequestAsync(senderAddress, password, 120);
+SpinWait.SpinUntil(delegate() { Thread.Sleep(100); return unlockAccountResult.Result; });
+Console.WriteLine("Wallet unlocked: " + unlockAccountResult.Result + "\n");
 
+Console.WriteLine("Creating contract...");
 
-/*var multiplier = 7;
-
-var web3 = new Web3.Web3();
-var unlockAccountResult =
-	await web3.Personal.UnlockAccount.SendRequestAsync(senderAddress, password, 120);
-Assert.True(unlockAccountResult);
-
-var transactionHash =
-	await web3.Eth.DeployContract.SendRequestAsync(abi, byteCode, senderAddress, multiplier);
+var transactionHash = await web3.Eth.DeployContract.SendRequestAsync(tenderApiAbi, tenderApiByteCode, senderAddress /*, constructor parameters come here*/);
 
 var mineResult = await web3.Miner.Start.SendRequestAsync(6);
+
+/*
 
 Assert.True(mineResult);
 
