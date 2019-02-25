@@ -15,4 +15,5 @@ echo Starting Remixd...
 start /b cmd /c remixd -s %cd% --remix-ide http://remix.ethereum.org <NUL
 echo Launching REPL...
 title Nethereum C# Console
-call dotnet-script -i "%cd%\..\init-csharp-repl.csx"
+rem call dotnet-script -i "%cd%\..\init-csharp-repl.csx"
+call scriptcs -script "%cd%\..\init-csharp-repl.csx" -Repl

@@ -25,44 +25,54 @@ Website repository can be found here: https://github.com/mathusummut/tender-webs
 
 5. Install Geth from https://ethereum.github.io/go-ethereum/downloads (the Windows installer)
 
-6. Run the following command in command prompt as well: `dotnet tool install -g dotnet-script`. Then open the project folder in Visual Studio Code.
+6. ~~Run the following command in command prompt as well: `dotnet tool install -g dotnet-script`.~~
+
+    Install Chocolatey by opening Powershell and entering this command:
+
+       Set-ExecutionPolicy Bypass -Scope Process -Force;iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1')
+
+7. Then close the Powershell window and reopen it, and run the following command:
+
+       choco install scriptcs
+
+Then (optionally) open the project folder in Visual Studio Code.
 
 ### i. Running the smart contract locally using Remix IDE (recommended method)
 
-7. Start `run-remix.bat` in the project folder.
+8. Start `run-remix.bat` in the project folder.
 
-8. When Remix loads in the browser, delete the files under the `browser` dropdown.
+9. When Remix loads in the browser, delete the files under the `browser` dropdown.
 
-9. Click the small chain icon top left (when hovering over it, it should be labelled `Connect to localhost`), and then click `Connect`.
+10. Click the small chain icon top left (when hovering over it, it should be labelled `Connect to localhost`), and then click `Connect`.
 
-10. Click the `Run` tab, and set `Environment` to `Web3 Provider`, and click `OK`, then `OK` again.
+11. Click the `Run` tab, and set `Environment` to `Web3 Provider`, and click `OK`, then `OK` again.
 
-11. You can edit inside Remix or use Visual Studio Code to modify the files. Files should be updated automatically.
+12. You can edit inside Remix or use Visual Studio Code to modify the files. Files should be updated automatically.
 
 **Warning: Deleting the files under `localhost` in Remix deletes the actual files permanently!!**
 
-12. You can compile and run from Remix at your own leisure.
+13. You can compile and run from Remix at your own leisure.
 
 ### ii. Running the smart contract using truffle (almost reliable method):
 
-7. Run `start-ganache-cli.bat` in the project folder.
+8. Run `start-ganache-cli.bat` in the project folder.
 
-8. In the ganache-cli output under `Available Accounts` (scroll up), copy the address at (0) and paste it in the `truffle-config.js` file next to the `from` key
+9. In the ganache-cli output under `Available Accounts` (scroll up), copy the address at (0) and paste it in the `truffle-config.js` file next to the `from` key
 
-9. In the `Terminal` tab in Visual Studio Code, enter the following line by line (`m` stands for `migrate`, `con` stands for `console`):
+10. In the `Terminal` tab in Visual Studio Code, enter the following line by line (`m` stands for `migrate`, `con` stands for `console`):
 
        truffle m --reset
        truffle con
 
-10. Copy and paste the following line into the truffle console and press enter (output should be `undefined`):
+11. Copy and paste the following line into the truffle console and press enter (output should be `undefined`):
 
         TenderApi.deployed().then(a=>{TenderApi=a;Tender.deployed().then(t=>{Tender=t;TenderApi.setCurrentAddress(Tender.address)})})
 
-11. Run console commands through Truffle, to close it simply close the console window or press Ctrl+C twice.
+12. Run console commands through Truffle, to close it simply close the console window or press Ctrl+C twice.
 
 ### iii. Running the smart contract using geth (not working):
 
-7. Simply double-click `run-local-blockchain.bat`. To re-run, simply close the current console window (or press Ctrl+Break, then 'Y' and Enter) and re-open.
+8. Simply double-click `run-local-blockchain.bat`. To re-run, simply close the current console window (or press Ctrl+Break, then 'Y' and Enter) and re-open.
 
 ## Additional Info
 

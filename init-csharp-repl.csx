@@ -1,8 +1,13 @@
-#r "nuget: Nethereum.Web3"
-#r "nuget: Nethereum.Accounts"
-#r "nuget: Nethereum.JsonRpc.Client"
-#r "nuget: Nethereum.RPC"
-#r "nuget: Newtonsoft.Json"
+//#r "nuget:Nethereum.Web3"
+//#r "nuget:Nethereum.Accounts"
+//#r "nuget:Nethereum.JsonRpc.Client"
+//#r "nuget:Nethereum.RPC"
+//#r "nuget:Newtonsoft.Json"
+#r "Nethereum.Web3"
+#r "Nethereum.Accounts"
+#r "Nethereum.JsonRpc.Client"
+#r "Nethereum.RPC"
+#r "Newtonsoft.Json"
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -21,16 +26,21 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using Nethereum.ABI.FunctionEncoding.Attributes;
-/*using Nethereum.Contracts;
-using Nethereum.Contracts.CQS;
-using Nethereum.Contracts.Extensions;
-using Nethereum.Hex.HexConvertors.Extensions;*/
+//using Nethereum.Contracts;
+//using Nethereum.Contracts.CQS;
+//using Nethereum.Contracts.Extensions;
+//using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Util;
 using Nethereum.Web3;
 using Nethereum.Web3.Accounts;
+using Newtonsoft;
 
 var web3 = new Web3("http://localhost:8545");
 Console.WriteLine("\n'web3' object now loaded using Nethereum, C# console loaded successfully.\n");
+
+var senderAddress = "0x5fbf49e66af350556c6186cb5e053fc22eecbde4";
+var password = "password";
+var tenderApiAbi = Newtonsoft.Json.JsonConvert.DeserializeObject(File.ReadAllText(@"build\contracts\TenderApi.json"));
 
 /*var senderAddress = "0x12890d2cce102216644c59daE5baed380d84830c";
 var password = "password";
