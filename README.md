@@ -35,7 +35,7 @@ Website repository can be found here: https://github.com/mathusummut/tender-webs
 
        choco install scriptcs
 
-       Then (optionally) open the project folder in Visual Studio Code.
+	Then (optionally) open the project folder in Visual Studio Code.
 
 ### i. Running the smart contract using Nethereum (recommended method)
 
