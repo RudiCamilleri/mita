@@ -13,6 +13,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.IO;
 using System.Reflection;
@@ -29,7 +30,9 @@ using Nethereum.ABI.FunctionEncoding.Attributes;
 using Nethereum.Contracts;
 using Nethereum.Contracts.CQS;
 using Nethereum.Contracts.Extensions;
+using Nethereum.Hex.HexConvertors;
 using Nethereum.Hex.HexConvertors.Extensions;
+using Nethereum.Hex.HexTypes;
 using Nethereum.Util;
 using Nethereum.Web3;
 using Nethereum.Web3.Accounts;
@@ -64,6 +67,11 @@ while (true) {
 	}
 }
 
+private static T Await<T>(Task<T> task) {
+	SpinWait.SpinUntil(() => task.IsCompleted);
+	return task.Result;
+}
+
 Console.WriteLine("Wallet address detected at " + senderAddress + "\n");
 var password = "password";
 var tenderApiJson = Newtonsoft.Json.JsonConvert.DeserializeObject(File.ReadAllText(@"build\contracts\TenderApi.json"));
@@ -71,19 +79,15 @@ var tenderApiAbi = ((JObject) tenderApiJson)["abi"].ToString();
 var tenderApiByteCode = ((JObject) tenderApiJson)["bytecode"].ToString();
 
 Console.WriteLine("Unlocking wallet using password \"password\"...");
-var unlockAccountResult = web3.Personal.UnlockAccount.SendRequestAsync(senderAddress, password, 120);
-SpinWait.SpinUntil(delegate() { Thread.Sleep(100); return unlockAccountResult.Result; });
-Console.WriteLine("Wallet unlocked: " + unlockAccountResult.Result + "\n");
+Console.WriteLine("Wallet unlocked: " + Await<bool>(web3.Personal.UnlockAccount.SendRequestAsync(senderAddress, password, 120)) + "\n");
 
 Console.WriteLine("Creating contract...");
+var transactionHash = Await<string>(web3.Eth.DeployContract.SendRequestAsync(tenderApiAbi, tenderApiByteCode, senderAddress, new HexBigInteger("0x567")/*, constructor parameters come here*/));
+Console.WriteLine("Transaction Hash: " + transactionHash + "\n");
 
-var transactionHash = await web3.Eth.DeployContract.SendRequestAsync(tenderApiAbi, tenderApiByteCode, senderAddress /*, constructor parameters come here*/);
+//var mineResult = await web3.Miner.Start.SendRequestAsync(6);
 
-var mineResult = await web3.Miner.Start.SendRequestAsync(6);
-
-/*
-
-Assert.True(mineResult);
+/*Assert.True(mineResult);
 
 var receipt = await web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(transactionHash);
 

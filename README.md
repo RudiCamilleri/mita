@@ -29,7 +29,7 @@ Website repository can be found here: https://github.com/mathusummut/tender-webs
 
     Install Chocolatey by opening Powershell and entering this command:
 
-       Set-ExecutionPolicy Bypass -Scope Process -Force;iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1')
+       Set-ExecutionPolicy Bypass -Scope Process -Force;iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 
 7. Then close the Powershell window and reopen it, and run the following command:
 
