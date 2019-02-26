@@ -116,11 +116,10 @@ var TenderApi = DeployContract(@"build\contracts\TenderApi.json", walletOwner, g
 
 //var geth = new Web3Geth("http://127.0.0.1:8545");
 //Console.WriteLine("Transaction Mined: " + Await<bool>(geth.Miner.Start.SendRequestAsync(6)));
+//Console.WriteLine("Miner stopped: " + Await<bool>(geth.Miner.Stop.SendRequestAsync()));
 
-//Await<bool>(geth.Miner.Stop.SendRequestAsync());
-
-/*var setCurrentAddress = contract.GetFunction("setCurrentAddress");
-var current = contract.GetFunction("current");
+/*var setCurrentAddress = TenderApi.GetFunction("setCurrentAddress");
+var current = TenderApi.GetFunction("current");
 Await<string>(current.CallAsync<string>());
 Await(setCurrentAddress.CallAsync<string>("0x82"));
 Await<string>(current.CallAsync<string>());*/
