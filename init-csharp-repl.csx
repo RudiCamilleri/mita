@@ -48,34 +48,7 @@ using Newtonsoft;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-var web3 = new Web3("http://localhost:8545");
-Console.WriteLine("\n'web3' object now loaded using Nethereum, C# console loaded successfully.\n");
-
-Console.WriteLine("Loading wallet address...");
-string senderAddress;
-
-while (true) {
-	var stream = new FileStream("ganache-output.txt", FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-	var reader = new StreamReader(stream);
-	var content = reader.ReadToEnd();
-	reader.Dispose();
-	stream.Dispose();
-	var search_string = "(0)";
-	var index = content.IndexOf(search_string);
-	if (index == -1) {
-		Thread.Sleep(1000);
-	} else {
-		index += search_string.Length + 1;
-		var end = index;
-		while ((end < content.Length) && !(string.IsNullOrWhiteSpace(content.Substring(end, 1)))) {
-			end++;
-		}
-		senderAddress = content.Substring(index, end - index).Trim();
-		break;
-	}
-}
-
-private static void Await<T>(Task task) {
+private static void Await(Task task) {
 	SpinWait.SpinUntil(() => task.IsCompleted);
 }
 
@@ -86,32 +59,68 @@ private static T Await<T>(Task<T> task, bool waitUntilNotNull = false) {
 	return task.Result;
 }
 
-Console.WriteLine("Wallet address detected at " + senderAddress + "\n");
-var password = "password";
-var tenderApiJson = Newtonsoft.Json.JsonConvert.DeserializeObject(File.ReadAllText(@"build\contracts\TenderApi.json"));
-var tenderApiAbi = ((JObject) tenderApiJson)["abi"].ToString();
-var tenderApiByteCode = ((JObject) tenderApiJson)["bytecode"].ToString();
+private static string GetWalletAddressFromGanacheLog(string path) {
+	while (true) {
+		var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+		var reader = new StreamReader(stream);
+		var content = reader.ReadToEnd();
+		reader.Dispose();
+		stream.Dispose();
+		var search_string = "(0)";
+		var index = content.IndexOf(search_string);
+		if (index == -1) {
+			Thread.Sleep(1000);
+		} else {
+			index += search_string.Length + 1;
+			var end = index;
+			while ((end < content.Length) && !(string.IsNullOrWhiteSpace(content.Substring(end, 1)))) {
+				end++;
+			}
+			return content.Substring(index, end - index).Trim();
+		}
+	}
+	throw new Exception("Wallet address could not be loaded");
+}
 
-Console.WriteLine("Unlocking wallet using password \"password\"...");
-Console.WriteLine("Wallet unlocked: " + Await<bool>(web3.Personal.UnlockAccount.SendRequestAsync(senderAddress, password, 120)) + "\n");
+public static Web3 Web3 = new Web3("http://localhost:8545");
+Console.WriteLine("\nWeb3 now loaded using Nethereum!\n");
+
+private static bool UnlockGanacheWallet(string address, string password) {
+	return Await<bool>(Web3.Personal.UnlockAccount.SendRequestAsync(address, password, 120));
+}
+
+//uses truffle compile output json
+public static Contract DeployContract(string jsonPath, string walletOwner, HexBigInteger gas, HexBigInteger gasPrice, HexBigInteger value, params object[] constructorParams) {
+	var json = Newtonsoft.Json.JsonConvert.DeserializeObject(File.ReadAllText(jsonPath));
+	var abi = ((JObject) json)["abi"].ToString();
+	var byteCode = ((JObject) json)["bytecode"].ToString();
+	var transactionHash = Await<string>(Web3.Eth.DeployContract.SendRequestAsync(abi, byteCode, walletOwner, gas, gasPrice, value, constructorParams));
+	Console.WriteLine("Transaction Hash: " + transactionHash + "\n");
+	var receipt = Await<TransactionReceipt>(Web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(transactionHash), true);
+	return Web3.Eth.GetContract(abi, receipt.ContractAddress);
+}
+
+Console.WriteLine("Loading wallet address...");
+var walletOwner = GetWalletAddressFromGanacheLog("ganache-output.txt");
+Console.WriteLine("Wallet address detected at " + walletOwner + "\n");
+
+var password = "password";
+Console.WriteLine("Unlocking wallet using password \"" + password + "\"...");
+Console.WriteLine("Wallet unlocked: " + UnlockGanacheWallet(walletOwner, password) + "\n");
 
 Console.WriteLine("Creating contract...");
 var gas = new HexBigInteger("0x6691b7");
 var gasPrice = new HexBigInteger("0x77359400");
 var value = new HexBigInteger("0x0");
-var transactionHash = Await<string>(web3.Eth.DeployContract.SendRequestAsync(tenderApiAbi, tenderApiByteCode, senderAddress, gas, gasPrice, value/*, constructor parameters come here*/));
-Console.WriteLine("Transaction Hash: " + transactionHash + "\n");
+var TenderApi = DeployContract(@"build\contracts\TenderApi.json", walletOwner, gas, gasPrice, value);
 
-//var geth = new Web3Geth();
+//var geth = new Web3Geth("http://127.0.0.1:8545");
 //Console.WriteLine("Transaction Mined: " + Await<bool>(geth.Miner.Start.SendRequestAsync(6)));
-
-var receipt = Await<TransactionReceipt>(web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(transactionHash), true);
 
 //Await<bool>(geth.Miner.Stop.SendRequestAsync());
 
-var contract = web3.Eth.GetContract(tenderApiAbi, receipt.ContractAddress);
-var setCurrentAddress = contract.GetFunction("setCurrentAddress");
+/*var setCurrentAddress = contract.GetFunction("setCurrentAddress");
 var current = contract.GetFunction("current");
 Await<string>(current.CallAsync<string>());
 Await(setCurrentAddress.CallAsync<string>("0x82"));
-Await<string>(current.CallAsync<string>());
+Await<string>(current.CallAsync<string>());*/
