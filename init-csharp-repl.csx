@@ -8,6 +8,7 @@
 #r "Nethereum.JsonRpc.Client"
 #r "Nethereum.RPC"
 #r "Newtonsoft.Json"
+#r "Nethereum.Geth"
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -30,9 +31,16 @@ using Nethereum.ABI.FunctionEncoding.Attributes;
 using Nethereum.Contracts;
 using Nethereum.Contracts.CQS;
 using Nethereum.Contracts.Extensions;
+using Nethereum.Geth;
+using Nethereum.Geth.RPC;
+using Nethereum.Geth.RPC.Miner;
 using Nethereum.Hex.HexConvertors;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Hex.HexTypes;
+using Nethereum.RPC;
+using Nethereum.RPC.Eth;
+using Nethereum.RPC.Eth.DTOs;
+using Nethereum.RPC.Eth.Transactions;
 using Nethereum.Util;
 using Nethereum.Web3;
 using Nethereum.Web3.Accounts;
@@ -67,8 +75,14 @@ while (true) {
 	}
 }
 
-private static T Await<T>(Task<T> task) {
+private static void Await<T>(Task task) {
 	SpinWait.SpinUntil(() => task.IsCompleted);
+}
+
+private static T Await<T>(Task<T> task, bool waitUntilNotNull = false) {
+	do {
+		SpinWait.SpinUntil(() => task.IsCompleted);
+	} while (waitUntilNotNull && task.Result == null);
 	return task.Result;
 }
 
@@ -82,30 +96,22 @@ Console.WriteLine("Unlocking wallet using password \"password\"...");
 Console.WriteLine("Wallet unlocked: " + Await<bool>(web3.Personal.UnlockAccount.SendRequestAsync(senderAddress, password, 120)) + "\n");
 
 Console.WriteLine("Creating contract...");
-var transactionHash = Await<string>(web3.Eth.DeployContract.SendRequestAsync(tenderApiAbi, tenderApiByteCode, senderAddress, new HexBigInteger("0x567")/*, constructor parameters come here*/));
+var gas = new HexBigInteger("0x6691b7");
+var gasPrice = new HexBigInteger("0x77359400");
+var value = new HexBigInteger("0x0");
+var transactionHash = Await<string>(web3.Eth.DeployContract.SendRequestAsync(tenderApiAbi, tenderApiByteCode, senderAddress, gas, gasPrice, value/*, constructor parameters come here*/));
 Console.WriteLine("Transaction Hash: " + transactionHash + "\n");
 
-//var mineResult = await web3.Miner.Start.SendRequestAsync(6);
+//var geth = new Web3Geth();
+//Console.WriteLine("Transaction Mined: " + Await<bool>(geth.Miner.Start.SendRequestAsync(6)));
 
-/*Assert.True(mineResult);
+var receipt = Await<TransactionReceipt>(web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(transactionHash), true);
 
-var receipt = await web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(transactionHash);
+//Await<bool>(geth.Miner.Stop.SendRequestAsync());
 
-while (receipt == null)
-{
-	Thread.Sleep(5000);
-	receipt = await web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(transactionHash);
-}
-
-mineResult = await web3.Miner.Stop.SendRequestAsync();
-Assert.True(mineResult);
-
-var contractAddress = receipt.ContractAddress;
-
-var contract = web3.Eth.GetContract(abi, contractAddress);
-
-var multiplyFunction = contract.GetFunction("multiply");
-
-var result = await multiplyFunction.CallAsync<int>(7);
-
-Assert.Equal(49, result);*/
+var contract = web3.Eth.GetContract(tenderApiAbi, receipt.ContractAddress);
+var setCurrentAddress = contract.GetFunction("setCurrentAddress");
+var current = contract.GetFunction("current");
+Await<string>(current.CallAsync<string>());
+Await(setCurrentAddress.CallAsync<string>("0x82"));
+Await<string>(current.CallAsync<string>());
