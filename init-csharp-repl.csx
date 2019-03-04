@@ -83,6 +83,7 @@ private static string GetWalletAddressFromGanacheLog(string path) {
 }
 
 public static Web3 Web3 = new Web3("http://localhost:8545");
+public static Web3Geth Geth = new Web3Geth("http://127.0.0.1:8545");
 Console.WriteLine("\nWeb3 now loaded using Nethereum!\n");
 
 private static bool UnlockGanacheWallet(string address, string password) {
@@ -100,6 +101,14 @@ public static Contract DeployContract(string jsonPath, string walletOwner, HexBi
 	return Web3.Eth.GetContract(abi, receipt.ContractAddress);
 }
 
+public static bool StartMining() {
+	return Await<bool>(Geth.Miner.Start.SendRequestAsync(6));
+}
+
+public static bool StopMining() {
+	return Await<bool>(Geth.Miner.Stop.SendRequestAsync());
+}
+
 Console.WriteLine("Loading wallet address...");
 var walletOwner = GetWalletAddressFromGanacheLog("ganache-output.txt");
 Console.WriteLine("Wallet address detected at " + walletOwner + "\n");
@@ -114,9 +123,8 @@ var gasPrice = new HexBigInteger("0x77359400");
 var value = new HexBigInteger("0x0");
 var TenderApi = DeployContract(@"build\contracts\TenderApi.json", walletOwner, gas, gasPrice, value);
 
-//var geth = new Web3Geth("http://127.0.0.1:8545");
-//Console.WriteLine("Transaction Mined: " + Await<bool>(geth.Miner.Start.SendRequestAsync(6)));
-//Console.WriteLine("Miner stopped: " + Await<bool>(geth.Miner.Stop.SendRequestAsync()));
+//Console.WriteLine("Transaction Mined: " + StartMining());
+//Console.WriteLine("Miner stopped: " + StopMining());
 
 /*var setCurrentAddress = TenderApi.GetFunction("setCurrentAddress");
 var current = TenderApi.GetFunction("current");
