@@ -13,4 +13,4 @@ echo Launching Nethereum Console...
 echo.
 title Nethereum C# Console
 rem call dotnet-script -i "%cd%\..\init-csharp-repl.csx"
-call scriptcs -script "%cd%\..\init-csharp-repl.csx" -Repl
+call scriptcs -script "%cd%\..\init-nethereum.csx" -Repl
