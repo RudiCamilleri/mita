@@ -9,14 +9,14 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("ContractUtils")]
 [assembly: AssemblyDescription("Contains useful functions to deploy and manage Ethereum contracts and function calls using Nethereum")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("MITA (Matthew Sammut)")]
+[assembly: AssemblyCompany("MITA (by Matthew Sammut)")]
 [assembly: AssemblyProduct("ContractUtils")]
 [assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
-// to COM components.  If you need to access a type in this assembly from
+// to COM components. If you need to access a type in this assembly from
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
 

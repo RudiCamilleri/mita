@@ -3,6 +3,7 @@ using Nethereum.Geth;
 using Nethereum.Hex.HexTypes;
 using Nethereum.RPC.Eth.DTOs;
 using Nethereum.Web3;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
@@ -30,25 +31,24 @@ namespace ContractUtils {
 		/// <param name="path">The path of the file containing the Ganache-Cli output</param>
 		/// <param name="walletIndex">The wallet index between 0 and 9 (the default is 0)</param>
 		/// <param name="timeoutSeconds">The timeout in seconds for the file to be found (default is 120)</param>
-		public static string GetWalletAddressFromGanacheLog(string path, int walletIndex = 0, int timeoutSeconds = 120) {
+		public static Wallet GetWalletAddressFromGanacheLog(string path, int walletIndex = 0, int timeoutSeconds = 120) {
+			string content, searchString;
+			int index, end;
 			for (int i = 0; i < timeoutSeconds; i++) {
-				string content;
 				using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
-					using (StreamReader reader = new StreamReader(stream)) {
+					using (StreamReader reader = new StreamReader(stream))
 						content = reader.ReadToEnd();
-					}
 				}
-				string search_string = "(" + walletIndex + ")";
-				int index = content.IndexOf(search_string);
-				if (index == -1) {
+				searchString = "(" + walletIndex + ")";
+				index = content.IndexOf(searchString);
+				if (index == -1)
 					Thread.Sleep(1000);
-				} else {
-					index += search_string.Length + 1;
-					int end = index;
-					while ((end < content.Length) && !(string.IsNullOrWhiteSpace(content.Substring(end, 1)))) {
+				else {
+					index += searchString.Length + 1;
+					end = index;
+					while ((end < content.Length) && !(string.IsNullOrWhiteSpace(content.Substring(end, 1))))
 						end++;
-					}
-					return content.Substring(index, end - index).Trim();
+					return new Wallet(content.Substring(index, end - index).Trim());
 				}
 			}
 			throw new Exception("Wallet address could not be loaded, operation timeout exceeded");
@@ -60,8 +60,8 @@ namespace ContractUtils {
 		/// <param name="wallet">The address of the wallet to unlock</param>
 		/// <param name="password">The password of the wallet</param>
 		/// <param name="timeoutSeconds">The operation timeout in seconds</param>
-		public static Task<bool> UnlockWallet(string wallet, string password, int timeoutSeconds = 120) {
-			return Web3.Personal.UnlockAccount.SendRequestAsync(wallet, password, new HexBigInteger(new BigInteger(timeoutSeconds)));
+		public static Task<bool> UnlockWallet(Wallet wallet, string password, int timeoutSeconds = 120) {
+			return Web3.Personal.UnlockAccount.SendRequestAsync(wallet.Address, password, new HexBigInteger(new BigInteger(timeoutSeconds)));
 		}
 
 		/// <summary>
@@ -71,9 +71,8 @@ namespace ContractUtils {
 		/// <param name="retryCount">The maximum number of retries if an error occurs</param>
 		public static async Task<TransactionReceipt> GetReceipt(string transactionHash, int retryCount = 10) {
 			TransactionReceipt receipt = null;
-			for (int i = 0; i < retryCount && receipt == null; i++) {
+			for (int i = 0; i < retryCount && receipt == null; i++)
 				receipt = await Web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(transactionHash);
-			}
 			return receipt;
 		}
 
@@ -88,8 +87,8 @@ namespace ContractUtils {
 		/// <param name="value">The initial value of the contract</param>
 		/// <param name="retryCount">The maximum number of retries if an error occurs</param>
 		/// <param name="constructorParams">The values to pass to the contract constructor</param>
-		public static async Task<DeployedContract> DeployContract(string abi, string byteCode, string wallet, HexBigInteger gas, HexBigInteger gasPrice, HexBigInteger value, int retryCount = 10, params object[] constructorParams) {
-			string transactionHash = await Web3.Eth.DeployContract.SendRequestAsync(abi, byteCode, wallet, gas, gasPrice, value, constructorParams);
+		public static async Task<DeployedContract> DeployContract(string abi, string byteCode, Wallet wallet, HexBigInteger gas, HexBigInteger gasPrice, HexBigInteger value, int retryCount = 10, params object[] constructorParams) {
+			string transactionHash = await Web3.Eth.DeployContract.SendRequestAsync(abi, byteCode, wallet.Address, gas, gasPrice, value, constructorParams);
 			TransactionReceipt receipt = await GetReceipt(transactionHash, retryCount);
 			return new DeployedContract(Web3.Eth.GetContract(abi, receipt.ContractAddress), receipt);
 		}
@@ -104,9 +103,9 @@ namespace ContractUtils {
 		/// <param name="value">The initial value of the contract</param>
 		/// <param name="retryCount">The maximum number of retries if an error occurs</param>
 		/// <param name="constructorParams">The values to pass to the contract constructor</param>
-		public static Task<DeployedContract> DeployContract(string jsonPath, string wallet, HexBigInteger gas, HexBigInteger gasPrice, HexBigInteger value, int retryCount = 10, params object[] constructorParams) {
-			JObject json = (JObject) Newtonsoft.Json.JsonConvert.DeserializeObject(File.ReadAllText(jsonPath));
-			return DeployContract(json["abi"].ToString(), json["bytecode"].ToString(), gas, gasPrice, value, retryCount, constructorParams);
+		public static Task<DeployedContract> DeployContract(string jsonPath, Wallet wallet, HexBigInteger gas, HexBigInteger gasPrice, HexBigInteger value, int retryCount = 10, params object[] constructorParams) {
+			JObject json = (JObject) JsonConvert.DeserializeObject(File.ReadAllText(jsonPath));
+			return DeployContract(json["abi"].ToString(), json["bytecode"].ToString(), wallet, gas, gasPrice, value, retryCount, constructorParams);
 		}
 
 		/// <summary>
@@ -115,7 +114,7 @@ namespace ContractUtils {
 		/// <param name="jsonPath">The path to the JSON ABI of the contract that is generated by Truffle</param>
 		/// <param name="wallet">The wallet address of the contract owner</param>
 		/// <param name="constructorParams">The values to pass to the contract constructor</param>
-		public static Task<DeployedContract> DeployContract(string jsonPath, string wallet, params object[] constructorParams) {
+		public static Task<DeployedContract> DeployContract(string jsonPath, Wallet wallet, params object[] constructorParams) {
 			return DeployContract(jsonPath, wallet, ConfigParams.DefaultGas, ConfigParams.DefaultGasPrice, ConfigParams.DefaultValue, 10, constructorParams);
 		}
 
@@ -127,7 +126,7 @@ namespace ContractUtils {
 		/// <param name="functionName">The name of the function to invoke</param>
 		/// <param name="functionParams">The parameters to pass to the function</param>
 		public static Task<T> CallRead<T>(this Contract contract, string functionName, params object[] functionParams) {
-			return contract.GetFunction(functionName).CallAsync<T>(functionParams);
+			return CallRead<T>(contract.GetFunction(functionName), functionParams);
 		}
 
 		/// <summary>
@@ -150,8 +149,8 @@ namespace ContractUtils {
 		/// <param name="value">The initial value of the contract</param>
 		/// <param name="functionName">The name of the function to invoke</param>
 		/// <param name="functionParams">The parameters to pass to the function</param>
-		public static Task<string> CallWrite(this Contract contract, string functionName, string wallet, HexBigInteger gas, HexBigInteger gasPrice, HexBigInteger value, params object[] functionParams) {
-			return contract.GetFunction(functionName).SendTransactionAsync(wallet, gas, gasPrice, value, functionParams);
+		public static Task<string> CallWrite(this Contract contract, string functionName, Wallet wallet, HexBigInteger gas, HexBigInteger gasPrice, HexBigInteger value, params object[] functionParams) {
+			return CallWrite(contract.GetFunction(functionName), wallet, gas, gasPrice, value, functionParams);
 		}
 
 		/// <summary>
@@ -163,8 +162,8 @@ namespace ContractUtils {
 		/// <param name="gasPrice">The gas price</param>
 		/// <param name="value">The initial value of the contract</param>
 		/// <param name="functionParams">The parameters to pass to the function</param>
-		public static Task<string> CallWrite(this Function function, string wallet, HexBigInteger gas, HexBigInteger gasPrice, HexBigInteger value, params object[] functionParams) {
-			return function.SendTransactionAsync(wallet, gas, gasPrice, value, functionParams);
+		public static Task<string> CallWrite(this Function function, Wallet wallet, HexBigInteger gas, HexBigInteger gasPrice, HexBigInteger value, params object[] functionParams) {
+			return function.SendTransactionAsync(wallet.Address, gas, gasPrice, value, functionParams);
 		}
 
 		/// <summary>
@@ -174,7 +173,7 @@ namespace ContractUtils {
 		/// <param name="wallet">The wallet address of the contract owner</param>
 		/// <param name="functionName">The name of the function to invoke</param>
 		/// <param name="functionParams">The parameters to pass to the function</param>
-		public static Task<string> CallWrite(this Contract contract, string functionName, string wallet, params object[] functionParams) {
+		public static Task<string> CallWrite(this Contract contract, string functionName, Wallet wallet, params object[] functionParams) {
 			return CallWrite(contract, functionName, wallet, ConfigParams.DefaultGas, ConfigParams.DefaultGasPrice, ConfigParams.DefaultValue, functionParams);
 		}
 
@@ -184,8 +183,24 @@ namespace ContractUtils {
 		/// <param name="function">The isntance of the function to invoke, which is the object returned by contractInstance.GetFunction("functionName")</param>
 		/// <param name="wallet">The wallet address of the contract owner</param>
 		/// <param name="functionParams">The parameters to pass to the function</param>
-		public static Task<string> CallWrite(this Function function, string wallet, params object[] functionParams) {
+		public static Task<string> CallWrite(this Function function, Wallet wallet, params object[] functionParams) {
 			return CallWrite(function, wallet, ConfigParams.DefaultGas, ConfigParams.DefaultGasPrice, ConfigParams.DefaultValue, functionParams);
+		}
+
+		/// <summary>
+		/// Gets the balance of the specified contract
+		/// </summary>
+		/// <param name="contract">The contract whose balance to obtain</param>
+		public static Task<HexBigInteger> GetBalance(this Contract contract) {
+			return GetBalance(contract.Address);
+		}
+
+		/// <summary>
+		/// Gets the balance of the specified wallet or contract address
+		/// </summary>
+		/// <param name="address">The address of the wallet or contract</param>
+		public static Task<HexBigInteger> GetBalance(string address) {
+			return Web3.Eth.GetBalance.SendRequestAsync(address);
 		}
 
 		/// <summary>
@@ -200,6 +215,25 @@ namespace ContractUtils {
 		/// </summary>
 		public static Task<bool> StopMining() {
 			return Node.Miner.Stop.SendRequestAsync();
+		}
+
+		/// <summary>
+		/// Should only be used for live demo scripting purposes
+		/// Waits for a task to finish
+		/// </summary>
+		/// <param name="task">The task to await</param>
+		public static void Await(this Task task) {
+			task.Wait();
+		}
+
+		/// <summary>
+		/// Should only be used for live demo scripting purposes.
+		/// Waits for a task to finish and returns the result
+		/// </summary>
+		/// <param name="task">The task to await</param>
+		public static T Await<T>(this Task<T> task) {
+			task.Wait();
+			return task.Result;
 		}
 	}
 }

@@ -29,6 +29,28 @@
             The default Ethereum node url
             </summary>
         </member>
+        <member name="M:ContractUtils.ConfigParams.#cctor">
+            <summary>
+            Initializes the class configuration
+            </summary>
+        </member>
+        <member name="M:ContractUtils.ConfigParams.LoadConfigFromFile">
+            <summary>
+            Loads the default configuration from contract_defaults.json
+            </summary>
+        </member>
+        <member name="M:ContractUtils.ConfigParams.LoadConfigFromFile(System.String)">
+            <summary>
+            Loads the default configuration from the specified JSON file
+            </summary>
+            <param name="path">The path to the JSON file</param>
+        </member>
+        <member name="M:ContractUtils.ConfigParams.LoadConfig(System.String)">
+            <summary>
+            Loads the configuration from the specified JSON object
+            </summary>
+            <param name="json">The JSON object string</param>
+        </member>
         <member name="T:ContractUtils.ContractUtil">
             <summary>
             Contains useful functions to deploy and manage Ethereum contracts and function calls using Nethereum
@@ -52,7 +74,7 @@
             <param name="walletIndex">The wallet index between 0 and 9 (the default is 0)</param>
             <param name="timeoutSeconds">The timeout in seconds for the file to be found (default is 120)</param>
         </member>
-        <member name="M:ContractUtils.ContractUtil.UnlockWallet(System.String,System.String,System.Int32)">
+        <member name="M:ContractUtils.ContractUtil.UnlockWallet(ContractUtils.Wallet,System.String,System.Int32)">
             <summary>
             Unlocks the specified wallet using the given password
             </summary>
@@ -67,7 +89,7 @@
             <param name="transactionHash">The hash of the transaction whose receipt to obtain</param>
             <param name="retryCount">The maximum number of retries if an error occurs</param>
         </member>
-        <member name="M:ContractUtils.ContractUtil.DeployContract(System.String,System.String,System.String,Nethereum.Hex.HexTypes.HexBigInteger,Nethereum.Hex.HexTypes.HexBigInteger,Nethereum.Hex.HexTypes.HexBigInteger,System.Int32,System.Object[])">
+        <member name="M:ContractUtils.ContractUtil.DeployContract(System.String,System.String,ContractUtils.Wallet,Nethereum.Hex.HexTypes.HexBigInteger,Nethereum.Hex.HexTypes.HexBigInteger,Nethereum.Hex.HexTypes.HexBigInteger,System.Int32,System.Object[])">
             <summary>
             Deploys the specified contract into the current node specified in the config file
             </summary>
@@ -80,7 +102,7 @@
             <param name="retryCount">The maximum number of retries if an error occurs</param>
             <param name="constructorParams">The values to pass to the contract constructor</param>
         </member>
-        <member name="M:ContractUtils.ContractUtil.DeployContract(System.String,System.String,Nethereum.Hex.HexTypes.HexBigInteger,Nethereum.Hex.HexTypes.HexBigInteger,Nethereum.Hex.HexTypes.HexBigInteger,System.Int32,System.Object[])">
+        <member name="M:ContractUtils.ContractUtil.DeployContract(System.String,ContractUtils.Wallet,Nethereum.Hex.HexTypes.HexBigInteger,Nethereum.Hex.HexTypes.HexBigInteger,Nethereum.Hex.HexTypes.HexBigInteger,System.Int32,System.Object[])">
             <summary>
             Deploys the specified contract into the current node specified in the config file
             </summary>
@@ -92,7 +114,7 @@
             <param name="retryCount">The maximum number of retries if an error occurs</param>
             <param name="constructorParams">The values to pass to the contract constructor</param>
         </member>
-        <member name="M:ContractUtils.ContractUtil.DeployContract(System.String,System.String,System.Object[])">
+        <member name="M:ContractUtils.ContractUtil.DeployContract(System.String,ContractUtils.Wallet,System.Object[])">
             <summary>
             Deploys the specified contract using default values into the current node specified in the config file
             </summary>
@@ -117,7 +139,7 @@
             <param name="function">The isntance of the function to invoke, which is the object returned by contractInstance.GetFunction("functionName")</param>
             <param name="functionParams">The parameters to pass to the function</param>
         </member>
-        <member name="M:ContractUtils.ContractUtil.CallWrite(Nethereum.Contracts.Contract,System.String,System.String,Nethereum.Hex.HexTypes.HexBigInteger,Nethereum.Hex.HexTypes.HexBigInteger,Nethereum.Hex.HexTypes.HexBigInteger,System.Object[])">
+        <member name="M:ContractUtils.ContractUtil.CallWrite(Nethereum.Contracts.Contract,System.String,ContractUtils.Wallet,Nethereum.Hex.HexTypes.HexBigInteger,Nethereum.Hex.HexTypes.HexBigInteger,Nethereum.Hex.HexTypes.HexBigInteger,System.Object[])">
             <summary>
             Calls the specified function as a write operation
             </summary>
@@ -129,7 +151,7 @@
             <param name="functionName">The name of the function to invoke</param>
             <param name="functionParams">The parameters to pass to the function</param>
         </member>
-        <member name="M:ContractUtils.ContractUtil.CallWrite(Nethereum.Contracts.Function,System.String,Nethereum.Hex.HexTypes.HexBigInteger,Nethereum.Hex.HexTypes.HexBigInteger,Nethereum.Hex.HexTypes.HexBigInteger,System.Object[])">
+        <member name="M:ContractUtils.ContractUtil.CallWrite(Nethereum.Contracts.Function,ContractUtils.Wallet,Nethereum.Hex.HexTypes.HexBigInteger,Nethereum.Hex.HexTypes.HexBigInteger,Nethereum.Hex.HexTypes.HexBigInteger,System.Object[])">
             <summary>
             Calls the specified function as a read operation
             </summary>
@@ -140,7 +162,7 @@
             <param name="value">The initial value of the contract</param>
             <param name="functionParams">The parameters to pass to the function</param>
         </member>
-        <member name="M:ContractUtils.ContractUtil.CallWrite(Nethereum.Contracts.Contract,System.String,System.String,System.Object[])">
+        <member name="M:ContractUtils.ContractUtil.CallWrite(Nethereum.Contracts.Contract,System.String,ContractUtils.Wallet,System.Object[])">
             <summary>
             Calls the specified function as a write operation using default config
             </summary>
@@ -149,13 +171,25 @@
             <param name="functionName">The name of the function to invoke</param>
             <param name="functionParams">The parameters to pass to the function</param>
         </member>
-        <member name="M:ContractUtils.ContractUtil.CallWrite(Nethereum.Contracts.Function,System.String,System.Object[])">
+        <member name="M:ContractUtils.ContractUtil.CallWrite(Nethereum.Contracts.Function,ContractUtils.Wallet,System.Object[])">
             <summary>
             Calls the specified function as a read operation using default config
             </summary>
             <param name="function">The isntance of the function to invoke, which is the object returned by contractInstance.GetFunction("functionName")</param>
             <param name="wallet">The wallet address of the contract owner</param>
             <param name="functionParams">The parameters to pass to the function</param>
+        </member>
+        <member name="M:ContractUtils.ContractUtil.GetBalance(Nethereum.Contracts.Contract)">
+            <summary>
+            Gets the balance of the specified contract
+            </summary>
+            <param name="contract">The contract whose balance to obtain</param>
+        </member>
+        <member name="M:ContractUtils.ContractUtil.GetBalance(System.String)">
+            <summary>
+            Gets the balance of the specified wallet or contract address
+            </summary>
+            <param name="address">The address of the wallet or contract</param>
         </member>
         <member name="M:ContractUtils.ContractUtil.StartMining">
             <summary>
@@ -166,6 +200,20 @@
             <summary>
             Sends a signal to the associated node to stop mining
             </summary>
+        </member>
+        <member name="M:ContractUtils.ContractUtil.Await(System.Threading.Tasks.Task)">
+            <summary>
+            Should only be used for live demo scripting purposes
+            Waits for a task to finish
+            </summary>
+            <param name="task">The task to await</param>
+        </member>
+        <member name="M:ContractUtils.ContractUtil.Await``1(System.Threading.Tasks.Task{``0})">
+            <summary>
+            Should only be used for live demo scripting purposes.
+            Waits for a task to finish and returns the result
+            </summary>
+            <param name="task">The task to await</param>
         </member>
         <member name="T:ContractUtils.DeployedContract">
             <summary>
@@ -188,6 +236,39 @@
             </summary>
             <param name="contract">The contract object that was created</param>
             <param name="receipt">The transaction receipt received at the creation of the contract</param>
+        </member>
+        <member name="T:ContractUtils.Wallet">
+            <summary>
+            Represents a wallet
+            </summary>
+        </member>
+        <member name="P:ContractUtils.Wallet.Address">
+            <summary>
+            Gets the address of the wallet
+            </summary>
+        </member>
+        <member name="M:ContractUtils.Wallet.#ctor(System.String)">
+            <summary>
+            Initializes a new wallet
+            </summary>
+            <param name="address">The address of the wallet</param>
+        </member>
+        <member name="M:ContractUtils.Wallet.GetBalance">
+            <summary>
+            Gets the balance of the current wallet
+            </summary>
+        </member>
+        <member name="M:ContractUtils.Wallet.op_Implicit(ContractUtils.Wallet)~System.String">
+            <summary>
+            Gets the address of a wallet
+            </summary>
+            <param name="wallet">The wallet whose address to obtain</param>
+        </member>
+        <member name="M:ContractUtils.Wallet.op_Implicit(System.String)~ContractUtils.Wallet">
+            <summary>
+            Initializes a new wallet from the specified address
+            </summary>
+            <param name="address">The address of the wallet</param>
         </member>
     </members>
 </doc>

@@ -1,5 +1,6 @@
 ﻿using Nethereum.Hex.HexTypes;
-using System.Configuration;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.IO;
 
 namespace ContractUtils {
@@ -24,19 +25,53 @@ namespace ContractUtils {
 		/// </summary>
 		public static string NodeUrl;
 
+		/// <summary>
+		/// Initializes the class configuration
+		/// </summary>
 		static ConfigParams() {
-			ExeConfigurationFileMap configMap = new ExeConfigurationFileMap();
-			configMap.ExeConfigFilename = @"ContractUtils.dll.config";
-			Configuration config = ConfigurationManager.OpenMappedExeConfiguration(configMap, ConfigurationUserLevel.None);
-			if (config == null) {
-				configMap.ExeConfigFilename = "scriptcs_bin" + Path.DirectorySeparatorChar + configMap.ExeConfigFilename;
-				config = ConfigurationManager.OpenMappedExeConfiguration(configMap, ConfigurationUserLevel.None);
+			LoadConfigFromFile();
+		}
+
+		/// <summary>
+		/// Loads the default configuration from contract_defaults.json
+		/// </summary>
+		public static void LoadConfigFromFile() {
+			LoadConfigFromFile("contract_defaults.json");
+		}
+
+		/// <summary>
+		/// Loads the default configuration from the specified JSON file
+		/// </summary>
+		/// <param name="path">The path to the JSON file</param>
+		public static void LoadConfigFromFile(string path) {
+			string json = null;
+			try {
+				using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
+					using (StreamReader reader = new StreamReader(stream))
+						json = reader.ReadToEnd();
+				}
+			} catch {
 			}
-			KeyValueConfigurationCollection collection = config.AppSettings.Settings;
-			DefaultGas = new HexBigInteger(collection["default-gas"].Value.Trim());
-			DefaultGasPrice = new HexBigInteger(collection["default-gas-price"].Value.Trim());
-			DefaultValue = new HexBigInteger(collection["default-value"].Value.Trim());
-			NodeUrl = collection["node-url"].Value.Trim();
+			if (json == null) {
+				path = "scriptcs_bin" + Path.DirectorySeparatorChar + path;
+				using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
+					using (StreamReader reader = new StreamReader(stream))
+						json = reader.ReadToEnd();
+				}
+			}
+			LoadConfig(json);
+		}
+
+		/// <summary>
+		/// Loads the configuration from the specified JSON object
+		/// </summary>
+		/// <param name="json">The JSON object string</param>
+		private static void LoadConfig(string json) {
+			JObject config = (JObject) JsonConvert.DeserializeObject(json);
+			DefaultGas = new HexBigInteger(config["default_gas"].ToString().Trim());
+			DefaultGasPrice = new HexBigInteger(config["default_gas_price"].ToString().Trim());
+			DefaultValue = new HexBigInteger(config["default_value"].ToString().Trim());
+			NodeUrl = config["node_url"].ToString().Trim();
 		}
 	}
 }

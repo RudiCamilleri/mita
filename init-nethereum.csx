@@ -51,34 +51,25 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ContractUtils;
 
-//glue code for scriptcs as it does not support await command
-private static void Await(Task task) {
-	SpinWait.SpinUntil(() => task.IsCompleted);
-}
-
-//glue code for scriptcs as it does not support await command
-private static T Await<T>(Task<T> task, bool waitUntilNotNull = false) {
-	do {
-		SpinWait.SpinUntil(() => task.IsCompleted);
-	} while (waitUntilNotNull && task.Result == null);
-	return task.Result;
+private static string ToJson(object obj) {
+	return JsonConvert.SerializeObject(obj, Formatting.Indented);
 }
 
 Console.WriteLine("Loading wallet address...");
-var wallet = ContractUtil.GetWalletAddressFromGanacheLog("ganache-output.txt");
-Console.WriteLine("Wallet address detected at " + wallet + "\n");
+var Wallet = ContractUtil.GetWalletAddressFromGanacheLog("ganache-output.txt");
+Console.WriteLine("Wallet address detected at " + Wallet + "\n");
 
 var password = "password";
 Console.WriteLine("Unlocking wallet using password \"" + password + "\"...");
-Console.WriteLine("Wallet unlocked: " + Await(ContractUtil.UnlockWallet(wallet, password)) + "\n");
+Console.WriteLine("Wallet unlocked: " + ContractUtil.UnlockWallet(Wallet, password).Await() + "\n");
 
-Console.WriteLine("Creating contract...");
-var TenderApiDeployment = Await(ContractUtil.DeployContract(@"build\contracts\TenderApi.json", wallet));
+Console.WriteLine("Deploying TenderApi contract...");
+var TenderApiDeployment = ContractUtil.DeployContract(@"build\contracts\TenderApi.json", Wallet).Await();
 var TenderApi = TenderApiDeployment.Contract;
-Console.WriteLine("\nTransactionReceipt: " + Newtonsoft.Json.JsonConvert.SerializeObject(TenderApiDeployment.Receipt, Formatting.Indented) + "\n");
+var TenderApiReceipt = TenderApiDeployment.Receipt;
+Console.WriteLine("TenderApiReceipt: " + ToJson(TenderApiReceipt) + "\n");
 
-//Await(TenderApi.CallRead<string>("setCurrentAddress", "0x82"));
-//Await(TenderApi.CallRead<string>("current"));
-//Await(TenderApi.GetFunction("incrementTest").CallAsync<byte>());
-//Await(TenderApi.GetFunction("test").CallAsync<byte>());
-//TenderApi.CallWrite("incrementTest", wallet);
+//TenderApi.CallRead<string>("setCurrentAddress", "0x82").Await();
+//TenderApi.CallRead<string>("current").Await();
+//TenderApi.CallWrite("incrementTest", Wallet).Await();
+//TenderApi.CallRead<byte>("test").Await();
