@@ -66,6 +66,16 @@
             The Ethereum node interface
             </summary>
         </member>
+        <member name="F:ContractUtils.ContractUtil.Convert">
+            <summary>
+            Contains conversion functions between common Ethereum units
+            </summary>
+        </member>
+        <member name="M:ContractUtils.ContractUtil.#cctor">
+            <summary>
+            Initializes Web3 configuration
+            </summary>
+        </member>
         <member name="M:ContractUtils.ContractUtil.GetWalletAddressFromGanacheLog(System.String,System.Int32,System.Int32)">
             <summary>
             Gets the specified Ganache-Cli wallet address
@@ -239,12 +249,17 @@
         </member>
         <member name="T:ContractUtils.Wallet">
             <summary>
-            Represents a wallet
+            Represents an Ethereum wallet
             </summary>
         </member>
         <member name="P:ContractUtils.Wallet.Address">
             <summary>
             Gets the address of the wallet
+            </summary>
+        </member>
+        <member name="P:ContractUtils.Wallet.Balance">
+            <summary>
+            Gets the balance of the current wallet
             </summary>
         </member>
         <member name="M:ContractUtils.Wallet.#ctor(System.String)">
@@ -253,10 +268,12 @@
             </summary>
             <param name="address">The address of the wallet</param>
         </member>
-        <member name="M:ContractUtils.Wallet.GetBalance">
+        <member name="M:ContractUtils.Wallet.Send(System.String,Nethereum.Hex.HexTypes.HexBigInteger)">
             <summary>
-            Gets the balance of the current wallet
+            Sends Ether from the current wallet to the specified address
             </summary>
+            <param name="to">The target address of the Ether</param>
+            <param name="amount">The amount to send in Wei</param>
         </member>
         <member name="M:ContractUtils.Wallet.op_Implicit(ContractUtils.Wallet)~System.String">
             <summary>

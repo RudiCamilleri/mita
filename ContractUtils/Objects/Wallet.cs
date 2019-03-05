@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace ContractUtils {
 	/// <summary>
-	/// Represents a wallet
+	/// Represents an Ethereum wallet
 	/// </summary>
 	public class Wallet {
 		/// <summary>
@@ -12,6 +12,15 @@ namespace ContractUtils {
 		public string Address {
 			get;
 			private set;
+		}
+
+		/// <summary>
+		/// Gets the balance of the current wallet
+		/// </summary>
+		public Task<HexBigInteger> Balance {
+			get {
+				return ContractUtil.GetBalance(Address);
+			}
 		}
 
 		/// <summary>
@@ -25,10 +34,12 @@ namespace ContractUtils {
 		}
 
 		/// <summary>
-		/// Gets the balance of the current wallet
+		/// Sends Ether from the current wallet to the specified address
 		/// </summary>
-		public Task<HexBigInteger> GetBalance() {
-			return ContractUtil.GetBalance(Address);
+		/// <param name="to">The target address of the Ether</param>
+		/// <param name="amount">The amount to send in Wei</param>
+		public void Send(string to, HexBigInteger amount) {
+			ContractUtil.Web3.TransactionManager.SendTransactionAsync(Address, to, amount);
 		}
 
 		/// <summary>

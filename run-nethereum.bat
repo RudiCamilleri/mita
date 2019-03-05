@@ -9,7 +9,7 @@ call .\minify-json.exe build/contracts build/contracts
 start /b call .\start-ganache-cli.bat <NUL >ganache-output.txt
 cd contracts
 echo.
-echo Launching Nethereum Console...
+echo Launching Nethereum C# Console...
 echo.
 title Nethereum C# Console
 rem call dotnet-script -i "%cd%\..\init-csharp-repl.csx"

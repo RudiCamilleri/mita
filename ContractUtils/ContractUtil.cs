@@ -2,6 +2,7 @@
 using Nethereum.Geth;
 using Nethereum.Hex.HexTypes;
 using Nethereum.RPC.Eth.DTOs;
+using Nethereum.Util;
 using Nethereum.Web3;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -24,6 +25,18 @@ namespace ContractUtils {
 		/// The Ethereum node interface
 		/// </summary>
 		public static readonly Web3Geth Node = new Web3Geth(ConfigParams.NodeUrl);
+		/// <summary>
+		/// Contains conversion functions between common Ethereum units
+		/// </summary>
+		public static UnitConversion Convert = UnitConversion.Convert;
+
+		/// <summary>
+		/// Initializes Web3 configuration
+		/// </summary>
+		static ContractUtil() {
+			Web3.TransactionManager.DefaultGas = ConfigParams.DefaultGas;
+			Web3.TransactionManager.DefaultGasPrice = ConfigParams.DefaultGasPrice;
+		}
 
 		/// <summary>
 		/// Gets the specified Ganache-Cli wallet address

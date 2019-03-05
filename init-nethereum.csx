@@ -55,7 +55,12 @@ private static string ToJson(object obj) {
 	return JsonConvert.SerializeObject(obj, Formatting.Indented);
 }
 
-Console.WriteLine("Loading wallet address...");
+Console.WriteLine("\nLoading Web3...");
+var Web3 = ContractUtil.Web3;
+var Node = ContractUtil.Node;
+Console.WriteLine("Web3 configuration initialized successfully!");
+
+Console.WriteLine("\nLoading wallet address...");
 var Wallet = ContractUtil.GetWalletAddressFromGanacheLog("ganache-output.txt");
 Console.WriteLine("Wallet address detected at " + Wallet + "\n");
 
@@ -67,7 +72,7 @@ Console.WriteLine("Deploying TenderApi contract...");
 var TenderApiDeployment = ContractUtil.DeployContract(@"build\contracts\TenderApi.json", Wallet).Await();
 var TenderApi = TenderApiDeployment.Contract;
 var TenderApiReceipt = TenderApiDeployment.Receipt;
-Console.WriteLine("TenderApiReceipt: " + ToJson(TenderApiReceipt) + "\n");
+Console.WriteLine("\nTenderApiReceipt: " + ToJson(TenderApiReceipt) + "\n");
 
 //TenderApi.CallRead<string>("setCurrentAddress", "0x82").Await();
 //TenderApi.CallRead<string>("current").Await();
