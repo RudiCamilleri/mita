@@ -2,6 +2,7 @@
 /.vs
 *.orig
 *.log
+*.pdb
 ganache-output.txt
 init-tenderapi-address.js
 init-tender-address.js
