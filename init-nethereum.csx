@@ -58,6 +58,7 @@ private static string ToJson(object obj) {
 Console.WriteLine("\nLoading Web3...");
 var Web3 = ContractUtil.Web3;
 var Node = ContractUtil.Node;
+var Convert = ContractUtil.Convert;
 Console.WriteLine("Web3 configuration initialized successfully!");
 
 Console.WriteLine("\nLoading wallet address...");
