@@ -19,13 +19,13 @@ Website repository can be found here: https://github.com/mathusummut/tender-webs
        npm install -g windows-build-tools
        npm install -g truffle
        npm install -g ganache-cli
-       npm install -g remixd
+       npm install -g remixd              (only if you plan to use remix)
 
 	Technical Note: If `windows-build-tools` or `ganache-cli` freezes or fails to install, install `truffle` and `ganache-cli` and try again. If the installation still does not work, then you have to add Python 2.7 to PATH and try again, installing both `windows-build-tools` or `ganache-cli`. If that does not work, try installing Python manually. The important thing is for `ganache-cli` to work.
 
-5. Install Geth from https://ethereum.github.io/go-ethereum/downloads (the Windows installer)
+5. (Optional) Install Geth from https://ethereum.github.io/go-ethereum/downloads (the Windows installer)
 
-6. ~~Run the following command in command prompt as well: `dotnet tool install -g dotnet-script`.~~
+6. ~~Run the following command in command prompt as well: `dotnet tool install -g dotnet-script`~~
 
     Install Chocolatey by opening Powershell and entering this command:
 
@@ -95,7 +95,7 @@ In this smart contract, calls are to be made through TenderApi.
 
 Type `eth` to see what's available.
 
-Minimum gas amount to deploy contract: 53751
+Minimum gas amount required to deploy contract: 53751wei
 
 ## Git Cheat Sheet
 
