@@ -64,12 +64,15 @@ Console.WriteLine("\nLoading wallet address...");
 var Wallet = ContractUtil.GetWalletAddressFromGanacheLog("ganache-output.txt");
 Console.WriteLine("Wallet address detected at " + Wallet + "\n");
 
-var password = "password";
-Console.WriteLine("Unlocking wallet using password \"" + password + "\"...");
-Console.WriteLine("Wallet unlocked: " + ContractUtil.UnlockWallet(Wallet, password).Await() + "\n");
+var Password = "password";
+Console.WriteLine("Unlocking wallet using password \"" + Password + "\"...");
+Console.WriteLine("Wallet unlocked: " + ContractUtil.UnlockWallet(Wallet, Password).Await() + "\n");
 
 Console.WriteLine("Deploying TenderApi contract...");
-var TenderApiDeployment = ContractUtil.DeployContract(@"build\contracts\TenderApi.json", Wallet).Await();
+var TenderApiCompiled = ContractUtil.GetCompiledContract(@"build\contracts\TenderApi.json");
+var TenderApiAbi = TenderApiCompiled.Abi;
+var TenderApiByteCode = TenderApiCompiled.ByteCode;
+var TenderApiDeployment = ContractUtil.DeployContract(TenderApiCompiled, Wallet).Await();
 var TenderApi = TenderApiDeployment.Contract;
 var TenderApiReceipt = TenderApiDeployment.Receipt;
 Console.WriteLine("\nTenderApiReceipt: " + ToJson(TenderApiReceipt) + "\n");

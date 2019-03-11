@@ -8,23 +8,16 @@ import "./TenderInterface.sol";
 contract TenderApi is TenderInterface {
 	TenderInterface public current; //the current contract implementation
 	address payable public owner; //the creator of the smart contract
-	uint8 public test;
 
 	//Initializes the smart contract
 	constructor() public {
 		owner = msg.sender;
-		test = 7;
 	}
 
 	//Specifies the address of the current (latest) smart contract implementation
 	function setCurrentAddress(address newAddress) public {
 		require(msg.sender == owner); //function can only be called by the creator of the smart contract
 		current = TenderInterface(newAddress); //cast contract to TenderInterface
-	}
-
-	function incrementTest() public returns (uint8) {
-		test++;
-		return test;
 	}
 
 	//======================================================

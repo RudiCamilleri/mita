@@ -89,6 +89,7 @@
   <ItemGroup>
     <Compile Include="ConfigParams.cs" />
     <Compile Include="ContractUtil.cs" />
+    <Compile Include="Objects\CompiledContract.cs" />
     <Compile Include="Objects\DeployedContract.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Objects\Wallet.cs" />
