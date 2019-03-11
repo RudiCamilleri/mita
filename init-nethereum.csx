@@ -103,7 +103,4 @@ Console.WriteLine("Function call transaction hash:");
 Console.WriteLine(TenderApi.CallWrite("setCurrentAddress", Wallet, Tender.Address).Await());
 Console.WriteLine("\nReady!\n");
 
-//TenderApi.CallRead<string>("setCurrentAddress", "0x82").Await();
 //TenderApi.CallRead<string>("current").Await();
-//TenderApi.CallWrite("incrementTest", Wallet).Await();
-//TenderApi.CallRead<byte>("test").Await();
