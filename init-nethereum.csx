@@ -78,6 +78,31 @@ var TenderApi = TenderApiDeployment.Contract;
 var TenderApiReceipt = TenderApiDeployment.Receipt;
 Console.WriteLine("\nTenderApiReceipt: " + ToJson(TenderApiReceipt) + "\n");
 
+Console.WriteLine("Deploying Tender contract...");
+var TenderCompiled = ContractUtil.GetCompiledContract(@"build\contracts\Tender.json");
+var TenderAbi = TenderCompiled.Abi;
+var TenderByteCode = TenderCompiled.ByteCode;
+var TenderDeployment = ContractUtil.DeployContract(TenderCompiled, Wallet,
+	TenderApi.Address, //the Tender owner address
+	"10", "20", "30", //smallServerPrice, mediumServerPrice, largeServerPrice
+	"1", "100", //min, max server order numbers
+	"25", //daysForDelivery
+	"2", //penaltyPerDay
+	"200", //penaltyCap
+	"2000", //maximumCostofExtras
+	"21102020", //expiryDate
+	"10987", //operatorId
+	"1" //guaranteeRequired
+).Await();
+var Tender = TenderDeployment.Contract;
+var TenderReceipt = TenderDeployment.Receipt;
+Console.WriteLine("\nTenderReceipt: " + ToJson(TenderReceipt) + "\n");
+
+Console.WriteLine("Calling TenderApi.setCurrentAddress(Tender.Address)...\n");
+Console.WriteLine("Function call transaction hash:");
+Console.WriteLine(TenderApi.CallWrite("setCurrentAddress", Wallet, Tender.Address).Await());
+Console.WriteLine("\nReady!\n");
+
 //TenderApi.CallRead<string>("setCurrentAddress", "0x82").Await();
 //TenderApi.CallRead<string>("current").Await();
 //TenderApi.CallWrite("incrementTest", Wallet).Await();
