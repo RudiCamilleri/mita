@@ -79,12 +79,27 @@ var TenderApi = TenderApiDeployment.Contract;
 var TenderApiReceipt = TenderApiDeployment.Receipt;
 Console.WriteLine("\nTenderApiReceipt: " + ToJson(TenderApiReceipt) + "\n");
 
-Console.WriteLine("Deploying Tender contract...");
+Console.WriteLine("Deploying Tender contract...\n");
 var TenderCompiled = ContractUtil.GetCompiledContract(@"build\contracts\Tender.json");
 var TenderAbi = TenderCompiled.Abi;
 var TenderByteCode = TenderCompiled.ByteCode;
+Console.WriteLine(@"Calling constructor with the following values:
+
+   smallServerPrice: 10
+   mediumServerPrice: 20
+   largeServerPrice: 30
+   min (orders): 1
+   max (orders): 100
+   daysForDelivery: 25
+   penalityPerDay: 2
+   penaltyCap: 200
+   maximumCostofExtras: 2000
+   expiryDate: 21102020
+   operatorId: 10987
+   guaranteeRequired: 1");
+
 var TenderDeployment = ContractUtil.DeployContract(TenderCompiled, Wallet,
-	TenderApi.Address, //the Tender owner address
+	TenderApi.Address, //the Tender owner address (TenderApi.Address)
 	"10", "20", "30", //smallServerPrice, mediumServerPrice, largeServerPrice
 	"1", "100", //min, max server order numbers
 	"25", //daysForDelivery
