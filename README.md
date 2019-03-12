@@ -43,6 +43,9 @@ Website repository can be found here: https://github.com/mathusummut/tender-webs
 
 9. Call C# Nethereum commands directly from the command window
 
+10. The project uses the ContractUtils library (created by MathuSum Mut) contained in the repository.
+The documentation for the API can be found here: https://deltsystem32.github.io/tenderdocs
+
 ### ii. Running the smart contract locally using Remix IDE
 
 8. Start `run-remix.bat` in the project folder.
