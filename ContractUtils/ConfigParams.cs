@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.IO;
+using System.Reflection;
 
 namespace ContractUtils {
 	/// <summary>
@@ -36,7 +37,11 @@ namespace ContractUtils {
 		/// Loads the default configuration from contract_defaults.json
 		/// </summary>
 		public static void LoadConfigFromFile() {
-			LoadConfigFromFile("contract_defaults.json");
+			try {
+				LoadConfigFromFile("contract_defaults.json");
+			} catch {
+				LoadConfigFromFile(Path.Combine(Assembly.GetExecutingAssembly().Location, "contract_defaults.json"));
+			}
 		}
 
 		/// <summary>
@@ -53,7 +58,7 @@ namespace ContractUtils {
 			} catch {
 			}
 			if (json == null) {
-				path = "scriptcs_bin" + Path.DirectorySeparatorChar + path;
+				path = Path.Combine("scriptcs_bin", path);
 				using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
 					using (StreamReader reader = new StreamReader(stream))
 						json = reader.ReadToEnd();
