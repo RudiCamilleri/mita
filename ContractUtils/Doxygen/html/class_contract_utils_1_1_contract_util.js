@@ -16,6 +16,8 @@ var class_contract_utils_1_1_contract_util =
     [ "GetBalance", "class_contract_utils_1_1_contract_util.html#a445dc355334977f9445c2537c2e1e4c4", null ],
     [ "GetBalance", "class_contract_utils_1_1_contract_util.html#a7299c75da602aa9572d2a1b55819b382", null ],
     [ "GetCompiledContract", "class_contract_utils_1_1_contract_util.html#a686914c5bbd51e893f195fbc489df055", null ],
+    [ "GetContractFromAddress", "class_contract_utils_1_1_contract_util.html#a990a8864a89edab595fd104f818bebb6", null ],
+    [ "GetContractFromAddress", "class_contract_utils_1_1_contract_util.html#a2ef1b5e0526648472d8aba19ee07bfae", null ],
     [ "GetReceipt", "class_contract_utils_1_1_contract_util.html#a17b200dae652c7e76f40c5a321e2ce87", null ],
     [ "GetWalletAddressFromGanacheLog", "class_contract_utils_1_1_contract_util.html#a1bccabdc34ae77406b79b11ed746deb0", null ],
     [ "StartMining", "class_contract_utils_1_1_contract_util.html#a8b2569e38ae60939766609f779c45b45", null ],

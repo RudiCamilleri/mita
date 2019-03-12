@@ -158,6 +158,20 @@
             <param name="wallet">The wallet address of the contract owner</param>
             <param name="constructorParams">The values to pass to the contract constructor</param>
         </member>
+        <member name="M:ContractUtils.ContractUtil.GetContractFromAddress(ContractUtils.CompiledContract,System.String)">
+            <summary>
+            Gets the contract instance from the template ABI and the address at which it was deployed
+            </summary>
+            <param name="template">The contract template</param>
+            <param name="address">The address at which the contract was deployed</param>
+        </member>
+        <member name="M:ContractUtils.ContractUtil.GetContractFromAddress(System.String,System.String)">
+            <summary>
+            Gets the contract instance from the ABI and the address at which it was deployed
+            </summary>
+            <param name="abi">The contract ABI</param>
+            <param name="address">The address at which the contract was deployed</param>
+        </member>
         <member name="M:ContractUtils.ContractUtil.CallRead``1(Nethereum.Contracts.Contract,System.String,System.Object[])">
             <summary>
             Calls the specified function as a read operation

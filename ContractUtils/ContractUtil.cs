@@ -164,6 +164,24 @@ namespace ContractUtils {
 		}
 
 		/// <summary>
+		/// Gets the contract instance from the template ABI and the address at which it was deployed
+		/// </summary>
+		/// <param name="template">The contract template</param>
+		/// <param name="address">The address at which the contract was deployed</param>
+		public static Contract GetContractFromAddress(this CompiledContract template, string address) {
+			return GetContractFromAddress(template.Abi, address);
+		}
+
+		/// <summary>
+		/// Gets the contract instance from the ABI and the address at which it was deployed
+		/// </summary>
+		/// <param name="abi">The contract ABI</param>
+		/// <param name="address">The address at which the contract was deployed</param>
+		public static Contract GetContractFromAddress(string abi, string address) {
+			return Web3.Eth.GetContract(abi, address);
+		}
+
+		/// <summary>
 		/// Calls the specified function as a read operation
 		/// </summary>
 		/// <typeparam name="T">The return type of the function</typeparam>

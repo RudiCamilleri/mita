@@ -126,6 +126,12 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:acfd843a8a7c31c790157c18df7ef3dc8"><td class="memItemLeft" align="right" valign="top">static Task&lt; <a class="el" href="class_contract_utils_1_1_deployed_contract.html">DeployedContract</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_contract_utils_1_1_contract_util.html#acfd843a8a7c31c790157c18df7ef3dc8">DeployContract</a> (this <a class="el" href="class_contract_utils_1_1_compiled_contract.html">CompiledContract</a> contract, <a class="el" href="class_contract_utils_1_1_wallet.html">Wallet</a> wallet, params object[] constructorParams)</td></tr>
 <tr class="memdesc:acfd843a8a7c31c790157c18df7ef3dc8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deploys the specified contract using default values into the current node specified in the config file  <a href="#acfd843a8a7c31c790157c18df7ef3dc8">More...</a><br /></td></tr>
 <tr class="separator:acfd843a8a7c31c790157c18df7ef3dc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a990a8864a89edab595fd104f818bebb6"><td class="memItemLeft" align="right" valign="top">static Contract&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_contract_utils_1_1_contract_util.html#a990a8864a89edab595fd104f818bebb6">GetContractFromAddress</a> (this <a class="el" href="class_contract_utils_1_1_compiled_contract.html">CompiledContract</a> template, string address)</td></tr>
+<tr class="memdesc:a990a8864a89edab595fd104f818bebb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the contract instance from the template ABI and the address at which it was deployed  <a href="#a990a8864a89edab595fd104f818bebb6">More...</a><br /></td></tr>
+<tr class="separator:a990a8864a89edab595fd104f818bebb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2ef1b5e0526648472d8aba19ee07bfae"><td class="memItemLeft" align="right" valign="top">static Contract&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_contract_utils_1_1_contract_util.html#a2ef1b5e0526648472d8aba19ee07bfae">GetContractFromAddress</a> (string abi, string address)</td></tr>
+<tr class="memdesc:a2ef1b5e0526648472d8aba19ee07bfae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the contract instance from the ABI and the address at which it was deployed  <a href="#a2ef1b5e0526648472d8aba19ee07bfae">More...</a><br /></td></tr>
+<tr class="separator:a2ef1b5e0526648472d8aba19ee07bfae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae50d92ad836216c528deeefc9c158844"><td class="memItemLeft" align="right" valign="top">static Task&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_contract_utils_1_1_contract_util.html#ae50d92ad836216c528deeefc9c158844">CallRead&lt; T &gt;</a> (this Contract contract, string functionName, params object[] functionParams)</td></tr>
 <tr class="memdesc:ae50d92ad836216c528deeefc9c158844"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calls the specified function as a read operation  <a href="#ae50d92ad836216c528deeefc9c158844">More...</a><br /></td></tr>
 <tr class="separator:ae50d92ad836216c528deeefc9c158844"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -212,7 +218,7 @@ Static Public Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_contract_util_8cs_source.html#l00270">270</a> of file <a class="el" href="_contract_util_8cs_source.html">ContractUtil.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_contract_util_8cs_source.html#l00288">288</a> of file <a class="el" href="_contract_util_8cs_source.html">ContractUtil.cs</a>.</p>
 
 </div>
 </div>
@@ -248,7 +254,7 @@ Static Public Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_contract_util_8cs_source.html#l00279">279</a> of file <a class="el" href="_contract_util_8cs_source.html">ContractUtil.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_contract_util_8cs_source.html#l00297">297</a> of file <a class="el" href="_contract_util_8cs_source.html">ContractUtil.cs</a>.</p>
 
 </div>
 </div>
@@ -308,7 +314,7 @@ Static Public Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_contract_util_8cs_source.html#l00173">173</a> of file <a class="el" href="_contract_util_8cs_source.html">ContractUtil.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_contract_util_8cs_source.html#l00191">191</a> of file <a class="el" href="_contract_util_8cs_source.html">ContractUtil.cs</a>.</p>
 
 </div>
 </div>
@@ -361,7 +367,7 @@ Static Public Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_contract_util_8cs_source.html#l00183">183</a> of file <a class="el" href="_contract_util_8cs_source.html">ContractUtil.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_contract_util_8cs_source.html#l00201">201</a> of file <a class="el" href="_contract_util_8cs_source.html">ContractUtil.cs</a>.</p>
 
 </div>
 </div>
@@ -443,7 +449,7 @@ Static Public Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_contract_util_8cs_source.html#l00197">197</a> of file <a class="el" href="_contract_util_8cs_source.html">ContractUtil.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_contract_util_8cs_source.html#l00215">215</a> of file <a class="el" href="_contract_util_8cs_source.html">ContractUtil.cs</a>.</p>
 
 </div>
 </div>
@@ -518,7 +524,7 @@ Static Public Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_contract_util_8cs_source.html#l00210">210</a> of file <a class="el" href="_contract_util_8cs_source.html">ContractUtil.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_contract_util_8cs_source.html#l00228">228</a> of file <a class="el" href="_contract_util_8cs_source.html">ContractUtil.cs</a>.</p>
 
 </div>
 </div>
@@ -579,7 +585,7 @@ Static Public Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_contract_util_8cs_source.html#l00221">221</a> of file <a class="el" href="_contract_util_8cs_source.html">ContractUtil.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_contract_util_8cs_source.html#l00239">239</a> of file <a class="el" href="_contract_util_8cs_source.html">ContractUtil.cs</a>.</p>
 
 </div>
 </div>
@@ -633,7 +639,7 @@ Static Public Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_contract_util_8cs_source.html#l00231">231</a> of file <a class="el" href="_contract_util_8cs_source.html">ContractUtil.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_contract_util_8cs_source.html#l00249">249</a> of file <a class="el" href="_contract_util_8cs_source.html">ContractUtil.cs</a>.</p>
 
 </div>
 </div>
@@ -1030,7 +1036,7 @@ Static Public Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_contract_util_8cs_source.html#l00239">239</a> of file <a class="el" href="_contract_util_8cs_source.html">ContractUtil.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_contract_util_8cs_source.html#l00257">257</a> of file <a class="el" href="_contract_util_8cs_source.html">ContractUtil.cs</a>.</p>
 
 </div>
 </div>
@@ -1066,7 +1072,7 @@ Static Public Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_contract_util_8cs_source.html#l00247">247</a> of file <a class="el" href="_contract_util_8cs_source.html">ContractUtil.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_contract_util_8cs_source.html#l00265">265</a> of file <a class="el" href="_contract_util_8cs_source.html">ContractUtil.cs</a>.</p>
 
 </div>
 </div>
@@ -1103,6 +1109,100 @@ Static Public Attributes</h2></td></tr>
 </dl>
 
 <p class="definition">Definition at line <a class="el" href="_contract_util_8cs_source.html#l00127">127</a> of file <a class="el" href="_contract_util_8cs_source.html">ContractUtil.cs</a>.</p>
+
+</div>
+</div>
+<a id="a990a8864a89edab595fd104f818bebb6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a990a8864a89edab595fd104f818bebb6">&#9670;&nbsp;</a></span>GetContractFromAddress() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static Contract ContractUtils.ContractUtil.GetContractFromAddress </td>
+          <td>(</td>
+          <td class="paramtype">this <a class="el" href="class_contract_utils_1_1_compiled_contract.html">CompiledContract</a>&#160;</td>
+          <td class="paramname"><em>template</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>address</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the contract instance from the template ABI and the address at which it was deployed </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">template</td><td>The contract template</td></tr>
+    <tr><td class="paramname">address</td><td>The address at which the contract was deployed</td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_contract_util_8cs_source.html#l00171">171</a> of file <a class="el" href="_contract_util_8cs_source.html">ContractUtil.cs</a>.</p>
+
+</div>
+</div>
+<a id="a2ef1b5e0526648472d8aba19ee07bfae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2ef1b5e0526648472d8aba19ee07bfae">&#9670;&nbsp;</a></span>GetContractFromAddress() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static Contract ContractUtils.ContractUtil.GetContractFromAddress </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>abi</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>address</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the contract instance from the ABI and the address at which it was deployed </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">abi</td><td>The contract ABI</td></tr>
+    <tr><td class="paramname">address</td><td>The address at which the contract was deployed</td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_contract_util_8cs_source.html#l00180">180</a> of file <a class="el" href="_contract_util_8cs_source.html">ContractUtil.cs</a>.</p>
 
 </div>
 </div>
@@ -1232,7 +1332,7 @@ Static Public Attributes</h2></td></tr>
 
 <p>Sends a signal to the associated node to start mining </p>
 
-<p class="definition">Definition at line <a class="el" href="_contract_util_8cs_source.html#l00254">254</a> of file <a class="el" href="_contract_util_8cs_source.html">ContractUtil.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_contract_util_8cs_source.html#l00272">272</a> of file <a class="el" href="_contract_util_8cs_source.html">ContractUtil.cs</a>.</p>
 
 </div>
 </div>
@@ -1261,7 +1361,7 @@ Static Public Attributes</h2></td></tr>
 
 <p>Sends a signal to the associated node to stop mining </p>
 
-<p class="definition">Definition at line <a class="el" href="_contract_util_8cs_source.html#l00261">261</a> of file <a class="el" href="_contract_util_8cs_source.html">ContractUtil.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_contract_util_8cs_source.html#l00279">279</a> of file <a class="el" href="_contract_util_8cs_source.html">ContractUtil.cs</a>.</p>
 
 </div>
 </div>

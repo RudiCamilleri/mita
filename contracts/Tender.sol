@@ -16,7 +16,7 @@ contract Tender is TenderInterface {
 	uint256 public penaltyPerDay;
 	uint256 public penaltyCap;
 	uint256 public maximumCostofExtras;
-	uint64 public expiryDate;
+	uint128 public expiryDate;
 	uint32 public operatorId;
 	uint256 public guaranteeRequired;
 
@@ -24,7 +24,7 @@ contract Tender is TenderInterface {
 	constructor(address payable _apiAddress,
 		uint256 _smallServerPrice, uint256 _mediumServerPrice, uint256 _largeServerPrice,
 		uint16 _min, uint16 _max, uint16 _daysForDelivery, uint256 _penaltyPerDay, uint256 _penaltyCap,
-		uint256 _maximumCostofExtras, uint64 _expiryDate, uint32 _operatorId, uint256 _guaranteeRequired) public {
+		uint256 _maximumCostofExtras, uint128 _expiryDate, uint32 _operatorId, uint256 _guaranteeRequired) public {
 		owner = _apiAddress;
 		_smallServerPrice = smallServerPrice;
 		_mediumServerPrice = mediumServerPrice;
