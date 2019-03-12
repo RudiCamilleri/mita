@@ -40,7 +40,11 @@ namespace ContractUtils {
 			try {
 				LoadConfigFromFile("contract_defaults.json");
 			} catch {
-				LoadConfigFromFile(Path.Combine(Assembly.GetExecutingAssembly().Location, "contract_defaults.json"));
+				try {
+					LoadConfigFromFile(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "contract_defaults.json"));
+				} catch {
+					LoadConfigFromFile(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase), "contract_defaults.json"));
+				}
 			}
 		}
 
