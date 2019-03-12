@@ -1,6 +1,7 @@
 ﻿using Nethereum.Hex.HexTypes;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
 using System.IO;
 using System.Reflection;
 
@@ -43,7 +44,10 @@ namespace ContractUtils {
 				try {
 					LoadConfigFromFile(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "contract_defaults.json"));
 				} catch {
-					LoadConfigFromFile(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase), "contract_defaults.json"));
+					try {
+						LoadConfigFromFile(Path.Combine(Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath), "contract_defaults.json"));
+					} catch {
+					}
 				}
 			}
 		}
@@ -53,6 +57,7 @@ namespace ContractUtils {
 		/// </summary>
 		/// <param name="path">The path to the JSON file</param>
 		public static void LoadConfigFromFile(string path) {
+			System.Console.WriteLine("Attempting to load config from " + path + "...");
 			string json = null;
 			try {
 				using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
@@ -63,6 +68,7 @@ namespace ContractUtils {
 			}
 			if (json == null) {
 				path = Path.Combine("scriptcs_bin", path);
+				System.Console.WriteLine("Attempting to load config from " + path + "...");
 				using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
 					using (StreamReader reader = new StreamReader(stream))
 						json = reader.ReadToEnd();
