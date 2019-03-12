@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ContractUtils {
+﻿namespace ContractUtils {
 	/// <summary>
 	/// Holds the data that defines a compiled contract
 	/// </summary>
