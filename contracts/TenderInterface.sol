@@ -6,7 +6,8 @@ pragma solidity ^0.5.0;
 interface TenderInterface {
 	//Ends the contract
 	function endContract() external;
-	/*//passes refundable deposit
+	/*
+	//passes refundable deposit
 	function topUpPerformanceGuarantee() external;
 	//stops the contract if payment isnt made.
 	function stopOrder(uint32 _orderNumber, uint8 _penalty) external; //uint32 - Order number, uint8 - Penalty to be taken

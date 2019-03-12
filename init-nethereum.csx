@@ -51,6 +51,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ContractUtils;
 
+//Utility method that converts an object to a pretty JSON string
 private static string ToJson(object obj) {
 	return JsonConvert.SerializeObject(obj, Formatting.Indented);
 }
