@@ -73,7 +73,7 @@ namespace ContractUtils {
 		/// <param name="wallet">The address of the wallet to unlock</param>
 		/// <param name="password">The password of the wallet</param>
 		/// <param name="timeoutSeconds">The operation timeout in seconds</param>
-		public static Task<bool> UnlockWallet(Wallet wallet, string password, int timeoutSeconds = 120) {
+		public static Task<bool> UnlockWallet(this Wallet wallet, string password, int timeoutSeconds = 120) {
 			return Web3.Personal.UnlockAccount.SendRequestAsync(wallet.Address, password, new HexBigInteger(new BigInteger(timeoutSeconds)));
 		}
 
