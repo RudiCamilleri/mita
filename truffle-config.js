@@ -13,5 +13,10 @@ module.exports = {
 			gasPrice: 100000000000, //Gas price used for deploys (default: 100 Shannon)
 			contracts_build_directory: "./build"
 		}
+	},
+	compilers: {
+		solc: {
+			version: "0.5.6"
+		}
 	}
 };

@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity >=0.5.6;
 
 //This file serves as glue code for truffle to work.
 //DO NOT MODIFY THE CODE BELOW

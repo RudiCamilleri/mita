@@ -1,32 +1,57 @@
-pragma solidity ^0.5.0;
+pragma solidity >=0.5.6;
 
 import "./TenderInterface.sol";
+import "./TenderData.sol";
+import "./Tender.sol";
 
 //Version 0.1
 //This is the main contract that expose functionality to the public and handles versioning
 //This is meant to be set in stone as much as possible after completion
 contract TenderApi is TenderInterface {
-	TenderInterface public current; //the current contract implementation
 	address payable public owner; //the creator of the smart contract
+	Tender public current; //the current contract implementation
 
 	//Initializes the smart contract
 	constructor() public {
 		owner = msg.sender;
 	}
 
-	//Specifies the address of the current (latest) smart contract implementation
-	function setCurrentAddress(address newAddress) public {
-		require(msg.sender == owner); //function can only be called by the creator of the smart contract
-		current = TenderInterface(newAddress); //cast contract to TenderInterface
+	//Makes sure that the function can only be called by TenderApi instance
+	modifier restricted() {
+		require(msg.sender == owner);
+		_;
+	}
+
+	//Specifies the address of the Tender smart contract implementation
+	function setTenderAddress(address payable tenderAddress, address dataAddress) external restricted {
+		if (address(current) != address(0))
+			current.transferOwner(tenderAddress);
+		current = Tender(tenderAddress); //cast contract to TenderInterface
+		current.setDataAddress(dataAddress);
+	}
+
+	//Specifies the address of the TenderData smart contract implementation
+	function setDataAddress(address dataAddress) external restricted {
+		current.setDataAddress(dataAddress);
 	}
 
 	//======================================================
 	//== PUBLIC API FUNCTIONALITY IS TO BE INSERTED BELOW ==
 	//======================================================
 
+	//Creates a contract instance
+	function createContract(uint128[] calldata params128, uint32[] calldata params32, uint16[] calldata params16) external {
+		current.createContract(params128, params32, params16);
+	}
+
 	//Ends the contract
-	function endContract() external {
-		current.endContract();
+	function endContract(uint32 contractId) external {
+		current.endContract(contractId);
+	}
+
+	//Kills the service
+	function endService() external {
+		current.endService();
 		selfdestruct(owner);
 	}
 

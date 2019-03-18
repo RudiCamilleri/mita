@@ -1,11 +1,41 @@
-pragma solidity ^0.5.0;
+pragma solidity >=0.5.6;
 
 //Version 0.1
 //This interface serves to expose and document main contract functionality
 //This is meant to be set in stone as much as possible after completion
 interface TenderInterface {
+	struct OrderContract {
+		uint32 orderId;
+		uint16 small; //small servers ordered
+		uint16 medium; //medium servers ordered
+		uint16 large; //large servers ordered
+	}
+
+	struct TenderContract {
+		uint32 contractId;
+		uint128 smallServerPrice;
+		uint128 mediumServerPrice;
+		uint128 largeServerPrice;
+		uint16 daysForDelivery;
+		uint128 penaltyPerDay;
+		uint128 creationDate;
+		uint128 expiryDate;
+		uint32 operatorId;
+		uint128 guaranteeRequired;
+		mapping(uint32 => OrderContract) orders;
+	}
+
+	//Specifies the address of the TenderData smart contract implementation
+	function setDataAddress(address newAddress) external;
+
+	//Creates a contract instance
+	function createContract(uint128[] calldata params128, uint32[] calldata params32, uint16[] calldata params16) external;
+
 	//Ends the contract
-	function endContract() external;
+	function endContract(uint32 contractId) external;
+
+	//Kills the service
+	function endService() external;
 	/*
 	//passes refundable deposit
 	function topUpPerformanceGuarantee() external;

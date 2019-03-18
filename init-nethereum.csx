@@ -11,6 +11,7 @@
 #r "Newtonsoft.Json"
 #r "Nethereum.Geth"
 #r "ContractUtils"
+#r "ErrorViewer"
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -52,71 +53,84 @@ using Newtonsoft.Json.Linq;
 using ContractUtils;
 
 //Utility method that converts an object to a pretty JSON string
-private static string ToJson(object obj) {
+public static string ToJson(object obj) {
 	return JsonConvert.SerializeObject(obj, Formatting.Indented);
 }
 
-Console.WriteLine("\nLoading Web3...");
-var Web3 = ContractUtil.Web3;
-var Node = ContractUtil.Node;
-var Convert = ContractUtil.Convert;
-Console.WriteLine("Web3 configuration initialized successfully!");
+static string GanacheLogPath = "ganache-output.txt";
 
-Console.WriteLine("\nLoading wallet address...");
-var Wallet = ContractUtil.GetWalletAddressFromGanacheLog("ganache-output.txt");
-Console.WriteLine("Wallet address detected at " + Wallet + "\n");
+public static void ViewGanacheLog() {
+	Process.Start(GanacheLogPath);
+}
 
-/*var Password = "password";
-Console.WriteLine("Unlocking wallet using password \"" + Password + "\"...");
-Console.WriteLine("Wallet unlocked: " + ContractUtil.UnlockWallet(Wallet, Password).Await() + "\n");*/
+//Starts the contract deployment
+private static void Start() {
+	try {
+		Console.WriteLine("\nLoading Web3...");
+		var Web3 = ContractUtil.Web3;
+		var Node = ContractUtil.Node;
+		var Convert = ContractUtil.Convert;
+		Console.WriteLine("Web3 configuration initialized successfully!");
 
-Console.WriteLine("Deploying TenderApi contract...");
-var TenderApiCompiled = ContractUtil.GetCompiledContract(@"build\contracts\TenderApi.json");
-var TenderApiAbi = TenderApiCompiled.Abi;
-var TenderApiByteCode = TenderApiCompiled.ByteCode;
-var TenderApiDeployment = ContractUtil.DeployContract(TenderApiCompiled, Wallet).Await();
-var TenderApi = TenderApiDeployment.Contract;
-var TenderApiReceipt = TenderApiDeployment.Receipt;
-Console.WriteLine("\nTenderApiReceipt: " + ToJson(TenderApiReceipt) + "\n");
+		Console.WriteLine("\nLoading wallet address...");
+		var Wallet = ContractUtil.GetWalletAddressFromGanacheLog(GanacheLogPath);
+		Console.WriteLine("Wallet address detected at " + Wallet + "\n");
 
-Console.WriteLine("Deploying Tender contract...\n");
-var TenderCompiled = ContractUtil.GetCompiledContract(@"build\contracts\Tender.json");
-var TenderAbi = TenderCompiled.Abi;
-var TenderByteCode = TenderCompiled.ByteCode;
-Console.WriteLine(@"Calling constructor with the following values:
+		/*var Password = "password";
+		Console.WriteLine("Unlocking wallet using password \"" + Password + "\"...");
+		Console.WriteLine("Wallet unlocked: " + ContractUtil.UnlockWallet(Wallet, Password).Await() + "\n");*/
 
-   smallServerPrice: 10
-   mediumServerPrice: 20
-   largeServerPrice: 30
-   min (orders): 1
-   max (orders): 100
-   daysForDelivery: 25
-   penalityPerDay: 2
-   penaltyCap: 200
-   maximumCostofExtras: 2000
-   expiryDate: 21102020
-   operatorId: 10987
-   guaranteeRequired: 1");
+		Console.WriteLine("Deploying TenderApi contract...");
+		var TenderApiCompiled = ContractUtil.GetCompiledContract(@"build\contracts\TenderApi.json");
+		var TenderApiAbi = TenderApiCompiled.Abi;
+		var TenderApiByteCode = TenderApiCompiled.ByteCode;
+		var TenderApiDeployment = ContractUtil.DeployContract(TenderApiCompiled, Wallet).Await();
+		var TenderApi = TenderApiDeployment.Contract;
+		var TenderApiReceipt = TenderApiDeployment.Receipt;
+		Console.WriteLine("\nTenderApiReceipt: " + ToJson(TenderApiReceipt));
 
-var TenderDeployment = ContractUtil.DeployContract(TenderCompiled, Wallet,
-	TenderApi.Address, //the Tender owner address (TenderApi.Address)
-	"10", "20", "30", //smallServerPrice, mediumServerPrice, largeServerPrice
-	"1", "100", //min, max server order numbers
-	"25", //daysForDelivery
-	"2", //penaltyPerDay
-	"200", //penaltyCap
-	"2000", //maximumCostofExtras
-	"21102020", //expiryDate
-	"10987", //operatorId
-	"1" //guaranteeRequired
-).Await();
-var Tender = TenderDeployment.Contract;
-var TenderReceipt = TenderDeployment.Receipt;
-Console.WriteLine("\nTenderReceipt: " + ToJson(TenderReceipt) + "\n");
+		Console.WriteLine("Deploying Tender contract...\n");
+		var TenderCompiled = ContractUtil.GetCompiledContract(@"build\contracts\Tender.json");
+		var TenderAbi = TenderCompiled.Abi;
+		var TenderByteCode = TenderCompiled.ByteCode;
+		var TenderDeployment = ContractUtil.DeployContract(TenderCompiled, Wallet, TenderApi.Address).Await();
+		var Tender = TenderDeployment.Contract;
+		var TenderReceipt = TenderDeployment.Receipt;
+		Console.WriteLine("\nTenderReceipt: " + ToJson(TenderReceipt));
 
-Console.WriteLine("Calling TenderApi.setCurrentAddress(Tender.Address)...\n");
-Console.WriteLine("Function call transaction hash:");
-Console.WriteLine(TenderApi.CallWrite("setCurrentAddress", Wallet, Tender.Address).Await());
-Console.WriteLine("\nReady!\n");
+		Console.WriteLine("Deploying TenderData contract...\n");
+		var TenderDataCompiled = ContractUtil.GetCompiledContract(@"build\contracts\TenderData.json");
+		var TenderDataAbi = TenderDataCompiled.Abi;
+		var TenderDataByteCode = TenderDataCompiled.ByteCode;
+		var TenderDataDeployment = ContractUtil.DeployContract(TenderDataCompiled, Wallet, Tender.Address).Await();
+		var TenderData = TenderDataDeployment.Contract;
+		var TenderDataReceipt = TenderDataDeployment.Receipt;
+		Console.WriteLine("\nTenderDataReceipt: " + ToJson(TenderDataReceipt));
+
+		Console.WriteLine("Calling TenderApi.setTenderAddress(Tender.Address, TenderData.Address)...\n");
+		Console.WriteLine("Function call transaction hash:");
+		Console.WriteLine(TenderApi.CallWrite("setTenderAddress", Wallet, Tender.Address, TenderData.Address).Await());
+		Console.WriteLine();
+
+		Console.WriteLine("Calling TenderApi.createContract(contract)...\n");
+		Console.WriteLine("Function call transaction hash:");
+		Console.WriteLine(TenderApi.CallWrite("createContract", Wallet, new BigInteger[] {
+				10, 20, 30, //smallServerPrice, mediumServerPrice, largeServerPrice
+				2, //penaltyPerDay
+				21102018, //creationDate
+				21102020, //expiryDate
+				1 //guaranteeRequired
+			}, new uint[] {
+				123, //contractId
+				10987, //operatorId
+			}, new ushort[] { 1 } //daysForDelivery
+		).Await());
+		Console.WriteLine("\nReady!\n");
+	} catch (Exception ex) {
+		ErrorHandler.Show("An error occurred while executing init-nethereum.csx", ex);
+	}
+}
+
+Start();
 
 //TenderApi.CallRead<string>("current").Await();
