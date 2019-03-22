@@ -107,9 +107,9 @@ private static void Start() {
 		var TenderDataReceipt = TenderDataDeployment.Receipt;
 		Console.WriteLine("\nTenderDataReceipt: " + ToJson(TenderDataReceipt));
 
-		Console.WriteLine("Calling TenderApi.setTenderAddress(Tender.Address, TenderData.Address)...\n");
+		Console.WriteLine("Calling TenderApi.setTenderAddress(Tender.Address, false)...\n");
 		Console.WriteLine("Function call transaction hash:");
-		Console.WriteLine(TenderApi.CallWrite("setTenderAddress", Wallet, Tender.Address, TenderData.Address).Await());
+		Console.WriteLine(TenderApi.CallWrite("setTenderAddress", Wallet, Tender.Address, false).Await());
 		Console.WriteLine();
 
 		Console.WriteLine("Calling TenderApi.createContract(contract)...\n");

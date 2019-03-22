@@ -1,14 +1,14 @@
-pragma solidity >=0.5.6;
+pragma solidity >=0.5.0;
 
 import "./TenderInterface.sol";
-import "./TenderData.sol";
+import "./TenderDataInterface.sol";
 
 //Version 0.01
 //This is the contract functionality implementation
 //This contract is upgradeable as long as it keeps the same TenderInterface implementation
 contract Tender is TenderInterface {
 	address payable public owner; //the TenderApi smart contract instance
-	TenderData public data; //the current contract implementation
+	TenderDataInterface public data; //the current contract implementation
 
 	//Initializes the smart contract
 	constructor(address payable tenderApiAddress) public {
@@ -29,14 +29,25 @@ contract Tender is TenderInterface {
 	//Functions that are used in the smart contract itself and are to be exported should be marked as public,
 	//whereas functions that are only called from outside should be marked as external
 
-	//Specifies the address of the TenderData smart contract implementation
-	function setDataAddress(address newAddress) external restricted {
-		data = TenderData(newAddress); //cast contract to TenderData
+	//Specifies the address of the TenderDataInterface smart contract implementation
+	function setDataAddress(address newAddress, bool migrateOldData, bool killOldData) external restricted {
+		require(newAddress != address(data));
+		TenderDataInterface newData = TenderDataInterface(newAddress); //cast contract to TenderDataInterface
+		if (address(data) != address(0)) {
+			if (migrateOldData)
+				newData.migrateData(address(data));
+			if (killOldData)
+				data.endService();
+		}
+		data = newData;
 	}
 
 	//Transfers ownership to the specified Tender smart contract owner
-	function transferOwner(address payable newTenderOwner) external restricted {
-		data.transferOwner(newTenderOwner);
+	function changeDataOwner(address payable newTenderOwner, bool killOldTender) external restricted {
+		if (address(data) != address(0))
+			data.changeDataOwner(newTenderOwner);
+		if (killOldTender)
+			selfdestruct(owner);
 	}
 
 	//Creates a contract instance (should be changed to external when compiler support starts to exist)

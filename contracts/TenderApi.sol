@@ -1,15 +1,13 @@
-pragma solidity >=0.5.6;
+pragma solidity >=0.5.0;
 
 import "./TenderInterface.sol";
-import "./TenderData.sol";
-import "./Tender.sol";
 
 //Version 0.1
 //This is the main contract that expose functionality to the public and handles versioning
 //This is meant to be set in stone as much as possible after completion
 contract TenderApi is TenderInterface {
 	address payable public owner; //the creator of the smart contract
-	Tender public current; //the current contract implementation
+	TenderInterface public current; //the current contract implementation
 
 	//Initializes the smart contract
 	constructor() public {
@@ -23,16 +21,21 @@ contract TenderApi is TenderInterface {
 	}
 
 	//Specifies the address of the Tender smart contract implementation
-	function setTenderAddress(address payable tenderAddress, address dataAddress) external restricted {
+	function setTenderAddress(address payable tenderAddress, bool killOldTender) external restricted {
+		require(address(current) != tenderAddress);
 		if (address(current) != address(0))
-			current.transferOwner(tenderAddress);
-		current = Tender(tenderAddress); //cast contract to TenderInterface
-		current.setDataAddress(dataAddress);
+			current.changeDataOwner(tenderAddress, killOldTender);
+		current = TenderInterface(tenderAddress); //cast contract to TenderInterface
 	}
 
 	//Specifies the address of the TenderData smart contract implementation
-	function setDataAddress(address dataAddress) external restricted {
-		current.setDataAddress(dataAddress);
+	function setDataAddress(address dataAddress, bool migrateOldData, bool killOldData) external restricted {
+		current.setDataAddress(dataAddress, migrateOldData, killOldData);
+	}
+
+	//Transfers ownership to the specified Tender smart contract owner
+	function changeDataOwner(address payable newTenderOwner) view external restricted {
+		require(false);
 	}
 
 	//======================================================
