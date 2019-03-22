@@ -89,27 +89,27 @@ private static void Start() {
 		var TenderApiReceipt = TenderApiDeployment.Receipt;
 		Console.WriteLine("\nTenderApiReceipt: " + ToJson(TenderApiReceipt));
 
-		Console.WriteLine("Deploying Tender contract...\n");
-		var TenderCompiled = ContractUtil.GetCompiledContract(@"build\contracts\Tender.json");
-		var TenderAbi = TenderCompiled.Abi;
-		var TenderByteCode = TenderCompiled.ByteCode;
-		var TenderDeployment = ContractUtil.DeployContract(TenderCompiled, Wallet, TenderApi.Address).Await();
-		var Tender = TenderDeployment.Contract;
-		var TenderReceipt = TenderDeployment.Receipt;
-		Console.WriteLine("\nTenderReceipt: " + ToJson(TenderReceipt));
+		Console.WriteLine("Deploying TenderBLL contract...\n");
+		var TenderBLLCompiled = ContractUtil.GetCompiledContract(@"build\contracts\TenderBLL.json");
+		var TenderBLLAbi = TenderBLLCompiled.Abi;
+		var TenderBLLByteCode = TenderBLLCompiled.ByteCode;
+		var TenderBLLDeployment = ContractUtil.DeployContract(TenderBLLCompiled, Wallet, TenderApi.Address).Await();
+		var TenderBLL = TenderBLLDeployment.Contract;
+		var TenderBLLReceipt = TenderBLLDeployment.Receipt;
+		Console.WriteLine("\nTenderBLLReceipt: " + ToJson(TenderBLLReceipt));
 
-		Console.WriteLine("Deploying TenderData contract...\n");
+		Console.WriteLine("\nDeploying TenderData contract...\n");
 		var TenderDataCompiled = ContractUtil.GetCompiledContract(@"build\contracts\TenderData.json");
 		var TenderDataAbi = TenderDataCompiled.Abi;
 		var TenderDataByteCode = TenderDataCompiled.ByteCode;
-		var TenderDataDeployment = ContractUtil.DeployContract(TenderDataCompiled, Wallet, Tender.Address).Await();
+		var TenderDataDeployment = ContractUtil.DeployContract(TenderDataCompiled, Wallet, TenderBLL.Address).Await();
 		var TenderData = TenderDataDeployment.Contract;
 		var TenderDataReceipt = TenderDataDeployment.Receipt;
-		Console.WriteLine("\nTenderDataReceipt: " + ToJson(TenderDataReceipt));
+		Console.WriteLine("TenderDataReceipt: " + ToJson(TenderDataReceipt));
 
-		Console.WriteLine("Calling TenderApi.setTenderAddress(Tender.Address, false)...\n");
+		Console.WriteLine("\nCalling TenderApi.replaceTenderBLL(TenderBLL.Address)...\n");
 		Console.WriteLine("Function call transaction hash:");
-		Console.WriteLine(TenderApi.CallWrite("setTenderAddress", Wallet, Tender.Address, false).Await());
+		Console.WriteLine(TenderApi.CallWrite("replaceTenderBLL", Wallet, TenderBLL.Address).Await());
 		Console.WriteLine();
 
 		Console.WriteLine("Calling TenderApi.createContract(contract)...\n");

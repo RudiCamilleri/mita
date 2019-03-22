@@ -1,119 +1,135 @@
 pragma solidity >=0.5.0;
 
-import "./TenderInterface.sol";
+import "./TenderBLLInterface.sol";
+
 
 //Version 0.1
-//This is the main contract that expose functionality to the public and handles versioning
-//This is meant to be set in stone as much as possible after completion
-contract TenderApi is TenderInterface {
-	address payable public owner; //the creator of the smart contract
-	TenderInterface public current; //the current contract implementation
+//This is the main contract that expose functionality to the server API and handles versioning
+contract TenderApi is TenderBLLInterface {
+	address public owner; //the main wallet owner of the smart contract
+	TenderBLLInterface public tenderBLL; //the current TenderBLL contract implementation
 
 	//Initializes the smart contract
 	constructor() public {
 		owner = msg.sender;
 	}
 
-	//Makes sure that the function can only be called by TenderApi instance
+	//Makes sure that the function can only be called by main wallet owner
 	modifier restricted() {
-		require(msg.sender == owner);
+		require(msg.sender == owner, "Illegitimate caller in TenderApi");
 		_;
 	}
 
-	//Specifies the address of the Tender smart contract implementation
-	function setTenderAddress(address payable tenderAddress, bool killOldTender) external restricted {
-		require(address(current) != tenderAddress);
-		if (address(current) != address(0))
-			current.changeDataOwner(tenderAddress, killOldTender);
-		current = TenderInterface(tenderAddress); //cast contract to TenderInterface
+	//=================================================
+	//==  API FUNCTIONALITY IS TO BE INSERTED BELOW  ==
+	//== ALL FUNCTIONS MUST BE MARKED AS RESTRICTED! ==
+	//=================================================
+
+	//Sets or replaces the TenderDataInterface smart contract implementation
+	function replaceTenderData(address payable newTenderDataAddress, bool migrateOldData, bool killOldData) external restricted {
+		tenderBLL.replaceTenderData(newTenderDataAddress, migrateOldData, killOldData);
 	}
 
-	//Specifies the address of the TenderData smart contract implementation
-	function setDataAddress(address dataAddress, bool migrateOldData, bool killOldData) external restricted {
-		current.setDataAddress(dataAddress, migrateOldData, killOldData);
+	//Sets or replaces the TenderBLLInterface smart contract implementation
+	function replaceTenderBLLAndTransfer(address payable newTenderBLLAddress, bool killOldTenderBLL) external restricted {
+		require(newTenderBLLAddress != address(this) && newTenderBLLAddress != address(tenderBLL), "Invalid newTenderBLLAddress in replaceTenderBLLAndTransfer TenderApi");
+		if (address(tenderBLL) != address(0))
+			tenderBLL.replaceTenderBLLAndTransfer(newTenderBLLAddress, killOldTenderBLL);
+		tenderBLL = TenderBLLInterface(newTenderBLLAddress); //cast contract to TenderBLLInterface
 	}
 
-	//Transfers ownership to the specified Tender smart contract owner
-	function changeDataOwner(address payable newTenderOwner) view external restricted {
-		require(false);
+	//Sets or replaces the TenderBLLInterface smart contract implementation without transferring resources
+	function replaceTenderBLL(address newTenderBLLAddress) external restricted {
+		require(newTenderBLLAddress != address(this) && newTenderBLLAddress != address(tenderBLL), "Invalid newTenderBLLAddress in replaceTenderBLL TenderApi");
+		if (address(tenderBLL) != address(0))
+			tenderBLL.replaceTenderBLL(newTenderBLLAddress);
+		tenderBLL = TenderBLLInterface(newTenderBLLAddress); //cast contract to TenderBLLInterface
 	}
 
-	//======================================================
-	//== PUBLIC API FUNCTIONALITY IS TO BE INSERTED BELOW ==
-	//======================================================
+	//Sets or replaces the TenderBLLInterface (ideally TenderApi) smart contract implementation,
+	//where targetWallet is the wallet to transfer the funds to (or 0 to not transfer anything)
+	function replaceTenderApi(address newTenderApiAddress, address payable targetWallet) external restricted {
+		require(newTenderApiAddress != address(this) && newTenderApiAddress != address(tenderBLL), "Invalid newTenderApiAddress in replaceTenderApi TenderApi");
+		if (address(tenderBLL) != address(0)) {
+			tenderBLL.replaceTenderApi(newTenderApiAddress, targetWallet);
+			TenderBLLInterface(newTenderApiAddress).replaceTenderBLL(address(tenderBLL));
+		}
+		if (address(targetWallet) != address(0))
+			selfdestruct(targetWallet);
+	}
 
 	//Creates a contract instance
-	function createContract(uint128[] calldata params128, uint32[] calldata params32, uint16[] calldata params16) external {
-		current.createContract(params128, params32, params16);
+	function createContract(uint128[] calldata params128, uint32[] calldata params32, uint16[] calldata params16) external restricted {
+		tenderBLL.createContract(params128, params32, params16);
 	}
 
 	//Ends the contract
-	function endContract(uint32 contractId) external {
-		current.endContract(contractId);
+	function endContract(uint32 contractId) external restricted {
+		tenderBLL.endContract(contractId);
 	}
 
 	//Kills the service
-	function endService() external {
-		current.endService();
-		selfdestruct(owner);
+	function endService(address payable targetWallet) external restricted {
+		tenderBLL.endService(targetWallet);
+		selfdestruct(targetWallet);
 	}
 
 	/*//passes refundable deposit.
-	function topUpPerformanceGuarantee() external {
-		return current.topUpPerformanceGuarantee();
+	function topUpPerformanceGuarantee() external restricted {
+		return tenderBLL.topUpPerformanceGuarantee();
 	}
 
 	//stops the contract if payment isnt made.
-	function stopOrder(uint32 _orderNumber, uint8 _penalty) external {
+	function stopOrder(uint32 orderNumber, uint8 penalty) external restricted {
 		//uint32 - Order number, uint8 - Penalty to be taken
-		return current.stopOrder(_orderNumber, _penalty);
+		return tenderBLL.stopOrder(orderNumber, penalty);
 	}
 
     //if order was delivered proceed
-	function deliveryAcceptance(uint32 _orderNumber, uint16 _serverAmount) external {
+	function deliveryAcceptance(uint32 orderNumber, uint16 serverAmount) external restricted {
 		//uint32 - Order number, unit16 server amount as a whole
-		return current.deliveryAcceptance(_orderNumber, _serverAmount);
+		return tenderBLL.deliveryAcceptance(orderNumber, serverAmount);
 	}
 
 	//to confirm order is delivered
-	function markDelivered(uint32 _orderNumber) external {
+	function markDelivered(uint32 orderNumber) external restricted {
 		//uint32 - Order number
-		return current.markDelivered(_orderNumber);
+		return tenderBLL.markDelivered(orderNumber);
 	}
 
 	//automatically accepts extension
-	function defaultAcceptanceOfOrderDeadlineExtension(uint32 _orderNumber) external {
+	function defaultAcceptanceOfOrderDeadlineExtension(uint32 orderNumber) external restricted {
 		//uint32 - Order number
-		return current.defaultAcceptanceOfOrderDeadlineExtension(_orderNumber);
+		return tenderBLL.defaultAcceptanceOfOrderDeadlineExtension(orderNumber);
 	}
 
 	//to reject the extension
-	function rejectOrderDeadlineExtension(uint32 _orderNumber) external {
+	function rejectOrderDeadlineExtension(uint32 orderNumber) external restricted {
 		//uint32 - Order number
-		return current.rejectOrderDeadlineExtension(_orderNumber);
+		return tenderBLL.rejectOrderDeadlineExtension(orderNumber);
 	}
 
 	//accepts deadline manually
-	function acceptOrderDeadlineExtension(uint32 _orderNumber, uint64 _dateExtension) external {
+	function acceptOrderDeadlineExtension(uint32 orderNumber, uint64 dateExtension) external restricted {
 		//uint32 - Order number, uint 64 is checking date of extension.
-		return current.acceptOrderDeadlineExtension(_orderNumber, _dateExtension);
+		return tenderBLL.acceptOrderDeadlineExtension(orderNumber, dateExtension);
 	}
 
 	//requests an extension of a deadline
-	function requestOrderDeadlineExtension(uint32 _orderNumber, bytes32 _reason, uint64 _dateExtension) external {
+	function requestOrderDeadlineExtension(uint32 orderNumber, bytes32 reason, uint64 dateExtension) external restricted {
 		//bytes 32 to store explanation //uint 64 is checking date of extension.
-		return current.requestOrderDeadlineExtension(_orderNumber, _reason, _dateExtension);
+		return tenderBLL.requestOrderDeadlineExtension(orderNumber, reason, dateExtension);
 	}
 
 	//cancels order
-	function cancelOrder(uint32 _orderNumber) external {
+	function cancelOrder(uint32 orderNumber) external restricted {
 		//uint32 - Order number
-		return current.cancelOrder(_orderNumber);
+		return tenderBLL.cancelOrder(orderNumber);
 	}
 
 	//creates order
-	function createOrder(uint32 _orderNumber, uint16 _serverAmount, bytes32 _costDescription) external {
+	function createOrder(uint32 orderNumber, uint16 serverAmount, bytes32 costDescription) external restricted {
 		//uint32 - Order number, uint16 server amoutn as a whole , bytes32 description of total price.
-		return current.createOrder(_orderNumber, _serverAmount, _costDescription);
+		return tenderBLL.createOrder(orderNumber, serverAmount, costDescription);
 	}*/
 }
