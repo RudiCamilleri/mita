@@ -16,9 +16,9 @@ interface TenderBLLInterface {
 	//Sets or replaces the TenderBLLInterface smart contract implementation without transferring resources
 	function replaceTenderBLL(address newTenderBLLAddress) external;
 
-	//Sets or replaces the TenderBLLInterface (ideally TenderApi) smart contract implementation,
+	//Sets or replaces the TenderBLLInterface (ideally TenderAPI) smart contract implementation,
 	//where targetWallet is the wallet to transfer the funds to (or 0 to not transfer anything)
-	function replaceTenderApi(address newTenderApiAddress, address payable targetWallet) external;
+	function replaceTenderAPI(address newTenderAPIAddress, address payable targetWallet) external;
 
 	//Ends the contract
 	function endContract(uint32 contractId) external;

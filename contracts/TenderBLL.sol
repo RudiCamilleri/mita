@@ -6,17 +6,17 @@ import "./TenderDataInterface.sol";
 //Version 0.1
 //This is the Business Logic Layer functionality implementation
 contract TenderBLL is TenderBLLInterface {
-	address public tenderApi; //the parent TenderApi smart contract instance
+	address public tenderAPI; //the parent TenderAPI smart contract instance
 	TenderDataInterface public tenderData; //the current data contract implementation
 
 	//Initializes the smart contract
-	constructor(address tenderApiAddress) public {
-		tenderApi = tenderApiAddress;
+	constructor(address tenderAPIAddress) public {
+		tenderAPI = tenderAPIAddress;
 	}
 
-	//Makes sure that the function can only be called by TenderApi parent
+	//Makes sure that the function can only be called by TenderAPI parent
 	modifier restricted() {
-		require(msg.sender == tenderApi, "Illegitimate caller in TenderBLL");
+		require(msg.sender == tenderAPI, "Illegitimate caller in TenderBLL");
 		_;
 	}
 
@@ -56,10 +56,10 @@ contract TenderBLL is TenderBLLInterface {
 			tenderData.replaceTenderBLL(newTenderBLLAddress);
 	}
 
-	//Sets or replaces the TenderBLLInterface (ideally TenderApi) smart contract implementation,
+	//Sets or replaces the TenderBLLInterface (ideally TenderAPI) smart contract implementation,
 	//where targetWallet is the wallet to transfer the funds to (or 0 to not transfer anything)
-	function replaceTenderApi(address newTenderApiAddress, address payable targetWallet) external restricted {
-		tenderApi = newTenderApiAddress;
+	function replaceTenderAPI(address newTenderAPIAddress, address payable targetWallet) external restricted {
+		tenderAPI = newTenderAPIAddress;
 	}
 
 	//Creates a contract instance (should be changed to external when compiler support starts to exist)

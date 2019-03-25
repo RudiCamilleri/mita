@@ -1,6 +1,8 @@
-# Smart Contract
+# Tender Smart Contract
 
 Website repository can be found here: https://github.com/mathusummut/tender-website
+
+Smart contract documentation is located here: https://github.com/mathusummut/tender/blob/master/ContractStructure.md
 
 ## To set up local development environment for testing Solidity smart contracts:
 
@@ -75,7 +77,7 @@ The documentation for the API can be found here: https://deltsystem32.github.io/
 
 11. Copy and paste the following line into the truffle console and press enter (output should be `undefined`):
 
-        TenderApi.deployed().then(a=>{TenderApi=a;Tender.deployed().then(t=>{Tender=t;TenderApi.setCurrentAddress(Tender.address)})})
+        TenderAPI.deployed().then(a=>{TenderAPI=a;Tender.deployed().then(t=>{Tender=t;TenderAPI.setCurrentAddress(Tender.address)})})
 
 12. Run console commands through Truffle, to close it simply close the console window or press Ctrl+C twice.
 
@@ -87,14 +89,14 @@ The documentation for the API can be found here: https://deltsystem32.github.io/
 
 In web3 there are two ways to call a function:
 
-       Read-only (not using call): TenderApi.owner()
-       Write-only (using call):    TenderApi.owner.call()
+       Read-only (not using call): TenderAPI.owner()
+       Write-only (using call):    TenderAPI.owner.call()
 
 Read-only executes the function and reads the return value of functions, but does not modify the state of the contract.
 
 Write-only executes the function, modifying the state if the function does so, but return value is not computed.
 
-In this smart contract, calls are to be made through TenderApi.
+In this smart contract, calls are to be made through TenderAPI.
 
 Type `eth` to see what's available.
 

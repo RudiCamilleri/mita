@@ -46,13 +46,13 @@ contract TenderApi is TenderBLLInterface {
 		tenderBLL = TenderBLLInterface(newTenderBLLAddress); //cast contract to TenderBLLInterface
 	}
 
-	//Sets or replaces the TenderBLLInterface (ideally TenderApi) smart contract implementation,
+	//Sets or replaces the TenderBLLInterface (ideally TenderAPI) smart contract implementation,
 	//where targetWallet is the wallet to transfer the funds to (or 0 to not transfer anything)
-	function replaceTenderApi(address newTenderApiAddress, address payable targetWallet) external restricted {
-		require(newTenderApiAddress != address(this) && newTenderApiAddress != address(tenderBLL), "Invalid newTenderApiAddress in replaceTenderApi TenderApi");
+	function replaceTenderAPI(address newTenderAPIAddress, address payable targetWallet) external restricted {
+		require(newTenderAPIAddress != address(this) && newTenderAPIAddress != address(tenderBLL), "Invalid newTenderAPIAddress in replaceTenderAPI TenderAPI");
 		if (address(tenderBLL) != address(0)) {
-			tenderBLL.replaceTenderApi(newTenderApiAddress, targetWallet);
-			TenderBLLInterface(newTenderApiAddress).replaceTenderBLL(address(tenderBLL));
+			tenderBLL.replaceTenderAPI(newTenderAPIAddress, targetWallet);
+			TenderBLLInterface(newTenderAPIAddress).replaceTenderBLL(address(tenderBLL));
 		}
 		if (address(targetWallet) != address(0))
 			selfdestruct(targetWallet);
