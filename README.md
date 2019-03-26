@@ -100,8 +100,6 @@ In this smart contract, calls are to be made through TenderAPI.
 
 Type `eth` to see what's available.
 
-Minimum gas amount required to deploy contract: 53751 wei
-
 ## Git Cheat Sheet
 
 Useful Commands:
