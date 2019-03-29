@@ -2,7 +2,6 @@ pragma solidity >=0.5.0;
 
 import "./TenderBLLInterface.sol";
 
-
 //Version 0.1
 //This is the main contract that expose functionality to the server API and handles versioning
 contract TenderApi is TenderBLLInterface {
@@ -58,11 +57,8 @@ contract TenderApi is TenderBLLInterface {
 			selfdestruct(targetWallet);
 	}
 
-	event Debug(string message);
-
 	//Creates a contract instance
 	function createContract(uint128[] calldata params128, uint32[] calldata params32, uint16[] calldata params16) external restricted {
-		emit Debug("tisk tisk!");
 		tenderBLL.createContract(params128, params32, params16);
 	}
 

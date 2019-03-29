@@ -57,6 +57,14 @@ public static string ToJson(object obj) {
 	return JsonConvert.SerializeObject(obj, Formatting.Indented);
 }
 
+public static string GetReceipt(string str) {
+	return ToJson(ContractUtil.GetReceipt(str).Await());
+}
+
+public static string GetReceipt(Task<string> str) {
+	return GetReceipt(str.Await());
+}
+
 static string GanacheLogPath = "ganache-output.txt";
 
 public static void ViewGanacheLog() {
@@ -108,13 +116,13 @@ private static void Start() {
 		Console.WriteLine("\nTenderDataReceipt: " + ToJson(TenderDataReceipt));
 
 		Console.WriteLine("\nCalling TenderAPI.replaceTenderBLL(TenderBLL.Address)...\n");
-		Console.WriteLine("Function call transaction hash:");
-		Console.WriteLine(TenderAPI.CallWrite("replaceTenderBLL", Wallet, TenderBLL.Address).Await());
+		Console.Write("Function call transaction: ");
+		Console.WriteLine(GetReceipt(TenderAPI.CallWrite("replaceTenderBLL", Wallet, TenderBLL.Address)));
 		Console.WriteLine();
 
 		Console.WriteLine("Calling TenderAPI.createContract(contract)...\n");
-		Console.WriteLine("Function call transaction hash:");
-		Console.WriteLine(TenderAPI.CallWrite("createContract", Wallet, new BigInteger[] {
+		Console.Write("Function call transaction: ");
+		Console.WriteLine(GetReceipt(TenderAPI.CallWrite("createContract", Wallet, new BigInteger[] {
 				10, 20, 30, //smallServerPrice, mediumServerPrice, largeServerPrice
 				2, //penaltyPerDay
 				21102018, //creationDate
@@ -124,7 +132,7 @@ private static void Start() {
 				123, //contractId
 				10987, //operatorId
 			}, new ushort[] { 1 } //daysForDelivery
-		).Await());
+		)));
 		Console.WriteLine("\nReady!\n");
 	} catch (Exception ex) {
 		ErrorHandler.Show("An error occurred while executing init-nethereum.csx", ex);
