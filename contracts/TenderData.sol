@@ -29,6 +29,7 @@ contract TenderData is TenderDataInterface {
 
 	//Adds the contract to the contracts dictionary a contract instance (should be changed to external when compiler support starts to exist)
 	function addContract(uint128[] calldata params128, uint32[] calldata params32, uint16[] calldata params16) external restricted {
+		require(contracts[params32[0]].creationDate == 0, "Contract already exists with that ID");
 		contracts[params32[0]] = TenderDataInterface.TenderContract({
 			contractId: params32[0],
 			state: TenderDataInterface.ContractState.Active,

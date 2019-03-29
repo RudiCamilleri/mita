@@ -3,6 +3,7 @@
 //#r "nuget:Nethereum.JsonRpc.Client"
 //#r "nuget:Nethereum.RPC"
 //#r "nuget:Newtonsoft.Json"
+//#r "nuget:Nethereum.Geth"
 //#r "ContractUtils"
 #r "Nethereum.Web3"
 #r "Nethereum.Accounts"
@@ -11,7 +12,6 @@
 #r "Newtonsoft.Json"
 #r "Nethereum.Geth"
 #r "ContractUtils"
-#r "ErrorViewer"
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -74,13 +74,13 @@ private static void Start() {
 
 		Console.WriteLine("\nLoading wallet address...");
 		var Wallet = ContractUtil.GetWalletAddressFromGanacheLog(GanacheLogPath);
-		Console.WriteLine("Wallet address detected at " + Wallet + "\n");
+		Console.WriteLine("Wallet address detected at " + Wallet);
 
 		/*var Password = "password";
 		Console.WriteLine("Unlocking wallet using password \"" + Password + "\"...");
 		Console.WriteLine("Wallet unlocked: " + ContractUtil.UnlockWallet(Wallet, Password).Await() + "\n");*/
 
-		Console.WriteLine("Deploying TenderAPI contract...");
+		Console.WriteLine("\nDeploying TenderAPI contract...");
 		var TenderAPICompiled = ContractUtil.GetCompiledContract(@"build\contracts\TenderAPI.json");
 		var TenderAPIAbi = TenderAPICompiled.Abi;
 		var TenderAPIByteCode = TenderAPICompiled.ByteCode;
@@ -89,7 +89,7 @@ private static void Start() {
 		var TenderAPIReceipt = TenderAPIDeployment.Receipt;
 		Console.WriteLine("\nTenderAPIReceipt: " + ToJson(TenderAPIReceipt));
 
-		Console.WriteLine("Deploying TenderBLL contract...\n");
+		Console.WriteLine("\nDeploying TenderBLL contract...");
 		var TenderBLLCompiled = ContractUtil.GetCompiledContract(@"build\contracts\TenderBLL.json");
 		var TenderBLLAbi = TenderBLLCompiled.Abi;
 		var TenderBLLByteCode = TenderBLLCompiled.ByteCode;
@@ -98,14 +98,14 @@ private static void Start() {
 		var TenderBLLReceipt = TenderBLLDeployment.Receipt;
 		Console.WriteLine("\nTenderBLLReceipt: " + ToJson(TenderBLLReceipt));
 
-		Console.WriteLine("\nDeploying TenderData contract...\n");
+		Console.WriteLine("\nDeploying TenderData contract...");
 		var TenderDataCompiled = ContractUtil.GetCompiledContract(@"build\contracts\TenderData.json");
 		var TenderDataAbi = TenderDataCompiled.Abi;
 		var TenderDataByteCode = TenderDataCompiled.ByteCode;
 		var TenderDataDeployment = ContractUtil.DeployContract(TenderDataCompiled, Wallet, TenderBLL.Address).Await();
 		var TenderData = TenderDataDeployment.Contract;
 		var TenderDataReceipt = TenderDataDeployment.Receipt;
-		Console.WriteLine("TenderDataReceipt: " + ToJson(TenderDataReceipt));
+		Console.WriteLine("\nTenderDataReceipt: " + ToJson(TenderDataReceipt));
 
 		Console.WriteLine("\nCalling TenderAPI.replaceTenderBLL(TenderBLL.Address)...\n");
 		Console.WriteLine("Function call transaction hash:");

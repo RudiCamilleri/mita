@@ -349,5 +349,211 @@
             </summary>
             <param name="address">The address of the wallet</param>
         </member>
+        <member name="T:System.Diagnostics.ErrorDialogAction">
+            <summary>
+            Describes the error dialog behavior
+            </summary>
+        </member>
+        <member name="F:System.Diagnostics.ErrorDialogAction.NormalUserChoice">
+            <summary>
+            The error dialog is shown and the user can choose an action to take
+            </summary>
+        </member>
+        <member name="F:System.Diagnostics.ErrorDialogAction.ThrowRegardless">
+            <summary>
+            The error dialog is not shown and the exception is thrown instead
+            </summary>
+        </member>
+        <member name="F:System.Diagnostics.ErrorDialogAction.SilentOperation">
+            <summary>
+            Writes the exception to console and attempts to ignore the exception
+            </summary>
+        </member>
+        <member name="T:System.Diagnostics.ErrorDialogButton">
+            <summary>
+            An enumeration of all the buttons that can be shown in the error dialog.
+            </summary>
+        </member>
+        <member name="F:System.Diagnostics.ErrorDialogButton.Ignore">
+            <summary>
+            Tries to ignore the error that happened.
+            </summary>
+        </member>
+        <member name="F:System.Diagnostics.ErrorDialogButton.Throw">
+            <summary>
+            Throws the ecxeptions that happened.
+            </summary>
+        </member>
+        <member name="F:System.Diagnostics.ErrorDialogButton.Quit">
+            <summary>
+            Kills the current process immediately.
+            </summary>
+        </member>
+        <member name="T:System.Diagnostics.ErrorHandler">
+            <summary>
+            A verbose error message dialog, perfect for advanced flexible exception handling.
+            </summary>
+        </member>
+        <member name="F:System.Diagnostics.ErrorHandler.Logger">
+            <summary>
+            The error logger to use.
+            </summary>
+        </member>
+        <member name="F:System.Diagnostics.ErrorHandler.Behavior">
+            <summary>
+            The behavior of the error dialog
+            </summary>
+        </member>
+        <member name="F:System.Diagnostics.ErrorHandler.DefaultButtons">
+            <summary>
+            A constant for showing the default buttons.
+            </summary>
+        </member>
+        <member name="M:System.Diagnostics.ErrorHandler.Show(System.Exception[])">
+            <summary>
+            Shows an error dialog handling the specified exceptions.
+            </summary>
+            <param name="ex">An error containing the exceptions whose info to display.</param>
+        </member>
+        <member name="M:System.Diagnostics.ErrorHandler.ShowAsync(System.Exception[])">
+            <summary>
+            Shows an error dialog handling the specified exceptions.
+            </summary>
+            <param name="ex">An error containing the exceptions whose info to display.</param>
+        </member>
+        <member name="M:System.Diagnostics.ErrorHandler.Show(System.Diagnostics.ErrorDialogButton,System.Exception[])">
+            <summary>
+            Shows an error dialog handling the specified exceptions.
+            </summary>
+            <param name="buttons">The buttons to show.</param>
+            <param name="ex">An error containing the exceptions whose info to display.</param>
+        </member>
+        <member name="M:System.Diagnostics.ErrorHandler.ShowAsync(System.Diagnostics.ErrorDialogButton,System.Exception[])">
+            <summary>
+            Shows an error dialog handling the specified exceptions.
+            </summary>
+            <param name="buttons">The buttons to show.</param>
+            <param name="ex">An error containing the exceptions whose info to display.</param>
+        </member>
+        <member name="M:System.Diagnostics.ErrorHandler.Show(System.String,System.Exception[])">
+            <summary>
+            Shows an error dialog handling the specified exceptions.
+            </summary>
+            <param name="message">The error message to show on top.</param>
+            <param name="ex">An error containing the exceptions whose info to display.</param>
+        </member>
+        <member name="M:System.Diagnostics.ErrorHandler.ShowAsync(System.String,System.Exception[])">
+            <summary>
+            Shows an error dialog handling the specified exceptions.
+            </summary>
+            <param name="message">The error message to show on top.</param>
+            <param name="ex">An error containing the exceptions whose info to display.</param>
+        </member>
+        <member name="M:System.Diagnostics.ErrorHandler.Show(System.String,System.Diagnostics.ErrorDialogButton,System.Exception[])">
+            <summary>
+            Shows an error dialog handling the specified exceptions.
+            </summary>
+            <param name="message">The error message to show on top.</param>
+            <param name="buttons">The buttons to show.</param>
+            <param name="ex">An error containing the exceptions whose info to display.</param>
+        </member>
+        <member name="M:System.Diagnostics.ErrorHandler.ShowAsync(System.String,System.Diagnostics.ErrorDialogButton,System.Exception[])">
+            <summary>
+            Shows an error dialog handling the specified exceptions.
+            </summary>
+            <param name="message">The error message to show on top.</param>
+            <param name="buttons">The buttons to show.</param>
+            <param name="ex">An error containing the exceptions whose info to display.</param>
+        </member>
+        <member name="M:System.Diagnostics.ErrorHandler.GetFirstNonNull``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Gets the first non-null element in the specified collection.
+            The return value is null if 'items' is null or all elements are null.
+            </summary>
+            <typeparam name="T">The type of the elements.</typeparam>
+            <param name="items"></param>
+        </member>
+        <member name="M:System.Diagnostics.ErrorHandler.ToDictionary(System.Object,System.Reflection.BindingFlags)">
+            <summary>
+            Gets a dictionary that represents the specified object (where keys represent properties).
+            </summary>
+            <param name="source">The object to serialize into a dictionary.</param>
+            <param name="bindingAttr">The attirbutes to use when searching for properties.</param>
+        </member>
+        <member name="M:System.Diagnostics.ErrorHandler.ToDynamic(System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Creates an object with the key-value pairs found in the specified dictionary
+            </summary>
+            <param name="dict">The dictionary that contains the necessary elements</param>
+        </member>
+        <member name="M:System.Diagnostics.ErrorHandler.ExceptionToDetailedString(System.String,System.Exception[])">
+            <summary>
+            Generates a helpful structured string that describes the specified exceptions
+            </summary>
+            <param name="message">A custom message that is added to the full string (can be null)</param>
+            <param name="ex">A list of the exceptions to show the details of</param>
+        </member>
+        <member name="M:System.Diagnostics.ErrorHandler.LogException(System.Exception)">
+            <summary>
+            Logs the specified exception
+            </summary>
+            <param name="ex">The exception to log.</param>
+        </member>
+        <member name="M:System.Diagnostics.ErrorHandler.LogException(System.Exception,System.String)">
+            <summary>
+            Raises the LogException event.
+            </summary>
+            <param name="ex">The exception to log.</param>
+            <param name="fullMessage">The full message string to log. Call ExceptionToDetailedString() to create a properly-formatted string.</param>
+        </member>
+        <member name="M:System.Diagnostics.ErrorHandler.ExtractFromException(System.Exception)">
+            <summary>
+            Extracts all inner exceptions from an exception.
+            </summary>
+            <param name="ex">The exception to extract inner exceptions from.</param>
+        </member>
+        <member name="T:System.Diagnostics.IErrorLogger">
+            <summary>
+            Represents an error logger. To use your own, implement IErrorLogger and set System.Diagnostics.ErrorHandler.Logger to a new instance of your logger
+            </summary>
+        </member>
+        <member name="M:System.Diagnostics.IErrorLogger.LogException(System.Exception,System.String)">
+            <summary>
+            Handles an exception that was thrown
+            </summary>
+            <param name="ex">The first exception that was thrown</param>
+            <param name="errorLog">A full description of the error that occurred (pre-formatted for logging)</param>
+        </member>
+        <member name="T:System.Diagnostics.ErrorLogger">
+            <summary>
+            The default error logger. To use your own, inherit this class or implement IErrorLogger and override LogException(),
+            and set System.Diagnostics.ErrorHandler.Logger to a new instance of your logger
+            </summary>
+        </member>
+        <member name="P:System.Diagnostics.ErrorLogger.MaxLogSizeKiB">
+            <summary>
+            Gets or sets the maximum log file size in kibibytes
+            </summary>
+        </member>
+        <member name="M:System.Diagnostics.ErrorLogger.LogException(System.Exception,System.String)">
+            <summary>
+            Handles an exception that was thrown
+            </summary>
+            <param name="ex">The first exception that was thrown</param>
+            <param name="errorLog">A full description of the error that occurred (pre-formatted for logging)</param>
+        </member>
+        <member name="M:System.Diagnostics.ErrorLogger.RemoveConsecutiveDuplicates(System.String,System.Char)">
+            <summary>
+            Removes consecutive duplicates of the specified character from the string.
+            </summary>
+            <param name="str">The string whose duplicate consecutive characters to remove.</param>
+            <param name="character">The character whose duplicates to remove.</param>
+        </member>
+        <member name="M:System.Diagnostics.ErrorLogger.GetFileNameWithoutExtension(System.String)">
+            <summary>
+            Returns the file name of the specified path string without the extension.
+            </summary>
+            <param name="path">The path of the file.</param>
+        </member>
     </members>
 </doc>
