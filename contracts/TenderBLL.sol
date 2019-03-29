@@ -11,6 +11,7 @@ contract TenderBLL is TenderBLLInterface {
 
 	//Initializes the smart contract
 	constructor(address tenderAPIAddress) public {
+		require(tenderAPIAddress != address(0), "tenderAPIAddress cannot be 0 in TenderBLL constructor");
 		tenderAPI = tenderAPIAddress;
 	}
 

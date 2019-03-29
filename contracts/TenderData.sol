@@ -10,6 +10,7 @@ contract TenderData is TenderDataInterface {
 
 	//Initializes the smart contract
 	constructor(address tenderBLLAddress) public {
+		require(tenderBLLAddress != address(0), "tenderBLLAddress cannot be 0 in TenderData constructor");
 		tenderBLL = tenderBLLAddress;
 	}
 

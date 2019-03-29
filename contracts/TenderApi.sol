@@ -4,7 +4,7 @@ import "./TenderBLLInterface.sol";
 
 //Version 0.1
 //This is the main contract that expose functionality to the server API and handles versioning
-contract TenderApi is TenderBLLInterface {
+contract TenderAPI is TenderBLLInterface {
 	address public owner; //the main wallet owner of the smart contract
 	TenderBLLInterface public tenderBLL; //the current TenderBLL contract implementation
 
@@ -15,7 +15,7 @@ contract TenderApi is TenderBLLInterface {
 
 	//Makes sure that the function can only be called by main wallet owner
 	modifier restricted() {
-		require(msg.sender == owner, "Illegitimate caller in TenderApi");
+		require(msg.sender == owner, "Illegitimate caller in TenderAPI");
 		_;
 	}
 

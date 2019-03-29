@@ -31,6 +31,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using Nethereum.ABI.FunctionEncoding.Attributes;
+using Nethereum.ABI.Model;
 using Nethereum.Contracts;
 using Nethereum.Contracts.CQS;
 using Nethereum.Contracts.Extensions;
@@ -118,9 +119,8 @@ private static void Start() {
 		Console.WriteLine("\nCalling TenderAPI.replaceTenderBLL(TenderBLL.Address)...\n");
 		Console.Write("Function call transaction: ");
 		Console.WriteLine(GetReceipt(TenderAPI.CallWrite("replaceTenderBLL", Wallet, TenderBLL.Address)));
-		Console.WriteLine();
-
-		Console.WriteLine("Calling TenderAPI.createContract(contract)...\n");
+		
+		Console.WriteLine("\nCalling TenderAPI.createContract(contract)...\n");
 		Console.Write("Function call transaction: ");
 		Console.WriteLine(GetReceipt(TenderAPI.CallWrite("createContract", Wallet, new BigInteger[] {
 				10, 20, 30, //smallServerPrice, mediumServerPrice, largeServerPrice
