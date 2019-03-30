@@ -5,12 +5,12 @@ module.exports = {
 	//to customize Truffle configuration
 	networks: {
 		development: {
-			from: "0xd24e1a4bc871da9e9ea1fc470c53ec14cf6f4089", //address of TenderApi owner
+			//from: "0x9c07857ac140039cb6e08edc13ec30887feb5ee8", //address of main wallet
 			host: "127.0.0.1", //localhost
-			port: 8545,
+			port: 8545, //default ganache-cli port
 			network_id: "*", //match any network id
-			gas: 4712388, //gas limit used for deploys
-			gasPrice: 100000000000, //Gas price used for deploys (default: 100 Shannon)
+			gas: 6721975, //gas limit used for deploys
+			gasPrice: 2000000000, //Gas price used for deploys (default: 100 Shannon = 100000000000)
 			contracts_build_directory: "./build"
 		}
 	},

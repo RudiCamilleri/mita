@@ -141,4 +141,4 @@ private static void Start() {
 
 Start();
 
-//TenderAPI.CallRead<string>("current").Await();
+//TenderAPI.CallRead<string>("tenderBLL").Await();

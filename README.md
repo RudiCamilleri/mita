@@ -66,20 +66,15 @@ The documentation for the API can be found here: https://deltsystem32.github.io/
 
 ### iii. Running the smart contract using truffle (almost reliable method):
 
-8. Run `start-ganache-cli.bat` in the project folder.
+8. Start `run-truffle.bat` in the project folder.
 
-9. In the ganache-cli output under `Available Accounts` (scroll up), copy the address at (0) and paste it in the `truffle-config.js` file next to the `from` key
+9. ~~Run `start-ganache-cli.bat` in the project folder, then in the ganache-cli output under `Available Accounts` (scroll up), copy the address at (0) and paste it in the `truffle-config.js` file next to the `from` key~~;
 
-10. In the `Terminal` tab in Visual Studio Code, enter the following line by line (`m` stands for `migrate`, `con` stands for `console`):
+10. Copy and paste the following line into the truffle console and press enter (output should be `undefined`):
 
-       truffle m --reset
-       truffle con
+        TenderAPIAbi.deployed().then(a=>{TenderAPI=a;TenderBLLAbi.deployed().then(t=>{TenderBLL=t;TenderAPI.replaceTenderBLL(TenderBLLAbi.address)})})
 
-11. Copy and paste the following line into the truffle console and press enter (output should be `undefined`):
-
-        TenderAPI.deployed().then(a=>{TenderAPI=a;Tender.deployed().then(t=>{Tender=t;TenderAPI.setCurrentAddress(Tender.address)})})
-
-12. Run console commands through Truffle, to close it simply close the console window or press Ctrl+C twice.
+11. Run console commands through Truffle, to close it simply close the console window or press Ctrl+C twice.
 
 ### iv. Running the smart contract using geth (not working):
 
