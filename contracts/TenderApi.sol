@@ -24,6 +24,11 @@ contract TenderAPI is TenderBLLInterface {
 	//== ALL FUNCTIONS MUST BE MARKED AS RESTRICTED! ==
 	//=================================================
 
+	//Replaces the current owner of the contract (not recommended to use)
+	function replaceOwner(address newOwner) external restricted {
+		owner = newOwner;
+	}
+
 	//Sets or replaces the TenderDataInterface smart contract implementation
 	function replaceTenderData(address payable newTenderDataAddress, bool migrateOldData, bool killOldData) external restricted {
 		tenderBLL.replaceTenderData(newTenderDataAddress, migrateOldData, killOldData);
