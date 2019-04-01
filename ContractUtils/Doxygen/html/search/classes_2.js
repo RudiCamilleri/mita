@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['wallet',['Wallet',['../class_contract_utils_1_1_wallet.html',1,'ContractUtils']]]
+  ['errorhandler',['ErrorHandler',['../class_system_1_1_diagnostics_1_1_error_handler.html',1,'System::Diagnostics']]],
+  ['errorlogger',['ErrorLogger',['../class_system_1_1_diagnostics_1_1_error_logger.html',1,'System::Diagnostics']]]
 ];

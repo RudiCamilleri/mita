@@ -22,7 +22,7 @@ var class_contract_utils_1_1_contract_util =
     [ "GetWalletAddressFromGanacheLog", "class_contract_utils_1_1_contract_util.html#a1bccabdc34ae77406b79b11ed746deb0", null ],
     [ "StartMining", "class_contract_utils_1_1_contract_util.html#a8b2569e38ae60939766609f779c45b45", null ],
     [ "StopMining", "class_contract_utils_1_1_contract_util.html#a9cfb43057f870feadbf0036a6426395d", null ],
-    [ "UnlockWallet", "class_contract_utils_1_1_contract_util.html#a9015d7787ac980ef54053e797c1cc0de", null ],
+    [ "UnlockWallet", "class_contract_utils_1_1_contract_util.html#a57a8978d785c92984e7861172de15bb1", null ],
     [ "Convert", "class_contract_utils_1_1_contract_util.html#a3478be137ac1043209d18d3e48305bc0", null ],
     [ "Node", "class_contract_utils_1_1_contract_util.html#a581b00871d3ebefeedeba9d3d4a437dc", null ],
     [ "Web3", "class_contract_utils_1_1_contract_util.html#a3ec3609a95f1a393c8cabfa052118383", null ]

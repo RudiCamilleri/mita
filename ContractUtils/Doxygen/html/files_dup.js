@@ -8,5 +8,10 @@ var files_dup =
     ] ],
     [ "ContractUtil.cs", "_contract_util_8cs.html", [
       [ "ContractUtil", "class_contract_utils_1_1_contract_util.html", "class_contract_utils_1_1_contract_util" ]
+    ] ],
+    [ "ErrorHandler.cs", "_error_handler_8cs.html", "_error_handler_8cs" ],
+    [ "ErrorLogger.cs", "_error_logger_8cs.html", [
+      [ "IErrorLogger", "interface_system_1_1_diagnostics_1_1_i_error_logger.html", "interface_system_1_1_diagnostics_1_1_i_error_logger" ],
+      [ "ErrorLogger", "class_system_1_1_diagnostics_1_1_error_logger.html", "class_system_1_1_diagnostics_1_1_error_logger" ]
     ] ]
 ];

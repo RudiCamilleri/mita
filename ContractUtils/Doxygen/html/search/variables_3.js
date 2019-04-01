@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['web3',['Web3',['../class_contract_utils_1_1_contract_util.html#a3ec3609a95f1a393c8cabfa052118383',1,'ContractUtils::ContractUtil']]]
+  ['logger',['Logger',['../class_system_1_1_diagnostics_1_1_error_handler.html#a144f609cfe0d4aec01f5b229b57e10bd',1,'System::Diagnostics::ErrorHandler']]]
 ];

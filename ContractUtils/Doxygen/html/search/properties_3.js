@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['receipt',['Receipt',['../class_contract_utils_1_1_deployed_contract.html#ad606585b34a11c84e9072d16288574a7',1,'ContractUtils::DeployedContract']]]
+  ['maxlogsizekib',['MaxLogSizeKiB',['../class_system_1_1_diagnostics_1_1_error_logger.html#aad4717bb7e7b4dce484e5ee063352e73',1,'System::Diagnostics::ErrorLogger']]]
 ];

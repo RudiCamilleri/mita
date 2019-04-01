@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['send',['Send',['../class_contract_utils_1_1_wallet.html#afda0fdecf538aec3ba3ce0f48d2cefa5',1,'ContractUtils::Wallet']]],
-  ['startmining',['StartMining',['../class_contract_utils_1_1_contract_util.html#a8b2569e38ae60939766609f779c45b45',1,'ContractUtils::ContractUtil']]],
-  ['stopmining',['StopMining',['../class_contract_utils_1_1_contract_util.html#a9cfb43057f870feadbf0036a6426395d',1,'ContractUtils::ContractUtil']]]
+  ['node',['Node',['../class_contract_utils_1_1_contract_util.html#a581b00871d3ebefeedeba9d3d4a437dc',1,'ContractUtils::ContractUtil']]],
+  ['nodeurl',['NodeUrl',['../class_contract_utils_1_1_config_params.html#aa557b8cce68acca964cdb8866f85d44f',1,'ContractUtils::ConfigParams']]],
+  ['normaluserchoice',['NormalUserChoice',['../namespace_system_1_1_diagnostics.html#a38f886db6873f8af7c17502d59a6085aa7356f71d609fe1e4f8bc0440e09d7c8a',1,'System::Diagnostics']]]
 ];
