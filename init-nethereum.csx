@@ -119,7 +119,7 @@ private static void Start() {
 		Console.WriteLine("\nCalling TenderAPI.replaceTenderBLL(TenderBLL.Address)...\n");
 		Console.Write("Function call transaction: ");
 		Console.WriteLine(GetReceipt(TenderAPI.CallWrite("replaceTenderBLL", Wallet, TenderBLL.Address)));
-		
+
 		Console.WriteLine("\nCalling TenderAPI.createContract(contract)...\n");
 		Console.Write("Function call transaction: ");
 		Console.WriteLine(GetReceipt(TenderAPI.CallWrite("createContract", Wallet, new BigInteger[] {

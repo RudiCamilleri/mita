@@ -31,14 +31,14 @@ contract TenderBLL is TenderBLLInterface {
 	//Sets or replaces the TenderDataInterface smart contract implementation
 	function replaceTenderData(address payable newTenderDataAddress, bool migrateOldData, bool killOldData) external restricted {
 		require(newTenderDataAddress != address(tenderData), "Invalid newTenderDataAddress in replaceTenderData TenderBLL");
-		TenderDataInterface newData = TenderDataInterface(newTenderDataAddress); //cast contract to TenderDataInterface
+		TenderDataInterface oldTenderData = tenderData;
+		tenderData = TenderDataInterface(newTenderDataAddress); //cast contract to TenderDataInterface
 		if (address(tenderData) != address(0)) {
 			if (migrateOldData)
-				newData.migrateData(address(tenderData));
+				tenderData.migrateData(address(oldTenderData));
 			if (killOldData)
-				tenderData.endService(newTenderDataAddress);
+				oldTenderData.endService(newTenderDataAddress);
 		}
-		tenderData = newData;
 	}
 
 	//Sets or replaces the TenderBLLInterface smart contract implementation

@@ -36,18 +36,20 @@ contract TenderAPI is TenderBLLInterface {
 
 	//Sets or replaces the TenderBLLInterface smart contract implementation
 	function replaceTenderBLLAndTransfer(address payable newTenderBLLAddress, bool killOldTenderBLL) external restricted {
-		require(newTenderBLLAddress != address(this) && newTenderBLLAddress != address(tenderBLL), "Invalid newTenderBLLAddress in replaceTenderBLLAndTransfer TenderApi");
-		if (address(tenderBLL) != address(0))
-			tenderBLL.replaceTenderBLLAndTransfer(newTenderBLLAddress, killOldTenderBLL);
+		require(newTenderBLLAddress != address(this) && newTenderBLLAddress != address(tenderBLL), "Invalid newTenderBLLAddress in replaceTenderBLLAndTransfer TenderAPI");
+		TenderBLLInterface oldTenderBLL = tenderBLL;
 		tenderBLL = TenderBLLInterface(newTenderBLLAddress); //cast contract to TenderBLLInterface
+		if (address(oldTenderBLL) != address(0))
+			oldTenderBLL.replaceTenderBLLAndTransfer(newTenderBLLAddress, killOldTenderBLL);
 	}
 
 	//Sets or replaces the TenderBLLInterface smart contract implementation without transferring resources
 	function replaceTenderBLL(address newTenderBLLAddress) external restricted {
-		require(newTenderBLLAddress != address(this) && newTenderBLLAddress != address(tenderBLL), "Invalid newTenderBLLAddress in replaceTenderBLL TenderApi");
-		if (address(tenderBLL) != address(0))
-			tenderBLL.replaceTenderBLL(newTenderBLLAddress);
+		require(newTenderBLLAddress != address(this) && newTenderBLLAddress != address(tenderBLL), "Invalid newTenderBLLAddress in replaceTenderBLL TenderAPI");
+		TenderBLLInterface oldTenderBLL = tenderBLL;
 		tenderBLL = TenderBLLInterface(newTenderBLLAddress); //cast contract to TenderBLLInterface
+		if (address(oldTenderBLL) != address(0))
+			oldTenderBLL.replaceTenderBLL(newTenderBLLAddress);
 	}
 
 	//Sets or replaces the TenderBLLInterface (ideally TenderAPI) smart contract implementation,
