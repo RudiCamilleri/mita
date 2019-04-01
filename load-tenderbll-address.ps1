@@ -21,7 +21,7 @@ while ($true) {
 			}
 			$address = $content.Substring($index, $end - $index).Trim()
 			$js = "var TenderAddress='" + $address + "'"
-			$js | Out-File ".\init-tender-address.js"
+			$js | Out-File ".\init-tenderbll-address.js"
 			Break
 		}
 	}

@@ -78,7 +78,7 @@ The documentation for the API can be found here: https://deltsystem32.github.io/
 
 ### iv. Running the smart contract using geth (not working):
 
-8. Simply double-click `run-local-blockchain.bat`. To re-run, simply close the current console window (or press Ctrl+Break, then 'Y' and Enter) and re-open.
+8. Simply double-click `run-geth.bat`. To re-run, simply close the current console window (or press Ctrl+Break, then 'Y' and Enter) and re-open.
 
 ## Additional Info
 

@@ -1,8 +1,8 @@
-console.log("\nDeploying TenderApi contract...");
+console.log("\nDeploying TenderAPI contract...");
 web3.eth.defaultAccount = web3.eth.accounts[0];
-loadScript("./build/contracts/TenderApi.js");
-var TenderApiAbi = web3.eth.contract(TenderApiBuild.abi);
-var TenderApiInit = TenderApiAbi.new([], { from: web3.eth.defaultAccount, data: TenderApiAbi.bytecode, gas: 2000000}, function(e, contract) {
+loadScript("./build/contracts/TenderAPI.js");
+var TenderAPIAbi = web3.eth.contract(TenderAPIBuild.abi);
+var TenderAPIInit = TenderApiAbi.new([], { from: web3.eth.defaultAccount, data: TenderAPIAbi.bytecode, gas: 2000000}, function(e, contract) {
 	if (!e) {
 		if (!contract.address)
 			console.log("TransactionHash: " + contract.transactionHash + " waiting to be mined...");

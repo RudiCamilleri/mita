@@ -1,18 +1,18 @@
 console.log("\nInitalizing Web3 console environment... ");
 web3.eth.defaultAccount = web3.eth.accounts[0];
 
-console.log("Initalizing TenderApi object...");
+console.log("Initalizing TenderAPI object...");
 loadScript("./init-tenderapi-address.js");
-loadScript("./build/contracts/TenderApi.js");
-var TenderApiAbi = web3.eth.contract(TenderApiBuild.abi);
-var TenderApi = TenderApiAbi.at(TenderApiAddress);
+loadScript("./build/contracts/TenderAPI.js");
+var TenderAPIAbi = web3.eth.contract(TenderAPIBuild.abi);
+var TenderAPI = TenderAPIAbi.at(TenderAPIAddress);
 
-console.log("Initalizing Tender object...");
-loadScript("./init-tender-address.js");
-loadScript("./build/contracts/Tender.js");
-var TenderAbi = web3.eth.contract(TenderBuild.abi);
-var Tender = TenderAbi.at(TenderAddress);
+console.log("Initalizing TenderBLL object...");
+loadScript("./init-tenderbll-address.js");
+loadScript("./build/contracts/TenderBLL.js");
+var TenderBLLAbi = web3.eth.contract(TenderBLLBuild.abi);
+var TenderBLL = TenderBLLAbi.at(TenderBLLAddress);
 
-TenderApi.setCurrentAddress(Tender.address);
+TenderAPI.setCurrentAddress(TenderBLL.address);
 
 console.log("init.js execution completed\n");
