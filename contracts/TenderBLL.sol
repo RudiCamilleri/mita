@@ -63,9 +63,19 @@ contract TenderBLL is TenderBLLInterface {
 		tenderAPI = newTenderAPIAddress;
 	}
 
-	//Creates a contract instance (should be changed to external when compiler support starts to exist)
+	//Creates a contract instance
 	function createContract(uint128[] calldata params128, uint32[] calldata params32, uint16[] calldata params16) external restricted {
 		tenderData.addContract(params128, params32, params16);
+	}
+
+	//Creates an order
+	function createOrder(uint32 contractId, uint32 orderId, uint16 small, uint16 medium, uint16 large) external restricted {
+		tenderData.addOrder(contractId, orderId, small, medium, large);
+	}
+
+	//to confirm order is delivered
+	function markDelivered(uint32 contractId, uint32 orderId) external restricted {
+		tenderData.setOrderState(contractId, orderId, TenderDataInterface.OrderState.Delivered);
 	}
 
 	//Ends the contract

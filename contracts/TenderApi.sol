@@ -69,6 +69,16 @@ contract TenderAPI is TenderBLLInterface {
 		tenderBLL.createContract(params128, params32, params16);
 	}
 
+	//Creates an order
+	function createOrder(uint32 contractId, uint32 orderId, uint16 small, uint16 medium, uint16 large) external restricted {
+		tenderBLL.createOrder(contractId, orderId, small, medium, large);
+	}
+
+	//to confirm order is delivered
+	function markDelivered(uint32 contractId, uint32 orderId) external restricted {
+		tenderBLL.markDelivered(contractId, orderId);
+	}
+
 	//Ends the contract
 	function endContract(uint32 contractId) external restricted {
 		tenderBLL.endContract(contractId);
@@ -95,12 +105,6 @@ contract TenderAPI is TenderBLLInterface {
 	function deliveryAcceptance(uint32 orderNumber, uint16 serverAmount) external restricted {
 		//uint32 - Order number, unit16 server amount as a whole
 		return tenderBLL.deliveryAcceptance(orderNumber, serverAmount);
-	}
-
-	//to confirm order is delivered
-	function markDelivered(uint32 orderNumber) external restricted {
-		//uint32 - Order number
-		return tenderBLL.markDelivered(orderNumber);
 	}
 
 	//automatically accepts extension

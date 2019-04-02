@@ -18,7 +18,6 @@ interface TenderDataInterface {
 
 	//Defines an order for a contract
 	struct Order {
-		uint32 orderId;
 		OrderState state;
 		uint16 small; //small servers ordered
 		uint16 medium; //medium servers ordered
@@ -27,7 +26,6 @@ interface TenderDataInterface {
 
 	//Defines a legal contract instance
 	struct TenderContract {
-		uint32 contractId;
 		ContractState state;
 		uint128 smallServerPrice;
 		uint128 mediumServerPrice;
@@ -41,14 +39,20 @@ interface TenderDataInterface {
 		mapping(uint32 => Order) orders;
 	}
 
-	//Adds the contract to the contracts dictionary a contract instance (should be changed to external when compiler support starts to exist)
-	function addContract(uint128[] calldata params128, uint32[] calldata params32, uint16[] calldata params16) external;
-
 	//Sets or replaces the TenderBLLInterface smart contract implementation
 	function replaceTenderBLL(address newTenderBLLAddress) external;
 
 	//Migrates the data from an old TenderData instance to a new one
 	function migrateData(address oldTenderDataAddress) external;
+
+	//Adds the contract to the contracts dictionary a contract instance (should be changed to external when compiler support starts to exist)
+	function addContract(uint128[] calldata params128, uint32[] calldata params32, uint16[] calldata params16) external;
+
+	//Adds a new order to the speicfied contract
+	function addOrder(uint32 contractId, uint32 orderId, uint16 small, uint16 medium, uint16 large) external;
+
+	//Sets the order state
+	function setOrderState(uint32 contractId, uint32 orderId, OrderState newState) external;
 
 	//Marks the contract as ended
 	function markEnded(uint32 contractId) external;
