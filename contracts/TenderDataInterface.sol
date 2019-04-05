@@ -59,4 +59,22 @@ interface TenderDataInterface {
 
 	//Kills the service
 	function endService(address payable targetWallet) external;
+
+	//=============== PUBLIC READ-ONLY SECTION ====================
+	function getContractState(uint32 contractId) external view returns (ContractState);
+	function getSmallServerPrice(uint32 contractId) external view returns (uint128);
+	function getMediumServerPrice(uint32 contractId) external view returns (uint128);
+	function getLargeServerPrice(uint32 contractId) external view returns (uint128);
+	function getDaysForDelivery(uint32 contractId) external view returns (uint16);
+	function getPenaltyPerDay(uint32 contractId) external view returns (uint128);
+	function getCreationDate(uint32 contractId) external view returns (uint128);
+	function getExpiryDate(uint32 contractId) external view returns (uint128);
+	function getOperatorId(uint32 contractId) external view returns (uint32);
+	function getGuaranteeRequired(uint32 contractId) external view returns (uint128);
+
+	function getOrderState(uint32 contractId, uint32 orderId) external view returns (OrderState);
+	function getSmallServersOrdered(uint32 contractId, uint32 orderId) external view returns (uint16);
+	function getMediumServersOrdered(uint32 contractId, uint32 orderId) external view returns (uint16);
+	function getLargeServersOrdered(uint32 contractId, uint32 orderId) external view returns (uint16);
+
 }

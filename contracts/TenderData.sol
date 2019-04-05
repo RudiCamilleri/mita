@@ -6,7 +6,7 @@ import "./TenderDataInterface.sol";
 //This is the contract data storage layer
 contract TenderData is TenderDataInterface {
 	address public tenderBLL; //the parent TenderBLL smart contract instance
-	mapping(uint32 => TenderDataInterface.TenderContract) public contracts; //the legal contracts that are represented in this instance
+	mapping(uint32 => TenderDataInterface.TenderContract) contracts; //the legal contracts that are represented in this instance
 
 	//Initializes the smart contract
 	constructor(address tenderBLLAddress) public {
@@ -78,5 +78,63 @@ contract TenderData is TenderDataInterface {
 	//Kills the service
 	function endService(address payable targetWallet) external restricted {
 		selfdestruct(targetWallet);
+	}
+
+	//=============== PUBLIC READ-ONLY SECTION ====================
+	function getContractState(uint32 contractId) external view returns (TenderDataInterface.ContractState) {
+		return contracts[contractId].state;
+	}
+
+	function getSmallServerPrice(uint32 contractId) external view returns (uint128) {
+		return contracts[contractId].smallServerPrice;
+	}
+
+	function getMediumServerPrice(uint32 contractId) external view returns (uint128) {
+		return contracts[contractId].mediumServerPrice;
+	}
+
+	function getLargeServerPrice(uint32 contractId) external view returns (uint128) {
+		return contracts[contractId].largeServerPrice;
+	}
+
+	function getDaysForDelivery(uint32 contractId) external view returns (uint16) {
+		return contracts[contractId].daysForDelivery;
+	}
+
+	function getPenaltyPerDay(uint32 contractId) external view returns (uint128) {
+		return contracts[contractId].penaltyPerDay;
+	}
+
+	function getCreationDate(uint32 contractId) external view returns (uint128) {
+		return contracts[contractId].creationDate;
+	}
+
+	function getExpiryDate(uint32 contractId) external view returns (uint128) {
+		return contracts[contractId].expiryDate;
+	}
+
+	function getOperatorId(uint32 contractId) external view returns (uint32) {
+		return contracts[contractId].operatorId;
+	}
+
+	function getGuaranteeRequired(uint32 contractId) external view returns (uint128) {
+		return contracts[contractId].guaranteeRequired;
+	}
+
+	//Orders
+	function getOrderState(uint32 contractId, uint32 orderId) external view returns (TenderDataInterface.OrderState) {
+		return contracts[contractId].orders[orderId].state;
+	}
+
+	function getSmallServersOrdered(uint32 contractId, uint32 orderId) external view returns (uint16) {
+		return contracts[contractId].orders[orderId].small;
+	}
+
+	function getMediumServersOrdered(uint32 contractId, uint32 orderId) external view returns (uint16) {
+		return contracts[contractId].orders[orderId].medium;
+	}
+
+	function getLargeServersOrdered(uint32 contractId, uint32 orderId) external view returns (uint16) {
+		return contracts[contractId].orders[orderId].large;
 	}
 }
