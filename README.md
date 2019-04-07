@@ -45,8 +45,7 @@ Smart contract documentation is located here: https://github.com/mathusummut/ten
 
 9. Call C# Nethereum commands directly from the command window
 
-10. The project uses the ContractUtils library (created by MathuSum Mut) contained in the repository.
-The documentation for the API can be found here: https://deltsystem32.github.io/tenderdocs
+10. The project uses the ContractUtils library (created by MathuSum Mut). The library source code and documentation can be found here: https://github.com/mathusummut/ContractUtils
 
 ### ii. Running the smart contract locally using Remix IDE
 
