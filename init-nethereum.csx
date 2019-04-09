@@ -1,10 +1,4 @@
-//#r "nuget:Nethereum.Web3"
-//#r "nuget:Nethereum.Accounts"
-//#r "nuget:Nethereum.JsonRpc.Client"
-//#r "nuget:Nethereum.RPC"
-//#r "nuget:Newtonsoft.Json"
-//#r "nuget:Nethereum.Geth"
-//#r "ContractUtils"
+#r "System.Numerics"
 #r "Nethereum.Web3"
 #r "Nethereum.Accounts"
 #r "Nethereum.JsonRpc.Client"
@@ -120,7 +114,7 @@ static void ViewGanacheLog() {
 		ShowFullReceipt = true;
 	else if (Environment.GetEnvironmentVariable("SILENT") == null) {
 		Console.Write("\nWould you like to show full receipt for every function call? y/N (default is N): ");
-		switch (Console.ReadLine().Trim().ToLower()) {
+		switch (ConsoleExt.ReadLine(3000, "").Trim().ToLower()) {
 			case "1":
 			case "true":
 			case "yes":
@@ -134,7 +128,7 @@ static void ViewGanacheLog() {
 		}
 	}
 
-	Console.WriteLine("\nCalling TenderAPI.replaceTenderBLL(TenderBLL.Address)...");
+	Console.WriteLine("\n\nCalling TenderAPI.replaceTenderBLL(TenderBLL.Address)...");
 	Console.Write("Function call transaction: ");
 	Console.WriteLine(GetReceipt(TenderAPI.CallWrite("replaceTenderBLL", Wallet, TenderBLL.Address)));
 

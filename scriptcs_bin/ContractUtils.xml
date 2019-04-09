@@ -265,6 +265,24 @@
             </summary>
             <param name="task">The task to await</param>
         </member>
+        <member name="T:ContractUtils.ConsoleExt">
+            <summary>
+            Contains extension methods for the System.Console class
+            </summary>
+        </member>
+        <member name="M:ContractUtils.ConsoleExt.ReadLine(System.Int32,System.String)">
+            <summary>
+            Reads the next line of characters from the standard input stream, and returns the default string if timeout occurs
+            </summary>
+            <param name="millisecondsTimeout">The input timeout in milliseconds</param>
+            <param name="timeoutDefault">The default string to return if ReadLine times out</param>
+        </member>
+        <member name="M:ContractUtils.ConsoleExt.ReadLineThrow(System.Int32)">
+            <summary>
+            Reads the next line of characters from the standard input stream, and throws TimeoutException if timeout occurs
+            </summary>
+            <param name="millisecondsTimeout">The input timeout in milliseconds</param>
+        </member>
         <member name="T:ContractUtils.CompiledContract">
             <summary>
             Holds the data that defines a compiled contract

@@ -43,7 +43,7 @@ Smart contract documentation is located here: https://github.com/mathusummut/ten
 
 8. Run the `run-nethereum.bat` script in the project folder
 
-9. Call C# Nethereum commands directly from the command window
+9. Call C# Nethereum commands directly from the command window. Side Note: The scriptcs_bin directory contents are copied from the build output of the ContractUtils library.
 
 10. The project uses the ContractUtils library (created by MathuSum Mut). The library source code and documentation can be found here: https://github.com/mathusummut/ContractUtils
 
