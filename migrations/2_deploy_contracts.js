@@ -1,21 +1,16 @@
 //This file deploys the smart contracts to the network
 
 //Load smart contracts for deployment
-TenderAPIAbi = artifacts.require("./TenderAPI.sol");
-TenderBLLAbi = artifacts.require("./TenderBLL.sol");
+TenderLogicAbi = artifacts.require("./TenderLogic.sol");
 TenderDataAbi = artifacts.require("./TenderData.sol");
-TenderAPI = null;
-TenderBLL = null;
+TenderLogic = null;
 TenderData = null;
 
 module.exports = function(deployer) {
-	deployer.deploy(TenderAPIAbi).then(function(tenderAPI) { //call constructor of TenderAPI, then
-		TenderAPI = tenderAPI;
-		deployer.deploy(TenderBLLAbi, TenderAPI.address).then(function(tenderBLL) { //call constructor of TenderBLL, then
-			TenderBLL = tenderBLL;
-			deployer.deploy(TenderDataAbi, tenderBLL.address).then(function(tenderData) { //call constructor of TenderData
-				TenderData = tenderData;
-			}); 
-		});
+	deployer.deploy(TenderLogicAbi).then(function(tenderLogic) { //call constructor of TenderLogic, then
+		TenderLogic = tenderLogic;
+		deployer.deploy(TenderDataAbi, tenderLogic.address).then(function(tenderData) { //call constructor of TenderData
+			TenderData = tenderData;
+		}); 
 	});
-};
+});

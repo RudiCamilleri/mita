@@ -39,8 +39,8 @@ interface TenderDataInterface {
 		mapping(uint32 => Order) orders;
 	}
 
-	//Sets or replaces the TenderLogic smart contract implementation
-	function replaceTenderLogic(address newTenderLogicAddress) external;
+	//Sets or replaces the TenderBLLInterface smart contract implementation
+	function replaceTenderBLL(address newTenderBLLAddress) external;
 
 	//Migrates the data from an old TenderData instance to a new one
 	function migrateData(address oldTenderDataAddress) external;

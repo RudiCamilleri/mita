@@ -5,18 +5,18 @@ import "./TenderDataInterface.sol";
 //Version 0.1
 //This is the contract data storage layer
 contract TenderData is TenderDataInterface {
-	address public tenderLogic; //the parent TenderLogic smart contract instance
+	address public tenderBLL; //the parent TenderBLL smart contract instance
 	mapping(uint32 => TenderDataInterface.TenderContract) contracts; //the legal contracts that are represented in this instance
 
 	//Initializes the smart contract
-	constructor(address tenderLogicAddress) public {
-		require(tenderLogicAddress != address(0), "tenderLogicAddress cannot be 0 in TenderData constructor");
-		tenderLogic = tenderLogicAddress;
+	constructor(address tenderBLLAddress) public {
+		require(tenderBLLAddress != address(0), "tenderBLLAddress cannot be 0 in TenderData constructor");
+		tenderBLL = tenderBLLAddress;
 	}
 
-	//Makes sure that the function can only be called by TenderLogic parent
+	//Makes sure that the function can only be called by TenderBLL parent
 	modifier restricted() {
-		require(msg.sender == tenderLogic, "Illegitimate caller in TenderData");
+		require(msg.sender == tenderBLL, "Illegitimate caller in TenderData");
 		_;
 	}
 
@@ -27,9 +27,9 @@ contract TenderData is TenderDataInterface {
 	//Functions that are used in the smart contract itself and are to be exported should be marked as public,
 	//whereas functions that are only called from outside should be marked as external
 
-	//Sets or replaces the TenderLogic smart contract implementation
-	function replaceTenderLogic(address newTenderLogicAddress) external restricted {
-		tenderLogic = newTenderLogicAddress;
+	//Sets or replaces the TenderBLLInterface smart contract implementation
+	function replaceTenderBLL(address newTenderBLLAddress) external restricted {
+		tenderBLL = newTenderBLLAddress;
 	}
 
 	//Adds the contract to the contracts dictionary a contract instance (should be changed to external when compiler support starts to exist)

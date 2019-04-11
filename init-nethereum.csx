@@ -48,7 +48,7 @@ using Newtonsoft.Json.Linq;
 using ContractUtils;
 
 static string GanacheLogPath = "ganache-output.txt";
-static bool ShowFullReceipt = false;
+static bool ShowFullReceipt = Environment.GetEnvironmentVariable("MINIMAL") == null;
 
 //Utility method that converts an object to a pretty JSON string
 static string ToJson(object obj) {
@@ -83,34 +83,25 @@ static void ViewGanacheLog() {
 	Console.WriteLine("Unlocking wallet using password \"" + Password + "\"...");
 	Console.WriteLine("Wallet unlocked: " + ContractUtil.UnlockWallet(Wallet, Password).Await() + "\n");*/
 
-	Console.WriteLine("\nDeploying TenderAPI contract...");
-	var TenderAPICompiled = ContractUtil.GetCompiledContract(@"build\contracts\TenderAPI.json");
-	var TenderAPIAbi = TenderAPICompiled.Abi;
-	var TenderAPIByteCode = TenderAPICompiled.ByteCode;
-	var TenderAPIDeployment = ContractUtil.DeployContract(TenderAPICompiled, Wallet).Await();
-	var TenderAPI = TenderAPIDeployment.Contract;
-	var TenderAPIReceipt = TenderAPIDeployment.Receipt;
-	Console.WriteLine("\nTenderAPIReceipt: " + ToJson(TenderAPIReceipt));
-
-	Console.WriteLine("\nDeploying TenderBLL contract...");
-	var TenderBLLCompiled = ContractUtil.GetCompiledContract(@"build\contracts\TenderBLL.json");
-	var TenderBLLAbi = TenderBLLCompiled.Abi;
-	var TenderBLLByteCode = TenderBLLCompiled.ByteCode;
-	var TenderBLLDeployment = ContractUtil.DeployContract(TenderBLLCompiled, Wallet, TenderAPI.Address).Await();
-	var TenderBLL = TenderBLLDeployment.Contract;
-	var TenderBLLReceipt = TenderBLLDeployment.Receipt;
-	Console.WriteLine("\nTenderBLLReceipt: " + ToJson(TenderBLLReceipt));
+	Console.WriteLine("\nDeploying TenderLogic contract...");
+	var TenderLogicCompiled = ContractUtil.GetCompiledContract(@"build\contracts\TenderLogic.json");
+	var TenderLogicAbi = TenderLogicCompiled.Abi;
+	var TenderLogicByteCode = TenderLogicCompiled.ByteCode;
+	var TenderLogicDeployment = ContractUtil.DeployContract(TenderLogicCompiled, Wallet).Await();
+	var TenderLogic = TenderLogicDeployment.Contract;
+	var TenderLogicReceipt = TenderLogicDeployment.Receipt;
+	Console.WriteLine("TenderLogicReceipt: " + ToJson(TenderLogicReceipt));
 
 	Console.WriteLine("\nDeploying TenderData contract...");
 	var TenderDataCompiled = ContractUtil.GetCompiledContract(@"build\contracts\TenderData.json");
 	var TenderDataAbi = TenderDataCompiled.Abi;
 	var TenderDataByteCode = TenderDataCompiled.ByteCode;
-	var TenderDataDeployment = ContractUtil.DeployContract(TenderDataCompiled, Wallet, TenderBLL.Address).Await();
+	var TenderDataDeployment = ContractUtil.DeployContract(TenderDataCompiled, Wallet, TenderLogic.Address).Await();
 	var TenderData = TenderDataDeployment.Contract;
 	var TenderDataReceipt = TenderDataDeployment.Receipt;
-	Console.WriteLine("\nTenderDataReceipt: " + ToJson(TenderDataReceipt));
+	Console.WriteLine("TenderDataReceipt: " + ToJson(TenderDataReceipt));
 
-	if (Environment.GetEnvironmentVariable("VERBOSE") != null)
+	/*if (Environment.GetEnvironmentVariable("VERBOSE") != null)
 		ShowFullReceipt = true;
 	else if (Environment.GetEnvironmentVariable("SILENT") == null) {
 		Console.Write("\nWould you like to show full receipt for every function call? y/N (default is N): ");
@@ -126,19 +117,15 @@ static void ViewGanacheLog() {
 				ShowFullReceipt = false;
 				break;
 		}
-	}
+	}*/
 
-	Console.WriteLine("\n\nCalling TenderAPI.replaceTenderBLL(TenderBLL.Address)...");
+	Console.WriteLine("\nCalling TenderLogic.replaceTenderData(TenderData.Address, false, false)...");
 	Console.Write("Function call transaction: ");
-	Console.WriteLine(GetReceipt(TenderAPI.CallWrite("replaceTenderBLL", Wallet, TenderBLL.Address)));
+	Console.WriteLine(GetReceipt(TenderLogic.CallWrite("replaceTenderData", Wallet, TenderData.Address, false, false)));
 
-	Console.WriteLine("\nCalling TenderAPI.replaceTenderData(TenderData.Address, false, false)...");
+	Console.WriteLine("\nCalling TenderLogic.createContract([10, 20, 30, 2, 21102018, 21102020, 1], [123, 10987], [1])...");
 	Console.Write("Function call transaction: ");
-	Console.WriteLine(GetReceipt(TenderAPI.CallWrite("replaceTenderData", Wallet, TenderData.Address, false, false)));
-
-	Console.WriteLine("\nCalling TenderAPI.createContract([10, 20, 30, 2, 21102018, 21102020, 1], [123, 10987], [1])...");
-	Console.Write("Function call transaction: ");
-	Console.WriteLine(GetReceipt(TenderAPI.CallWrite("createContract", Wallet, new BigInteger[] {
+	Console.WriteLine(GetReceipt(TenderLogic.CallWrite("createContract", Wallet, new BigInteger[] {
 			10, 20, 30, //smallServerPrice, mediumServerPrice, largeServerPrice
 			2, //penaltyPerDay
 			21102018, //creationDate
@@ -150,13 +137,13 @@ static void ViewGanacheLog() {
 		}, new ushort[] { 1 } //daysForDelivery
 	)));
 
-	Console.WriteLine("\nCalling TenderAPI.createOrder(123, 12, 0, 3, 1)...");
+	Console.WriteLine("\nCalling TenderLogic.createOrder(123, 12, 0, 3, 1)...");
 	Console.Write("Function call transaction: ");
 	//uint32 contractId, uint32 orderId, uint16 small, uint16 medium, uint16 large
-	Console.WriteLine(GetReceipt(TenderAPI.CallWrite("createOrder", Wallet, 123, 12, 0, 3, 1)));
+	Console.WriteLine(GetReceipt(TenderLogic.CallWrite("createOrder", Wallet, 123, 12, 0, 3, 1)));
 	Console.WriteLine("\nReady!\n");
 //} catch (Exception ex) {
 //	ErrorHandler.Show("An error occurred while executing init-nethereum.csx", ex);
 //}
 
-//TenderAPI.CallRead<string>("tenderBLL").Await();
+//TenderData.CallRead<BigInteger>("getSmallServerPrice", 123).Await();
