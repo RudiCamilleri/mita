@@ -37,7 +37,7 @@ interface TenderBLLInterface {
 	function topUpPerformanceGuarantee() external;
 	//stops the contract if payment isnt made.
 	function stopOrder(uint32 orderNumber, uint8 penalty) external; //uint32 - Order number, uint8 - Penalty to be taken
-    //if order was delivered proceed
+	//if order was delivered proceed
 	function deliveryAcceptance(uint32 orderNumber, uint16 serverAmount) external; //uint32 - Order number, unit16 server amount as a whole
 	//to confirm order is delivered
 	//automatically accepts extension

@@ -63,10 +63,33 @@ contract TenderLogic {
 		tenderData.addOrder(contractId, orderId, small, medium, large);
 	}
 
-	//to confirm order is delivered
+	//Marks the order as delivered
 	function markDelivered(uint32 contractId, uint32 orderId) external restricted {
 		tenderData.setOrderState(contractId, orderId, TenderDataInterface.OrderState.Delivered);
 	}
+
+	//Marks the order as cancelled
+	function cancelOrder(uint32 contractId, uint32 orderId) external restricted {
+		tenderData.setOrderState(contractId, orderId, TenderDataInterface.OrderState.Cancelled);
+	}
+
+	/*
+	//passes refundable deposit
+	function topUpPerformanceGuarantee() external;
+	//stops the contract if payment isnt made.
+	function stopOrder(uint32 orderNumber, uint8 penalty) external; //uint32 - Order number, uint8 - Penalty to be taken
+    //if order was delivered proceed
+	function deliveryAcceptance(uint32 orderNumber, uint16 serverAmount) external; //uint32 - Order number, unit16 server amount as a whole
+	//to confirm order is delivered
+	//automatically accepts extension
+	function defaultAcceptanceOfOrderDeadlineExtension(uint32 orderNumber) external; //uint32 - Order number
+	//to reject the extension
+	function rejectOrderDeadlineExtension(uint32 orderNumber) external; //uint32 - Order number
+	//accepts deadline manually
+	function acceptOrderDeadlineExtension(uint32 orderNumber, uint64 dateExtension) external; //uint32 - Order number, uint 64 is checking date of extension
+	//requests an extension of a deadline
+	function requestOrderDeadlineExtension(uint32 orderNumber, bytes32 reason, uint64 dateExtension) external; //bytes 32 to store explanation, uint 64 is checking date of extension
+	*/
 
 	//Ends the contract
 	function endContract(uint32 contractId) external restricted {
