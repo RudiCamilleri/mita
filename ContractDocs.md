@@ -34,16 +34,18 @@ Here are a few sample commands you can use to quickly interact with the smart co
     TenderData.CallRead("getSmallServerPrice", 123).Await();
 
     //Creates a new business contract instance within the smart contract
-    TenderLogic.CallWrite("createContract", Wallet, new BigInteger[] {
-        10, 20, 30, //smallServerPrice, mediumServerPrice, largeServerPrice
-        2, //penaltyPerDay
-        21102018, //creationDate in UTC time
-        21102020, //expiryDate in UTC time
-        1, //guaranteeRequired
-    }, new uint[] {
-        123, //contractId
-        10987, //operatorId
-    }, new ushort[] { 1 /*daysForDelivery*/ }).Await();
+    TenderLogic.CallWrite("createContract", Wallet, ClientWallet.Address,
+        new BigInteger[] {
+            10, 20, 30, //smallServerPrice, mediumServerPrice, largeServerPrice
+            2, //penaltyPerDay
+            1555337743, //creationDate in UTC time
+            1655337743, //expiryDate in UTC time
+            1, //guaranteeRequired
+        }, new uint[] {
+            123, //contractId
+            10987, //operatorId
+        }, new ushort[] { 1 } //daysForDelivery
+    ).Await();
 
     //Creates a new order with ID #12 for contract #123 of 0 small servers, 3 medium servers and 1 large
     TenderLogic.CallWrite("createOrder", Wallet, 123, 12, 0, 3, 1);

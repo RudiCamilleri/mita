@@ -32,10 +32,11 @@ contract TenderData is TenderDataInterface {
 		tenderLogic = newTenderLogicAddress;
 	}
 
-	//Adds the contract to the contracts dictionary a contract instance (should be changed to external when compiler support starts to exist)
-	function addContract(uint128[] calldata params128, uint32[] calldata params32, uint16[] calldata params16) external restricted {
+	//Adds a business contract instance to the smart contract
+	function addContract(address payable client, uint128[] calldata params128, uint32[] calldata params32, uint16[] calldata params16) external restricted {
 		require(contracts[params32[0]].creationDate == 0, "Contract already exists with that ID");
 		contracts[params32[0]] = TenderDataInterface.TenderContract({
+			client: client,
 			state: TenderDataInterface.ContractState.Active,
 			smallServerPrice: params128[0],
 			mediumServerPrice: params128[1],
@@ -49,7 +50,7 @@ contract TenderData is TenderDataInterface {
 		});
 	}
 
-	//Adds a new order to the speicfied contract
+	//Adds a new order to the specified contract
 	function addOrder(uint32 contractId, uint32 orderId, uint16 small, uint16 medium, uint16 large) external restricted {
 		require(contracts[contractId].creationDate != 0 && contracts[contractId].orders[orderId].small == 0 && contracts[contractId].orders[orderId].medium == 0 && contracts[contractId].orders[orderId].large == 0, "The specified contract is empty or an order already exists with that ID");
 		contracts[contractId].orders[orderId] = TenderDataInterface.Order({
@@ -81,6 +82,10 @@ contract TenderData is TenderDataInterface {
 	}
 
 	//=============== PUBLIC READ-ONLY SECTION ====================
+	function getClient(uint32 contractId) external view returns (address payable) {
+		return contracts[contractId].client;
+	}
+
 	function getContractState(uint32 contractId) external view returns (TenderDataInterface.ContractState) {
 		return contracts[contractId].state;
 	}

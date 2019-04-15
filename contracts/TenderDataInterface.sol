@@ -12,6 +12,7 @@ interface TenderDataInterface {
 	//Represents the current state of an order
 	enum OrderState {
 		Pending,
+		PaidPending,
 		Delivered,
 		Cancelled
 	}
@@ -26,6 +27,7 @@ interface TenderDataInterface {
 
 	//Defines a legal contract instance
 	struct TenderContract {
+		address payable client;
 		ContractState state;
 		uint128 smallServerPrice;
 		uint128 mediumServerPrice;
@@ -45,10 +47,10 @@ interface TenderDataInterface {
 	//Migrates the data from an old TenderData instance to a new one
 	function migrateData(address oldTenderDataAddress) external;
 
-	//Adds the contract to the contracts dictionary a contract instance (should be changed to external when compiler support starts to exist)
-	function addContract(uint128[] calldata params128, uint32[] calldata params32, uint16[] calldata params16) external;
+	//Adds a business contract instance to the smart contract
+	function addContract(address payable client, uint128[] calldata params128, uint32[] calldata params32, uint16[] calldata params16) external;
 
-	//Adds a new order to the speicfied contract
+	//Adds a new order to the specified contract
 	function addOrder(uint32 contractId, uint32 orderId, uint16 small, uint16 medium, uint16 large) external;
 
 	//Sets the order state
@@ -61,6 +63,7 @@ interface TenderDataInterface {
 	function endService(address payable targetWallet) external;
 
 	//=============== PUBLIC READ-ONLY SECTION ====================
+	function getClient(uint32 contractId) external view returns (address payable);
 	function getContractState(uint32 contractId) external view returns (ContractState);
 	function getSmallServerPrice(uint32 contractId) external view returns (uint128);
 	function getMediumServerPrice(uint32 contractId) external view returns (uint128);

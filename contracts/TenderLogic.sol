@@ -26,6 +26,20 @@ contract TenderLogic {
 	//Functions that are used in the smart contract itself and are to be exported should be marked as public,
 	//whereas functions that are only called from outside should be marked as external
 
+	//Replaces the current owner of the contract (not recommended to use)
+	function replaceOwner(address newOwner) external restricted {
+		owner = newOwner;
+	}
+
+	//Replaces the current TenderLogic smart contract implementation
+	function replaceTenderLogic(address payable newTenderLogicAddress, bool killOldTenderLogic) external restricted {
+		require(newTenderLogicAddress != address(this), "Invalid newTenderLogicAddress in replaceTenderLogic TenderLogic");
+		if (address(tenderData) != address(0))
+			tenderData.replaceTenderLogic(newTenderLogicAddress);
+		if (killOldTenderLogic)
+			selfdestruct(newTenderLogicAddress);
+	}
+
 	//Sets or replaces the TenderDataInterface smart contract implementation
 	function replaceTenderData(address payable newTenderDataAddress, bool migrateOldData, bool killOldData) external restricted {
 		require(newTenderDataAddress != address(tenderData), "Invalid newTenderDataAddress in replaceTenderData TenderLogic");
@@ -39,23 +53,9 @@ contract TenderLogic {
 		}
 	}
 
-	//Replaces the current TenderLogic smart contract implementation
-	function replaceTenderLogic(address payable newTenderLogicAddress, bool killOldTenderLogic) external restricted {
-		require(newTenderLogicAddress != address(this), "Invalid newTenderLogicAddress in replaceTenderLogic TenderLogic");
-		if (address(tenderData) != address(0))
-			tenderData.replaceTenderLogic(newTenderLogicAddress);
-		if (killOldTenderLogic)
-			selfdestruct(newTenderLogicAddress);
-	}
-
-	//Replaces the current owner of the contract (not recommended to use)
-	function replaceOwner(address newOwner) external restricted {
-		owner = newOwner;
-	}
-
 	//Creates a contract instance
-	function createContract(uint128[] calldata params128, uint32[] calldata params32, uint16[] calldata params16) external restricted {
-		tenderData.addContract(params128, params32, params16);
+	function createContract(address payable client, uint128[] calldata params128, uint32[] calldata params32, uint16[] calldata params16) external restricted {
+		tenderData.addContract(client, params128, params32, params16);
 	}
 
 	//Creates an order
@@ -65,13 +65,23 @@ contract TenderLogic {
 
 	//Marks the order as delivered
 	function markDelivered(uint32 contractId, uint32 orderId) external restricted {
+		require(tenderData.getOrderState(contractId, orderId) == TenderDataInterface.OrderState.PaidPending, "Order must be PaidPending to mark as delivered");
 		tenderData.setOrderState(contractId, orderId, TenderDataInterface.OrderState.Delivered);
 
 	}
 
 	//Marks the order as cancelled
 	function cancelOrder(uint32 contractId, uint32 orderId) external restricted {
+		TenderDataInterface.OrderState state = tenderData.getOrderState(contractId, orderId);
+		require(!(state == TenderDataInterface.OrderState.Delivered || state == TenderDataInterface.OrderState.Cancelled), "Order cannot be already cancelled or delivered to mark it as cancelled");
 		tenderData.setOrderState(contractId, orderId, TenderDataInterface.OrderState.Cancelled);
+		if (state == TenderDataInterface.OrderState.PaidPending) {
+			tenderData.getClient(contractId).transfer(
+				tenderData.getSmallServerPrice(contractId) * tenderData.getSmallServersOrdered(contractId, orderId) +
+				tenderData.getMediumServerPrice(contractId) * tenderData.getMediumServersOrdered(contractId, orderId) +
+				tenderData.getLargeServerPrice(contractId) * tenderData.getLargeServersOrdered(contractId, orderId)
+			);
+		}
 	}
 
 	/*

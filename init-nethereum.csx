@@ -76,8 +76,12 @@ static void ViewGanacheLog() {
 	Console.WriteLine("Web3 configuration initialized successfully!");
 
 	Console.WriteLine("\nLoading wallet address...");
-	var Wallet = ContractUtil.GetWalletAddressFromGanacheLog(GanacheLogPath);
+	var Wallet = ContractUtil.GetWalletAddressFromGanacheLog(GanacheLogPath, 0);
 	Console.WriteLine("Wallet address detected at " + Wallet);
+
+	Console.WriteLine("\nLoading client wallet address...");
+	var ClientWallet = ContractUtil.GetWalletAddressFromGanacheLog(GanacheLogPath, 1);
+	Console.WriteLine("Client wallet address detected at " + ClientWallet);
 
 	/*var Password = "password";
 	Console.WriteLine("Unlocking wallet using password \"" + Password + "\"...");
@@ -123,9 +127,10 @@ static void ViewGanacheLog() {
 	Console.Write("Function call transaction: ");
 	Console.WriteLine(GetReceipt(TenderLogic.CallWrite("replaceTenderData", Wallet, TenderData.Address, false, false)));
 
-	Console.WriteLine("\nCalling TenderLogic.createContract([10, 20, 30, 2, 1555337743, 1655337743, 1], [123, 10987], [1])...");
+	Console.WriteLine("\nCalling TenderLogic.createContract(ClientWallet, [10, 20, 30, 2, 1555337743, 1655337743, 1], [123, 10987], [1])...");
 	Console.Write("Function call transaction: ");
-	Console.WriteLine(GetReceipt(TenderLogic.CallWrite("createContract", Wallet, new BigInteger[] {
+	Console.WriteLine(GetReceipt(TenderLogic.CallWrite("createContract", Wallet, ClientWallet.Address,
+		new BigInteger[] {
 			10, 20, 30, //smallServerPrice, mediumServerPrice, largeServerPrice
 			2, //penaltyPerDay
 			1555337743, //creationDate in UTC time
