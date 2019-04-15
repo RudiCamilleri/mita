@@ -32,8 +32,8 @@ interface TenderDataInterface {
 		uint128 largeServerPrice;
 		uint16 daysForDelivery;
 		uint128 penaltyPerDay;
-		uint128 creationDate;
-		uint128 expiryDate;
+		uint128 creationDate; //in UTC time
+		uint128 expiryDate; //in UTC time
 		uint32 operatorId;
 		uint128 guaranteeRequired;
 		mapping(uint32 => Order) orders;
@@ -54,8 +54,8 @@ interface TenderDataInterface {
 	//Sets the order state
 	function setOrderState(uint32 contractId, uint32 orderId, OrderState newState) external;
 
-	//Marks the contract as ended
-	function markEnded(uint32 contractId) external;
+	//Marks the contract as expired
+	function markExpired(uint32 contractId) external;
 
 	//Kills the service
 	function endService(address payable targetWallet) external;

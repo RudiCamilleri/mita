@@ -2,7 +2,7 @@
 
 Website repository can be found here: https://github.com/mathusummut/tender-website
 
-Smart contract documentation is located here: https://github.com/mathusummut/tender/blob/master/ContractStructure.md
+Smart contract documentation is located here: https://github.com/mathusummut/tender/blob/master/ContractDocs.md
 
 ## To set up local development environment for testing Solidity smart contracts:
 

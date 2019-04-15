@@ -69,8 +69,8 @@ contract TenderData is TenderDataInterface {
 		contracts[contractId].orders[orderId].state = newState;
 	}
 
-	//Marks the contract as ended
-	function markEnded(uint32 contractId) external restricted {
+	//Marks the contract as expired
+	function markExpired(uint32 contractId) external restricted {
 		contracts[contractId].state = TenderDataInterface.ContractState.Expired;
 		//delete contracts[contractId];
 	}

@@ -123,13 +123,13 @@ static void ViewGanacheLog() {
 	Console.Write("Function call transaction: ");
 	Console.WriteLine(GetReceipt(TenderLogic.CallWrite("replaceTenderData", Wallet, TenderData.Address, false, false)));
 
-	Console.WriteLine("\nCalling TenderLogic.createContract([10, 20, 30, 2, 21102018, 21102020, 1], [123, 10987], [1])...");
+	Console.WriteLine("\nCalling TenderLogic.createContract([10, 20, 30, 2, 1555337743, 1655337743, 1], [123, 10987], [1])...");
 	Console.Write("Function call transaction: ");
 	Console.WriteLine(GetReceipt(TenderLogic.CallWrite("createContract", Wallet, new BigInteger[] {
 			10, 20, 30, //smallServerPrice, mediumServerPrice, largeServerPrice
 			2, //penaltyPerDay
-			21102018, //creationDate
-			21102020, //expiryDate
+			1555337743, //creationDate in UTC time
+			1655337743, //expiryDate in UTC time
 			1 //guaranteeRequired
 		}, new uint[] {
 			123, //contractId
@@ -145,5 +145,3 @@ static void ViewGanacheLog() {
 //} catch (Exception ex) {
 //	ErrorHandler.Show("An error occurred while executing init-nethereum.csx", ex);
 //}
-
-//TenderData.CallRead<BigInteger>("getSmallServerPrice", 123).Await();

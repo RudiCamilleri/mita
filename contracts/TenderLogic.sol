@@ -66,6 +66,7 @@ contract TenderLogic {
 	//Marks the order as delivered
 	function markDelivered(uint32 contractId, uint32 orderId) external restricted {
 		tenderData.setOrderState(contractId, orderId, TenderDataInterface.OrderState.Delivered);
+
 	}
 
 	//Marks the order as cancelled
@@ -92,8 +93,9 @@ contract TenderLogic {
 	*/
 
 	//Ends the contract
-	function endContract(uint32 contractId) external restricted {
-		tenderData.markEnded(contractId);
+	function endContract(uint32 contractId, uint128 currentUtcDate) external restricted {
+		require(currentUtcDate - tenderData.getExpiryDate(contractId) >= 0);
+		tenderData.markExpired(contractId);
 	}
 
 	//Kills the service
