@@ -172,6 +172,14 @@
             <param name="abi">The contract ABI</param>
             <param name="address">The address at which the contract was deployed</param>
         </member>
+        <member name="M:ContractUtils.ContractUtil.CallRead(Nethereum.Contracts.Contract,System.String,System.Object[])">
+            <summary>
+            Calls the specified function as a read operation and returns a generic object
+            </summary>
+            <param name="contract">The contract instance on which to invoke the function</param>
+            <param name="functionName">The name of the function to invoke</param>
+            <param name="functionParams">The parameters to pass to the function</param>
+        </member>
         <member name="M:ContractUtils.ContractUtil.CallRead``1(Nethereum.Contracts.Contract,System.String,System.Object[])">
             <summary>
             Calls the specified function as a read operation
@@ -179,6 +187,13 @@
             <typeparam name="T">The return type of the function</typeparam>
             <param name="contract">The contract instance on which to invoke the function</param>
             <param name="functionName">The name of the function to invoke</param>
+            <param name="functionParams">The parameters to pass to the function</param>
+        </member>
+        <member name="M:ContractUtils.ContractUtil.CallRead(Nethereum.Contracts.Function,System.Object[])">
+            <summary>
+            Calls the specified function as a read operation and returns a generic object
+            </summary>
+            <param name="function">The isntance of the function to invoke, which is the object returned by contractInstance.GetFunction("functionName")</param>
             <param name="functionParams">The parameters to pass to the function</param>
         </member>
         <member name="M:ContractUtils.ContractUtil.CallRead``1(Nethereum.Contracts.Function,System.Object[])">
@@ -205,7 +220,7 @@
             <summary>
             Calls the specified function as a read operation
             </summary>
-            <param name="function">The isntance of the function to invoke, which is the object returned by contractInstance.GetFunction("functionName")</param>
+            <param name="function">The instance of the function to invoke, which is the object returned by contractInstance.GetFunction("functionName")</param>
             <param name="wallet">The wallet address of the contract owner</param>
             <param name="gas">The gas value</param>
             <param name="gasPrice">The gas price</param>
@@ -225,7 +240,7 @@
             <summary>
             Calls the specified function as a read operation using default config
             </summary>
-            <param name="function">The isntance of the function to invoke, which is the object returned by contractInstance.GetFunction("functionName")</param>
+            <param name="function">The instance of the function to invoke, which is the object returned by contractInstance.GetFunction("functionName")</param>
             <param name="wallet">The wallet address of the contract owner</param>
             <param name="functionParams">The parameters to pass to the function</param>
         </member>
@@ -326,6 +341,12 @@
             </summary>
             <param name="contract">The contract object that was created</param>
             <param name="receipt">The transaction receipt received at the creation of the contract</param>
+        </member>
+        <member name="M:ContractUtils.DeployedContract.op_Implicit(ContractUtils.DeployedContract)~Nethereum.Contracts.Contract">
+            <summary>
+            Gets the deployed contract instance
+            </summary>
+            <param name="contract">The instance whose contract to return</param>
         </member>
         <member name="T:ContractUtils.Wallet">
             <summary>

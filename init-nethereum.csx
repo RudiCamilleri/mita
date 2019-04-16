@@ -100,7 +100,7 @@ static void ViewGanacheLog() {
 	var TenderDataCompiled = ContractUtil.GetCompiledContract(@"build\contracts\TenderData.json");
 	var TenderDataAbi = TenderDataCompiled.Abi;
 	var TenderDataByteCode = TenderDataCompiled.ByteCode;
-	var TenderDataDeployment = ContractUtil.DeployContract(TenderDataCompiled, Wallet, TenderLogic.Address).Await();
+	var TenderDataDeployment = ContractUtil.DeployContract(TenderDataCompiled, Wallet, TenderLogic).Await();
 	var TenderData = TenderDataDeployment.Contract;
 	var TenderDataReceipt = TenderDataDeployment.Receipt;
 	Console.WriteLine("TenderDataReceipt: " + ToJson(TenderDataReceipt));
@@ -123,13 +123,13 @@ static void ViewGanacheLog() {
 		}
 	}*/
 
-	Console.WriteLine("\nCalling TenderLogic.replaceTenderData(TenderData.Address, false, false)...");
+	Console.WriteLine("\nCalling TenderLogic.replaceTenderData(TenderData, false, false)...");
 	Console.Write("Function call transaction: ");
-	Console.WriteLine(GetReceipt(TenderLogic.CallWrite("replaceTenderData", Wallet, TenderData.Address, false, false)));
+	Console.WriteLine(GetReceipt(TenderLogic.CallWrite("replaceTenderData", Wallet, TenderData, false, false)));
 
 	Console.WriteLine("\nCalling TenderLogic.createContract(ClientWallet, [10, 20, 30, 2, 1555337743, 1655337743, 1], [123, 10987], [1])...");
 	Console.Write("Function call transaction: ");
-	Console.WriteLine(GetReceipt(TenderLogic.CallWrite("createContract", Wallet, ClientWallet.Address,
+	Console.WriteLine(GetReceipt(TenderLogic.CallWrite("createContract", Wallet, ClientWallet,
 		new BigInteger[] {
 			10, 20, 30, //smallServerPrice, mediumServerPrice, largeServerPrice
 			2, //penaltyPerDay
