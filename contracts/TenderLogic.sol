@@ -72,16 +72,18 @@ contract TenderLogic {
 
 	//Marks the order as cancelled
 	function cancelOrder(uint32 contractId, uint32 orderId) external restricted {
-		TenderDataInterface.OrderState state = tenderData.getOrderState(contractId, orderId);
-		require(!(state == TenderDataInterface.OrderState.Delivered || state == TenderDataInterface.OrderState.Cancelled), "Order cannot be already cancelled or delivered to mark it as cancelled");
+		require(tenderData.getOrderState(contractId, orderId) == TenderDataInterface.OrderState.Pending, "Only pending orders can be cancelled");
 		tenderData.setOrderState(contractId, orderId, TenderDataInterface.OrderState.Cancelled);
-		if (state == TenderDataInterface.OrderState.PaidPending) {
-			tenderData.getClient(contractId).transfer(
-				tenderData.getSmallServerPrice(contractId) * tenderData.getSmallServersOrdered(contractId, orderId) +
-				tenderData.getMediumServerPrice(contractId) * tenderData.getMediumServersOrdered(contractId, orderId) +
-				tenderData.getLargeServerPrice(contractId) * tenderData.getLargeServersOrdered(contractId, orderId)
-			);
-		}
+	}
+
+	//Accepts the order as delivered and pays the client
+	function acceptDelivery(uint32 contractId, uint32 orderId) external restricted {
+		require(tenderData.getOrderState(contractId, orderId) == TenderDataInterface.OrderState.Pending, "Only pending orders can be accepted as delivered");
+		tenderData.getClient(contractId).transfer(
+			tenderData.getSmallServerPrice(contractId) * tenderData.getSmallServersOrdered(contractId, orderId) +
+			tenderData.getMediumServerPrice(contractId) * tenderData.getMediumServersOrdered(contractId, orderId) +
+			tenderData.getLargeServerPrice(contractId) * tenderData.getLargeServersOrdered(contractId, orderId)
+		);
 	}
 
 	/*
@@ -89,9 +91,7 @@ contract TenderLogic {
 	function topUpPerformanceGuarantee() external;
 	//stops the contract if payment isnt made.
 	function stopOrder(uint32 orderNumber, uint8 penalty) external; //uint32 - Order number, uint8 - Penalty to be taken
-    //if order was delivered proceed
-	function deliveryAcceptance(uint32 orderNumber, uint16 serverAmount) external; //uint32 - Order number, unit16 server amount as a whole
-	//to confirm order is delivered
+
 	//automatically accepts extension
 	function defaultAcceptanceOfOrderDeadlineExtension(uint32 orderNumber) external; //uint32 - Order number
 	//to reject the extension
@@ -101,6 +101,12 @@ contract TenderLogic {
 	//requests an extension of a deadline
 	function requestOrderDeadlineExtension(uint32 orderNumber, bytes32 reason, uint64 dateExtension) external; //bytes 32 to store explanation, uint 64 is checking date of extension
 	*/
+
+	//Extends the deadline of an order
+	function extendOrderDeadline(uint32 contractId, uint32 orderId, uint128 newUtcDeadline) external restricted {
+		require(tenderData.getOrderDeadline(contractId, orderId) < newUtcDeadline, "New order deadline cannot be older than the current order deadline");
+		tenderData.setOrderDeadline(contractId, orderId, newUtcDeadline);
+	}
 
 	//Ends the contract
 	function endContract(uint32 contractId, uint128 currentUtcDate) external restricted {

@@ -6,7 +6,7 @@ import "./TenderDataInterface.sol";
 //This is the contract data storage layer
 contract TenderData is TenderDataInterface {
 	address public tenderLogic; //the parent TenderLogic smart contract instance
-	mapping(uint32 => TenderDataInterface.TenderContract) contracts; //the legal contracts that are represented in this instance
+	mapping(uint32 => TenderDataInterface.Contract) contracts; //the legal contracts that are represented in this instance
 
 	//Initializes the smart contract
 	constructor(address tenderLogicAddress) public {
@@ -51,13 +51,14 @@ contract TenderData is TenderDataInterface {
 	}
 
 	//Adds a new order to the specified contract
-	function addOrder(uint32 contractId, uint32 orderId, uint16 small, uint16 medium, uint16 large) external restricted {
+	function addOrder(uint32 contractId, uint32 orderId, uint16 small, uint16 medium, uint16 large, uint128 orderDeadlineDate) external restricted {
 		require(contracts[contractId].creationDate != 0 && contracts[contractId].orders[orderId].small == 0 && contracts[contractId].orders[orderId].medium == 0 && contracts[contractId].orders[orderId].large == 0, "The specified contract is empty or an order already exists with that ID");
 		contracts[contractId].orders[orderId] = TenderDataInterface.Order({
 			state: TenderDataInterface.OrderState.Pending,
 			small: small,
 			medium: medium,
-			large: large
+			large: large,
+			orderDeadlineDate: orderDeadlineDate
 		});
 	}
 
@@ -68,6 +69,11 @@ contract TenderData is TenderDataInterface {
 	//Sets the order state
 	function setOrderState(uint32 contractId, uint32 orderId, TenderDataInterface.OrderState newState) external restricted {
 		contracts[contractId].orders[orderId].state = newState;
+	}
+
+	//Sets the order deadline
+	function setOrderDeadline(uint32 contractId, uint32 orderId, uint128 newUtcDeadline) external restricted {
+		contracts[contractId].orders[orderId].orderDeadlineDate = newUtcDeadline;
 	}
 
 	//Marks the contract as expired

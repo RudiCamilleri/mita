@@ -12,29 +12,49 @@ interface TenderDataInterface {
 	//Represents the current state of an order
 	enum OrderState {
 		Pending,
-		PaidPending,
 		Delivered,
 		Cancelled
+	}
+
+	struct Attributes {
+		//Contract: current number of small servers ordered
+		//Order: current number of small servers that arrived
+		uint16 small;
+		//Contract: current number of medium servers ordered
+		//Order: current number of medium servers that arrived
+		uint16 medium;
+		//Contract: current number of large servers ordered
+		//Order: current number of large servers that arrived
+		uint16 large;
+		//Contract: max number of small servers that can be ordered
+		//Order: the number of small servers ordered
+		uint16 maxSmall;
+		//Contract: max number of medium servers that can be ordered
+		//Order: the number of medium servers ordered
+		uint16 maxMedium;
+		//Contract: max number of medium servers that can be ordered
+		//Order: the number of medium servers ordered
+		uint16 maxLarge;
+		//The deadline date in UTC time
+		uint128 deadline;
 	}
 
 	//Defines an order for a contract
 	struct Order {
 		OrderState state;
-		uint16 small; //small servers ordered
-		uint16 medium; //medium servers ordered
-		uint16 large; //large servers ordered
+		Attributes attr;
 	}
 
 	//Defines a legal contract instance
-	struct TenderContract {
+	struct Contract {
 		address payable client;
 		ContractState state;
+		Attributes attr;
 		uint128 smallServerPrice;
 		uint128 mediumServerPrice;
 		uint128 largeServerPrice;
-		uint16 daysForDelivery;
+		uint16 defaultDaysForDelivery;
 		uint128 penaltyPerDay;
-		uint128 creationDate; //in UTC time
 		uint128 expiryDate; //in UTC time
 		uint32 operatorId;
 		uint128 guaranteeRequired;
@@ -51,10 +71,13 @@ interface TenderDataInterface {
 	function addContract(address payable client, uint128[] calldata params128, uint32[] calldata params32, uint16[] calldata params16) external;
 
 	//Adds a new order to the specified contract
-	function addOrder(uint32 contractId, uint32 orderId, uint16 small, uint16 medium, uint16 large) external;
+	function addOrder(uint32 contractId, uint32 orderId, uint16 small, uint16 medium, uint16 large, uint128 orderDeadlineDate) external;
 
 	//Sets the order state
 	function setOrderState(uint32 contractId, uint32 orderId, OrderState newState) external;
+
+	//Sets the order deadline
+	function setOrderDeadline(uint32 contractId, uint32 orderId, uint128 newUtcDeadline) external;
 
 	//Marks the contract as expired
 	function markExpired(uint32 contractId) external;
@@ -79,5 +102,5 @@ interface TenderDataInterface {
 	function getSmallServersOrdered(uint32 contractId, uint32 orderId) external view returns (uint16);
 	function getMediumServersOrdered(uint32 contractId, uint32 orderId) external view returns (uint16);
 	function getLargeServersOrdered(uint32 contractId, uint32 orderId) external view returns (uint16);
-
+	function getOrderDeadline(uint32 contractId, uint32 orderId) external view returns (uint16);
 }
