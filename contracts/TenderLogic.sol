@@ -96,10 +96,10 @@ contract TenderLogic {
 	//Accepts the order as delivered and pays the client
 	function acceptDelivery(uint32 contractId, uint32 orderId) external restricted
 	orderActive(contractId, orderId) {
-		tenderData.getClient(contractId).transfer(
-			tenderData.getSmallServerPrice(contractId) * tenderData.getSmallServersOrdered(contractId, orderId) +
-			tenderData.getMediumServerPrice(contractId) * tenderData.getMediumServersOrdered(contractId, orderId) +
-			tenderData.getLargeServerPrice(contractId) * tenderData.getLargeServersOrdered(contractId, orderId)
+		tenderData.getClient(contractId).transfer(safeAdd(safeAdd(
+			safeMul(tenderData.getSmallServerPrice(contractId), tenderData.getSmallServersOrdered(contractId, orderId)),
+			safeMul(tenderData.getMediumServerPrice(contractId), tenderData.getMediumServersOrdered(contractId, orderId))),
+			safeMul(tenderData.getLargeServerPrice(contractId), tenderData.getLargeServersOrdered(contractId, orderId)))
 		);
 	}
 
@@ -129,7 +129,7 @@ contract TenderLogic {
 	//Ends the contract
 	function endContract(uint32 contractId, uint128 currentUtcDate) external restricted
 	contractActive(contractId) {
-		require(currentUtcDate - tenderData.getContractDeadline(contractId) >= 0);
+		require(currentUtcDate >= tenderData.getContractDeadline(contractId));
 		tenderData.markExpired(contractId);
 	}
 
@@ -137,5 +137,25 @@ contract TenderLogic {
 	function endService(address payable targetWallet) external restricted {
 		tenderData.endService(targetWallet);
 		selfdestruct(targetWallet);
+	}
+
+	function safeAdd(uint a, uint b) internal pure returns (uint c) {
+		c = a + b;
+		require(c >= a);
+	}
+
+	function safeSub(uint a, uint b) internal pure returns (uint c) {
+		require(b <= a);
+		c = a - b;
+	}
+
+	function safeMul(uint a, uint b) internal pure returns (uint c) {
+		c = a * b;
+		require(a == 0 || c / a == b);
+	}
+
+	function safeDiv(uint a, uint b) internal pure returns (uint c) {
+		require(b > 0);
+		c = a / b;
 	}
 }
