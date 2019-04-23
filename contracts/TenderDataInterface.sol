@@ -5,13 +5,16 @@ pragma solidity >=0.5.0;
 interface TenderDataInterface {
 	//Represents the current state of a legal contract
 	enum ContractState {
-		Expired,
-		Active
+		Null,
+		Active,
+		Expired
 	}
 
 	//Represents the current state of an order
 	enum OrderState {
+		Null,
 		Pending,
+		BeingDelivered,
 		Delivered,
 		Cancelled
 	}
@@ -19,23 +22,24 @@ interface TenderDataInterface {
 	struct Attributes {
 		//Contract: current number of small servers ordered
 		//Order: current number of small servers that arrived
-		uint16 small;
+		uint32 small;
 		//Contract: current number of medium servers ordered
 		//Order: current number of medium servers that arrived
-		uint16 medium;
+		uint32 medium;
 		//Contract: current number of large servers ordered
 		//Order: current number of large servers that arrived
-		uint16 large;
+		uint32 large;
 		//Contract: max number of small servers that can be ordered
 		//Order: the number of small servers ordered
-		uint16 maxSmall;
+		uint32 maxSmall;
 		//Contract: max number of medium servers that can be ordered
 		//Order: the number of medium servers ordered
-		uint16 maxMedium;
+		uint32 maxMedium;
 		//Contract: max number of medium servers that can be ordered
 		//Order: the number of medium servers ordered
-		uint16 maxLarge;
-		//The deadline date in UTC time
+		uint32 maxLarge;
+		//Contract: the contract expiry date in UTC time
+		//Order: the order deadline in UTC time
 		uint128 deadline;
 	}
 
@@ -49,18 +53,45 @@ interface TenderDataInterface {
 	struct Contract {
 		address payable client;
 		ContractState state;
-		Attributes attr;
 		uint128 smallServerPrice;
 		uint128 mediumServerPrice;
 		uint128 largeServerPrice;
 		uint16 defaultDaysForDelivery;
 		uint128 penaltyPerDay;
-		uint128 expiryDate; //in UTC time
-		uint32 operatorId;
 		uint128 guaranteeRequired;
+		Attributes attr;
 		mapping(uint32 => Order) orders;
 	}
 
+	//=============== PUBLIC READ-ONLY SECTION ====================
+	//==================== Contract Data ==========================
+	function getClient(uint32 contractId) external view returns (address payable);
+	function getSmallServerPrice(uint32 contractId) external view returns (uint128);
+	function getMediumServerPrice(uint32 contractId) external view returns (uint128);
+	function getLargeServerPrice(uint32 contractId) external view returns (uint128);
+	function getDefaultDaysForDelivery(uint32 contractId) external view returns (uint16);
+	function getPenaltyPerDay(uint32 contractId) external view returns (uint128);
+	function getOperatorId(uint32 contractId) external view returns (uint32);
+	function getGuaranteeRequired(uint32 contractId) external view returns (uint128);
+	function getContractState(uint32 contractId) external view returns (ContractState);
+	function getTotalSmallServersOrdered(uint32 contractId) external view returns (uint32);
+	function getTotalMediumServersOrdered(uint32 contractId) external view returns (uint32);
+	function getTotalLargeServersOrdered(uint32 contractId) external view returns (uint32);
+	function getMaxSmallServers(uint32 contractId) external view returns (uint32);
+	function getMaxMediumServers(uint32 contractId) external view returns (uint32);
+	function getMaxLargeServers(uint32 contractId) external view returns (uint32);
+	function getContractDeadline(uint32 contractId) external view returns (uint128);
+	//====================== Order Data ===========================
+	function getOrderState(uint32 contractId, uint32 orderId) external view returns (OrderState);
+	function getSmallServersDelivered(uint32 contractId, uint32 orderId) external view returns (uint32);
+	function getMediumServersDelivered(uint32 contractId, uint32 orderId) external view returns (uint32);
+	function getLargeServersDelivered(uint32 contractId, uint32 orderId) external view returns (uint32);
+	function getSmallServersOrdered(uint32 contractId, uint32 orderId) external view returns (uint32);
+	function getMediumServersOrdered(uint32 contractId, uint32 orderId) external view returns (uint32);
+	function getLargeServersOrdered(uint32 contractId, uint32 orderId) external view returns (uint32);
+	function getOrderDeadline(uint32 contractId, uint32 orderId) external view returns (uint128);
+
+	//===================== DATA SECTION ==========================
 	//Sets or replaces the TenderLogic smart contract implementation
 	function replaceTenderLogic(address newTenderLogicAddress) external;
 
@@ -68,10 +99,10 @@ interface TenderDataInterface {
 	function migrateData(address oldTenderDataAddress) external;
 
 	//Adds a business contract instance to the smart contract
-	function addContract(address payable client, uint128[] calldata params128, uint32[] calldata params32, uint16[] calldata params16) external;
+	function addContract(uint32 contractId, address payable client, uint128[] calldata params128, uint32[] calldata params32, uint16[] calldata params16) external;
 
 	//Adds a new order to the specified contract
-	function addOrder(uint32 contractId, uint32 orderId, uint16 small, uint16 medium, uint16 large, uint128 orderDeadlineDate) external;
+	function addOrder(uint32 contractId, uint32 orderId, uint128[] calldata params128, uint32[] calldata params32) external;
 
 	//Sets the order state
 	function setOrderState(uint32 contractId, uint32 orderId, OrderState newState) external;
@@ -84,23 +115,4 @@ interface TenderDataInterface {
 
 	//Kills the service
 	function endService(address payable targetWallet) external;
-
-	//=============== PUBLIC READ-ONLY SECTION ====================
-	function getClient(uint32 contractId) external view returns (address payable);
-	function getContractState(uint32 contractId) external view returns (ContractState);
-	function getSmallServerPrice(uint32 contractId) external view returns (uint128);
-	function getMediumServerPrice(uint32 contractId) external view returns (uint128);
-	function getLargeServerPrice(uint32 contractId) external view returns (uint128);
-	function getDaysForDelivery(uint32 contractId) external view returns (uint16);
-	function getPenaltyPerDay(uint32 contractId) external view returns (uint128);
-	function getCreationDate(uint32 contractId) external view returns (uint128);
-	function getExpiryDate(uint32 contractId) external view returns (uint128);
-	function getOperatorId(uint32 contractId) external view returns (uint32);
-	function getGuaranteeRequired(uint32 contractId) external view returns (uint128);
-
-	function getOrderState(uint32 contractId, uint32 orderId) external view returns (OrderState);
-	function getSmallServersOrdered(uint32 contractId, uint32 orderId) external view returns (uint16);
-	function getMediumServersOrdered(uint32 contractId, uint32 orderId) external view returns (uint16);
-	function getLargeServersOrdered(uint32 contractId, uint32 orderId) external view returns (uint16);
-	function getOrderDeadline(uint32 contractId, uint32 orderId) external view returns (uint16);
 }

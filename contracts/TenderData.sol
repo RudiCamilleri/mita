@@ -20,80 +20,10 @@ contract TenderData is TenderDataInterface {
 		_;
 	}
 
-	//=======================================================
-	//== FUNCTION IMPLEMENTATIONS ARE TO BE INSERTED BELOW ==
-	//==    ALL FUNCTIONS MUST BE MARKED AS RESTRICTED!    ==
-	//=======================================================
-	//Functions that are used in the smart contract itself and are to be exported should be marked as public,
-	//whereas functions that are only called from outside should be marked as external
-
-	//Sets or replaces the TenderLogic smart contract implementation
-	function replaceTenderLogic(address newTenderLogicAddress) external restricted {
-		tenderLogic = newTenderLogicAddress;
-	}
-
-	//Adds a business contract instance to the smart contract
-	function addContract(address payable client, uint128[] calldata params128, uint32[] calldata params32, uint16[] calldata params16) external restricted {
-		require(contracts[params32[0]].creationDate == 0, "Contract already exists with that ID");
-		contracts[params32[0]] = TenderDataInterface.TenderContract({
-			client: client,
-			state: TenderDataInterface.ContractState.Active,
-			smallServerPrice: params128[0],
-			mediumServerPrice: params128[1],
-			largeServerPrice: params128[2],
-			daysForDelivery: params16[0],
-			penaltyPerDay: params128[3],
-			creationDate: params128[4],
-			expiryDate: params128[5],
-			operatorId: params32[1],
-			guaranteeRequired: params128[6]
-		});
-	}
-
-	//Adds a new order to the specified contract
-	function addOrder(uint32 contractId, uint32 orderId, uint16 small, uint16 medium, uint16 large, uint128 orderDeadlineDate) external restricted {
-		require(contracts[contractId].creationDate != 0 && contracts[contractId].orders[orderId].small == 0 && contracts[contractId].orders[orderId].medium == 0 && contracts[contractId].orders[orderId].large == 0, "The specified contract is empty or an order already exists with that ID");
-		contracts[contractId].orders[orderId] = TenderDataInterface.Order({
-			state: TenderDataInterface.OrderState.Pending,
-			small: small,
-			medium: medium,
-			large: large,
-			orderDeadlineDate: orderDeadlineDate
-		});
-	}
-
-	//Migrates the data from an old TenderDataInterface instance to a new one
-	function migrateData(address oldTenderDataAddress) external restricted {
-	}
-
-	//Sets the order state
-	function setOrderState(uint32 contractId, uint32 orderId, TenderDataInterface.OrderState newState) external restricted {
-		contracts[contractId].orders[orderId].state = newState;
-	}
-
-	//Sets the order deadline
-	function setOrderDeadline(uint32 contractId, uint32 orderId, uint128 newUtcDeadline) external restricted {
-		contracts[contractId].orders[orderId].orderDeadlineDate = newUtcDeadline;
-	}
-
-	//Marks the contract as expired
-	function markExpired(uint32 contractId) external restricted {
-		contracts[contractId].state = TenderDataInterface.ContractState.Expired;
-		//delete contracts[contractId];
-	}
-
-	//Kills the service
-	function endService(address payable targetWallet) external restricted {
-		selfdestruct(targetWallet);
-	}
-
 	//=============== PUBLIC READ-ONLY SECTION ====================
+	//==================== Contract Data ==========================
 	function getClient(uint32 contractId) external view returns (address payable) {
 		return contracts[contractId].client;
-	}
-
-	function getContractState(uint32 contractId) external view returns (TenderDataInterface.ContractState) {
-		return contracts[contractId].state;
 	}
 
 	function getSmallServerPrice(uint32 contractId) external view returns (uint128) {
@@ -108,44 +38,162 @@ contract TenderData is TenderDataInterface {
 		return contracts[contractId].largeServerPrice;
 	}
 
-	function getDaysForDelivery(uint32 contractId) external view returns (uint16) {
-		return contracts[contractId].daysForDelivery;
+	function getDefaultDaysForDelivery(uint32 contractId) external view returns (uint16) {
+		return contracts[contractId].defaultDaysForDelivery;
 	}
 
 	function getPenaltyPerDay(uint32 contractId) external view returns (uint128) {
 		return contracts[contractId].penaltyPerDay;
 	}
 
-	function getCreationDate(uint32 contractId) external view returns (uint128) {
-		return contracts[contractId].creationDate;
-	}
-
-	function getExpiryDate(uint32 contractId) external view returns (uint128) {
-		return contracts[contractId].expiryDate;
-	}
-
-	function getOperatorId(uint32 contractId) external view returns (uint32) {
-		return contracts[contractId].operatorId;
-	}
-
 	function getGuaranteeRequired(uint32 contractId) external view returns (uint128) {
 		return contracts[contractId].guaranteeRequired;
 	}
 
-	//Orders
+	function getContractState(uint32 contractId) external view returns (TenderDataInterface.ContractState) {
+		return contracts[contractId].state;
+	}
+
+	function getTotalSmallServersOrdered(uint32 contractId) external view returns (uint32) {
+		return contracts[contractId].attr.small;
+	}
+
+	function getTotalMediumServersOrdered(uint32 contractId) external view returns (uint32) {
+		return contracts[contractId].attr.medium;
+	}
+
+	function getTotalLargeServersOrdered(uint32 contractId) external view returns (uint32) {
+		return contracts[contractId].attr.large;
+	}
+
+	function getMaxSmallServers(uint32 contractId) external view returns (uint32) {
+		return contracts[contractId].attr.maxSmall;
+	}
+
+	function getMaxMediumServers(uint32 contractId) external view returns (uint32) {
+		return contracts[contractId].attr.maxMedium;
+	}
+
+	function getMaxLargeServers(uint32 contractId) external view returns (uint32) {
+		return contracts[contractId].attr.maxLarge;
+	}
+
+	function getContractDeadline(uint32 contractId) external view returns (uint128) {
+		return contracts[contractId].attr.deadline;
+	}
+
+	//====================== Order Data ===========================
 	function getOrderState(uint32 contractId, uint32 orderId) external view returns (TenderDataInterface.OrderState) {
 		return contracts[contractId].orders[orderId].state;
 	}
 
-	function getSmallServersOrdered(uint32 contractId, uint32 orderId) external view returns (uint16) {
-		return contracts[contractId].orders[orderId].small;
+	function getSmallServersDelivered(uint32 contractId, uint32 orderId) external view returns (uint32) {
+		return contracts[contractId].orders[orderId].attr.small;
 	}
 
-	function getMediumServersOrdered(uint32 contractId, uint32 orderId) external view returns (uint16) {
-		return contracts[contractId].orders[orderId].medium;
+	function getMediumServersDelivered(uint32 contractId, uint32 orderId) external view returns (uint32) {
+		return contracts[contractId].orders[orderId].attr.medium;
 	}
 
-	function getLargeServersOrdered(uint32 contractId, uint32 orderId) external view returns (uint16) {
-		return contracts[contractId].orders[orderId].large;
+	function getLargeServersDelivered(uint32 contractId, uint32 orderId) external view returns (uint32) {
+		return contracts[contractId].orders[orderId].attr.large;
+	}
+
+	function getSmallServersOrdered(uint32 contractId, uint32 orderId) external view returns (uint32) {
+		return contracts[contractId].orders[orderId].attr.maxSmall;
+	}
+
+	function getMediumServersOrdered(uint32 contractId, uint32 orderId) external view returns (uint32) {
+		return contracts[contractId].orders[orderId].attr.maxMedium;
+	}
+
+	function getLargeServersOrdered(uint32 contractId, uint32 orderId) external view returns (uint32) {
+		return contracts[contractId].orders[orderId].attr.maxLarge;
+	}
+
+	function getOrderDeadline(uint32 contractId, uint32 orderId) external view returns (uint128) {
+		return contracts[contractId].orders[orderId].attr.deadline;
+	}
+
+	//=======================================================
+	//==================== DATA SECTION =====================
+	//
+	//== FUNCTION IMPLEMENTATIONS ARE TO BE INSERTED BELOW ==
+	//==    ALL FUNCTIONS MUST BE MARKED AS RESTRICTED!    ==
+	//=======================================================
+	//Functions that are used in the smart contract itself and are to be exported should be marked as public,
+	//whereas functions that are only called from outside should be marked as external
+
+	//Sets or replaces the TenderLogic smart contract implementation
+	function replaceTenderLogic(address newTenderLogicAddress) external restricted {
+		tenderLogic = newTenderLogicAddress;
+	}
+
+	//Adds a business contract instance to the smart contract
+	function addContract(uint32 contractId, address payable client, uint128[] calldata params128, uint32[] calldata params32, uint16[] calldata params16) external restricted {
+		contracts[contractId] = TenderDataInterface.Contract({
+			client: client,
+			state: TenderDataInterface.ContractState.Active,
+			smallServerPrice: params128[0],
+			mediumServerPrice: params128[1],
+			largeServerPrice: params128[2],
+			defaultDaysForDelivery: params16[0],
+			penaltyPerDay: params128[3],
+			guaranteeRequired: params128[4],
+			attr: TenderDataInterface.Attributes({
+				small: params32[0],
+				medium: params32[1],
+				large: params32[2],
+				maxSmall: params32[3],
+				maxMedium: params32[4],
+				maxLarge: params32[5],
+				deadline: params128[5]
+			})
+		});
+	}
+
+	//Adds a new order to the specified contract
+	function addOrder(uint32 contractId, uint32 orderId, uint128[] calldata params128, uint32[] calldata params32) external restricted {
+		contracts[contractId].orders[orderId] = TenderDataInterface.Order({
+			state: TenderDataInterface.OrderState.Pending,
+			attr: TenderDataInterface.Attributes({
+				small: params32[0],
+				medium: params32[1],
+				large: params32[2],
+				maxSmall: params32[3],
+				maxMedium: params32[4],
+				maxLarge: params32[5],
+				deadline: params128[0]
+			})
+		});
+	}
+
+	//Migrates the data from an old TenderDataInterface instance to a new one
+	function migrateData(address oldTenderDataAddress) external restricted {
+	}
+
+	//Sets the contract deadline
+	function setContractDeadline(uint32 contractId, uint128 newUtcDeadline) external restricted {
+		contracts[contractId].attr.deadline = newUtcDeadline;
+	}
+
+	//Sets the order state
+	function setOrderState(uint32 contractId, uint32 orderId, TenderDataInterface.OrderState newState) external restricted {
+		contracts[contractId].orders[orderId].state = newState;
+	}
+
+	//Sets the order deadline
+	function setOrderDeadline(uint32 contractId, uint32 orderId, uint128 newUtcDeadline) external restricted {
+		contracts[contractId].orders[orderId].attr.deadline = newUtcDeadline;
+	}
+
+	//Marks the contract as expired
+	function markExpired(uint32 contractId) external restricted {
+		contracts[contractId].state = TenderDataInterface.ContractState.Expired;
+	}
+
+	//Kills the service
+	function endService(address payable targetWallet) external restricted {
+		selfdestruct(targetWallet);
 	}
 }

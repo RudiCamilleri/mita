@@ -19,6 +19,20 @@ contract TenderLogic {
 		_;
 	}
 
+	//Makes sure that the contract is active
+	modifier contractActive(uint32 contractId) {
+		require(tenderData.getContractState(contractId) == TenderDataInterface.ContractState.Active, "Specified contract is expired or invalid");
+		_;
+	}
+
+	//Makes sure that the contract is active and the order is Pending or BeingDelivered (ie. not finalized)
+	modifier orderActive(uint32 contractId, uint32 orderId) {
+		require(tenderData.getContractState(contractId) == TenderDataInterface.ContractState.Active, "Specified contract is expired or invalid");
+		TenderDataInterface.OrderState state = tenderData.getOrderState(contractId, orderId);
+		require(state == TenderDataInterface.OrderState.Pending || state == TenderDataInterface.OrderState.BeingDelivered, "Order state must be Pending or BeingDelivered to be modified");
+		_;
+	}
+
 	//=======================================================
 	//== FUNCTION IMPLEMENTATIONS ARE TO BE INSERTED BELOW ==
 	//==    ALL FUNCTIONS MUST BE MARKED AS RESTRICTED!    ==
@@ -54,31 +68,34 @@ contract TenderLogic {
 	}
 
 	//Creates a contract instance
-	function createContract(address payable client, uint128[] calldata params128, uint32[] calldata params32, uint16[] calldata params16) external restricted {
-		tenderData.addContract(client, params128, params32, params16);
+	function createContract(uint32 contractId, address payable client, uint128[] calldata params128, uint32[] calldata params32, uint16[] calldata params16) external restricted {
+		require(tenderData.getContractState(contractId) == TenderDataInterface.ContractState.Null, "Contract already exists with that ID");
+		tenderData.addContract(contractId, client, params128, params32, params16);
 	}
 
 	//Creates an order
-	function createOrder(uint32 contractId, uint32 orderId, uint16 small, uint16 medium, uint16 large) external restricted {
-		tenderData.addOrder(contractId, orderId, small, medium, large);
+	function createOrder(uint32 contractId, uint32 orderId, uint128[] calldata params128, uint32[] calldata params32) external restricted
+	contractActive(contractId) {
+		require(tenderData.getOrderState(contractId, orderId) == TenderDataInterface.OrderState.Null, "Order already exists with that ID");
+		tenderData.addOrder(contractId, orderId, params128, params32);
 	}
 
-	//Marks the order as delivered
-	function markDelivered(uint32 contractId, uint32 orderId) external restricted {
-		require(tenderData.getOrderState(contractId, orderId) == TenderDataInterface.OrderState.PaidPending, "Order must be PaidPending to mark as delivered");
+	//Marks servers as delivered
+	function markServersDelivered(uint32 contractId, uint32 orderId, uint32 small, uint32 medium, uint32 large) external restricted
+	orderActive(contractId, orderId) {
+		if ()
 		tenderData.setOrderState(contractId, orderId, TenderDataInterface.OrderState.Delivered);
-
 	}
 
 	//Marks the order as cancelled
-	function cancelOrder(uint32 contractId, uint32 orderId) external restricted {
-		require(tenderData.getOrderState(contractId, orderId) == TenderDataInterface.OrderState.Pending, "Only pending orders can be cancelled");
+	function cancelOrder(uint32 contractId, uint32 orderId) external restricted
+	orderActive(contractId, orderId) {
 		tenderData.setOrderState(contractId, orderId, TenderDataInterface.OrderState.Cancelled);
 	}
 
 	//Accepts the order as delivered and pays the client
-	function acceptDelivery(uint32 contractId, uint32 orderId) external restricted {
-		require(tenderData.getOrderState(contractId, orderId) == TenderDataInterface.OrderState.Pending, "Only pending orders can be accepted as delivered");
+	function acceptDelivery(uint32 contractId, uint32 orderId) external restricted
+	orderActive(contractId, orderId) {
 		tenderData.getClient(contractId).transfer(
 			tenderData.getSmallServerPrice(contractId) * tenderData.getSmallServersOrdered(contractId, orderId) +
 			tenderData.getMediumServerPrice(contractId) * tenderData.getMediumServersOrdered(contractId, orderId) +
@@ -103,14 +120,16 @@ contract TenderLogic {
 	*/
 
 	//Extends the deadline of an order
-	function extendOrderDeadline(uint32 contractId, uint32 orderId, uint128 newUtcDeadline) external restricted {
+	function extendOrderDeadline(uint32 contractId, uint32 orderId, uint128 newUtcDeadline) external restricted
+	orderActive(contractId, orderId) {
 		require(tenderData.getOrderDeadline(contractId, orderId) < newUtcDeadline, "New order deadline cannot be older than the current order deadline");
 		tenderData.setOrderDeadline(contractId, orderId, newUtcDeadline);
 	}
 
 	//Ends the contract
-	function endContract(uint32 contractId, uint128 currentUtcDate) external restricted {
-		require(currentUtcDate - tenderData.getExpiryDate(contractId) >= 0);
+	function endContract(uint32 contractId, uint128 currentUtcDate) external restricted
+	contractActive(contractId) {
+		require(currentUtcDate - tenderData.getContractDeadline(contractId) >= 0);
 		tenderData.markExpired(contractId);
 	}
 
