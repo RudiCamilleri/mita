@@ -38,10 +38,6 @@ contract TenderData is TenderDataInterface {
 		return contracts[contractId].largeServerPrice;
 	}
 
-	function getDefaultDaysForDelivery(uint32 contractId) external view returns (uint16) {
-		return contracts[contractId].defaultDaysForDelivery;
-	}
-
 	function getPenaltyPerDay(uint32 contractId) external view returns (uint128) {
 		return contracts[contractId].penaltyPerDay;
 	}
@@ -129,15 +125,18 @@ contract TenderData is TenderDataInterface {
 		tenderLogic = newTenderLogicAddress;
 	}
 
+	//Migrates the data from an old TenderDataInterface instance to a new one
+	function migrateData(address oldTenderDataAddress) external restricted {
+	}
+
 	//Adds a business contract instance to the smart contract
-	function addContract(uint32 contractId, address payable client, uint128[] calldata params128, uint32[] calldata params32, uint16[] calldata params16) external restricted {
+	function addContract(uint32 contractId, address payable client, uint128[] calldata params128, uint32[] calldata params32) external restricted {
 		contracts[contractId] = TenderDataInterface.Contract({
 			client: client,
 			state: TenderDataInterface.ContractState.Active,
 			smallServerPrice: params128[0],
 			mediumServerPrice: params128[1],
 			largeServerPrice: params128[2],
-			defaultDaysForDelivery: params16[0],
 			penaltyPerDay: params128[3],
 			guaranteeRequired: params128[4],
 			attr: TenderDataInterface.Attributes({
@@ -150,6 +149,16 @@ contract TenderData is TenderDataInterface {
 				deadline: params128[5]
 			})
 		});
+	}
+
+	//Sets the contract deadline
+	function setContractDeadline(uint32 contractId, uint128 newUtcDeadline) external restricted {
+		contracts[contractId].attr.deadline = newUtcDeadline;
+	}
+
+	//Sets the contract state
+	function setContractState(uint32 contractId, TenderDataInterface.ContractState newState) external restricted {
+		contracts[contractId].state = newState;
 	}
 
 	//Adds a new order to the specified contract
@@ -168,28 +177,14 @@ contract TenderData is TenderDataInterface {
 		});
 	}
 
-	//Migrates the data from an old TenderDataInterface instance to a new one
-	function migrateData(address oldTenderDataAddress) external restricted {
-	}
-
-	//Sets the contract deadline
-	function setContractDeadline(uint32 contractId, uint128 newUtcDeadline) external restricted {
-		contracts[contractId].attr.deadline = newUtcDeadline;
-	}
-
-	//Sets the order state
-	function setOrderState(uint32 contractId, uint32 orderId, TenderDataInterface.OrderState newState) external restricted {
-		contracts[contractId].orders[orderId].state = newState;
-	}
-
 	//Sets the order deadline
 	function setOrderDeadline(uint32 contractId, uint32 orderId, uint128 newUtcDeadline) external restricted {
 		contracts[contractId].orders[orderId].attr.deadline = newUtcDeadline;
 	}
 
-	//Marks the contract as expired
-	function markExpired(uint32 contractId) external restricted {
-		contracts[contractId].state = TenderDataInterface.ContractState.Expired;
+	//Sets the order state
+	function setOrderState(uint32 contractId, uint32 orderId, TenderDataInterface.OrderState newState) external restricted {
+		contracts[contractId].orders[orderId].state = newState;
 	}
 
 	//Kills the service

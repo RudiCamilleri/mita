@@ -20,14 +20,17 @@ contract TenderLogic {
 	}
 
 	//Makes sure that the contract is active
-	modifier contractActive(uint32 contractId) {
-		require(tenderData.getContractState(contractId) == TenderDataInterface.ContractState.Active, "Specified contract is expired or invalid");
+	modifier contractActive(uint128 currentUtcDate, uint32 contractId) {
+		require(tenderData.getContractState(contractId) == TenderDataInterface.ContractState.Active &&
+			tenderData.getContractDeadline(contractId) > currentUtcDate, "Specified contract is expired or invalid");
 		_;
 	}
 
 	//Makes sure that the contract is active and the order is Pending or BeingDelivered (ie. not finalized)
-	modifier orderActive(uint32 contractId, uint32 orderId) {
-		require(tenderData.getContractState(contractId) == TenderDataInterface.ContractState.Active, "Specified contract is expired or invalid");
+	modifier orderActive(uint128 currentUtcDate, uint32 contractId, uint32 orderId) {
+		require(tenderData.getContractState(contractId) == TenderDataInterface.ContractState.Active &&
+			tenderData.getContractDeadline(contractId) > currentUtcDate, "Specified contract is expired or invalid");
+		require(tenderData.getOrderDeadline(contractId, orderId) <= currentUtcDate, "Order is expired");
 		TenderDataInterface.OrderState state = tenderData.getOrderState(contractId, orderId);
 		require(state == TenderDataInterface.OrderState.Pending || state == TenderDataInterface.OrderState.BeingDelivered, "Order state must be Pending or BeingDelivered to be modified");
 		_;
@@ -68,69 +71,69 @@ contract TenderLogic {
 	}
 
 	//Creates a contract instance
-	function createContract(uint32 contractId, address payable client, uint128[] calldata params128, uint32[] calldata params32, uint16[] calldata params16) external restricted {
+	function createContract(uint32 contractId, address payable client, uint128[] calldata params128, uint32[] calldata params32) external restricted {
 		require(tenderData.getContractState(contractId) == TenderDataInterface.ContractState.Null, "Contract already exists with that ID");
-		tenderData.addContract(contractId, client, params128, params32, params16);
+		tenderData.addContract(contractId, client, params128, params32);
 	}
 
 	//Creates an order
-	function createOrder(uint32 contractId, uint32 orderId, uint128[] calldata params128, uint32[] calldata params32) external restricted
-	contractActive(contractId) {
+	function createOrder(uint128 currentUtcDate, uint32 contractId, uint32 orderId, uint128[] calldata params128, uint32[] calldata params32) external restricted
+	contractActive(currentUtcDate, contractId) {
 		require(tenderData.getOrderState(contractId, orderId) == TenderDataInterface.OrderState.Null, "Order already exists with that ID");
 		tenderData.addOrder(contractId, orderId, params128, params32);
 	}
 
 	//Marks servers as delivered
-	function markServersDelivered(uint32 contractId, uint32 orderId, uint32 small, uint32 medium, uint32 large) external restricted
-	orderActive(contractId, orderId) {
-		if ()
-		tenderData.setOrderState(contractId, orderId, TenderDataInterface.OrderState.Delivered);
+	function markServersDelivered(uint128 currentUtcDate, uint32 contractId, uint32 orderId, uint32 small, uint32 medium, uint32 large) external restricted
+	orderActive(currentUtcDate, contractId, orderId) {
+		if () {
+			tenderData.setOrderState(contractId, orderId, TenderDataInterface.OrderState.Delivered);
+			tenderData.getClient(contractId).transfer(safeAdd(safeAdd(
+				safeMul(tenderData.getSmallServerPrice(contractId), tenderData.getSmallServersOrdered(contractId, orderId)),
+				safeMul(tenderData.getMediumServerPrice(contractId), tenderData.getMediumServersOrdered(contractId, orderId))),
+				safeMul(tenderData.getLargeServerPrice(contractId), tenderData.getLargeServersOrdered(contractId, orderId)))
+			);
+		}
 	}
 
 	//Marks the order as cancelled
-	function cancelOrder(uint32 contractId, uint32 orderId) external restricted
-	orderActive(contractId, orderId) {
+	function cancelOrder(uint128 currentUtcDate, uint32 contractId, uint32 orderId, uint128 penalty) external restricted
+	orderActive(currentUtcDate, contractId, orderId) {
 		tenderData.setOrderState(contractId, orderId, TenderDataInterface.OrderState.Cancelled);
+		tenderData.setContract fgd
 	}
 
-	//Accepts the order as delivered and pays the client
-	function acceptDelivery(uint32 contractId, uint32 orderId) external restricted
-	orderActive(contractId, orderId) {
-		tenderData.getClient(contractId).transfer(safeAdd(safeAdd(
-			safeMul(tenderData.getSmallServerPrice(contractId), tenderData.getSmallServersOrdered(contractId, orderId)),
-			safeMul(tenderData.getMediumServerPrice(contractId), tenderData.getMediumServersOrdered(contractId, orderId))),
-			safeMul(tenderData.getLargeServerPrice(contractId), tenderData.getLargeServersOrdered(contractId, orderId)))
-		);
+	//Marks the order deadline as reached
+	function markOrderDeadlineReached(uint128 currentUtcDate, uint32 contractId, uint32 orderId) external restricted
+	orderActive(0, contractId, contractId) {
+		if ()
+		tenderData.setContractState(contractId, TenderDataInterface.ContractState.Expired);
 	}
-
-	/*
-	//passes refundable deposit
-	function topUpPerformanceGuarantee() external;
-	//stops the contract if payment isnt made.
-	function stopOrder(uint32 orderNumber, uint8 penalty) external; //uint32 - Order number, uint8 - Penalty to be taken
-
-	//automatically accepts extension
-	function defaultAcceptanceOfOrderDeadlineExtension(uint32 orderNumber) external; //uint32 - Order number
-	//to reject the extension
-	function rejectOrderDeadlineExtension(uint32 orderNumber) external; //uint32 - Order number
-	//accepts deadline manually
-	function acceptOrderDeadlineExtension(uint32 orderNumber, uint64 dateExtension) external; //uint32 - Order number, uint 64 is checking date of extension
-	//requests an extension of a deadline
-	function requestOrderDeadlineExtension(uint32 orderNumber, bytes32 reason, uint64 dateExtension) external; //bytes 32 to store explanation, uint 64 is checking date of extension
-	*/
 
 	//Extends the deadline of an order
-	function extendOrderDeadline(uint32 contractId, uint32 orderId, uint128 newUtcDeadline) external restricted
-	orderActive(contractId, orderId) {
+	function extendOrderDeadline(uint128 currentUtcDate, uint32 contractId, uint32 orderId, uint128 newUtcDeadline) external restricted
+	orderActive(0, contractId, orderId) {
 		require(tenderData.getOrderDeadline(contractId, orderId) < newUtcDeadline, "New order deadline cannot be older than the current order deadline");
 		tenderData.setOrderDeadline(contractId, orderId, newUtcDeadline);
 	}
 
-	//Ends the contract
-	function endContract(uint32 contractId, uint128 currentUtcDate) external restricted
-	contractActive(contractId) {
-		require(currentUtcDate >= tenderData.getContractDeadline(contractId));
-		tenderData.markExpired(contractId);
+	//Extends the deadline of a contract
+	function extendContractDeadline(uint128 currentUtcDate, uint32 contractId, uint128 newUtcDeadline) external restricted
+	contractActive(0, contractId) {
+		require(tenderData.getContractDeadline(contractId) < newUtcDeadline, "New contract deadline cannot be older than the current order deadline");
+		tenderData.setContractDeadline(contractId, newUtcDeadline);
+	}
+
+	//Marks the contract as expired
+	function markContractExpired(uint128 currentUtcDate, uint32 contractId) external restricted
+	contractActive(0, contractId) {
+		tenderData.setContractState(contractId, TenderDataInterface.ContractState.Expired);
+	}
+
+	//Terminates the contract abnormally (possibly due to breach)
+	function terminateContract(uint128 currentUtcDate, uint32 contractId) external restricted
+	contractActive(currentUtcDate, contractId) {
+		tenderData.setContractState(contractId, TenderDataInterface.ContractState.Terminated);
 	}
 
 	//Kills the service
@@ -139,23 +142,29 @@ contract TenderLogic {
 		selfdestruct(targetWallet);
 	}
 
-	function safeAdd(uint a, uint b) internal pure returns (uint c) {
+	//======================= CALCULATIONS =======================
+
+	//Adds two positive integers
+	function safeAdd(uint256 a, uint256 b) internal pure returns (uint256 c) {
 		c = a + b;
-		require(c >= a);
+		require(c >= a, "Wraparound occurred in addition");
 	}
 
-	function safeSub(uint a, uint b) internal pure returns (uint c) {
-		require(b <= a);
+	//Subtracts a small positive integer from a larger positive integer
+	function safeSub(uint256 a, uint256 b) internal pure returns (uint256 c) {
+		require(b <= a, "Wraparound occurred in subtraction");
 		c = a - b;
 	}
 
-	function safeMul(uint a, uint b) internal pure returns (uint c) {
+	//Multiplies two positive integers
+	function safeMul(uint256 a, uint256 b) internal pure returns (uint256 c) {
 		c = a * b;
-		require(a == 0 || c / a == b);
+		require(a == 0 || c / a == b, "Wraparound occurred in multiplication");
 	}
 
-	function safeDiv(uint a, uint b) internal pure returns (uint c) {
-		require(b > 0);
+	//Divides a positive integer by another positive integer
+	function safeDiv(uint256 a, uint256 b) internal pure returns (uint256 c) {
+		require(b > 0, "Cannot divide by 0");
 		c = a / b;
 	}
 }

@@ -5,18 +5,20 @@ pragma solidity >=0.5.0;
 interface TenderDataInterface {
 	//Represents the current state of a legal contract
 	enum ContractState {
-		Null,
-		Active,
-		Expired
+		Null, //not set
+		Active, //the contract is active
+		Expired, //the contract is marked as expired
+		Terminated //the contract is terminated abnormally (possibly due to breach)
 	}
 
 	//Represents the current state of an order
 	enum OrderState {
-		Null,
-		Pending,
-		BeingDelivered,
-		Delivered,
-		Cancelled
+		Null, //not set
+		Pending, //order is created and pending
+		BeingDelivered, //order servers are being delivered (ie. one or more servers was already delivered and accepted)
+		PartiallyDelivered, //deadline reached before all of the order was delivered and accepted
+		Delivered, //the order was delivered and accepted successfully
+		Cancelled //the order was cancelled, and possibly a penalty was issued
 	}
 
 	struct Attributes {
@@ -56,7 +58,6 @@ interface TenderDataInterface {
 		uint128 smallServerPrice;
 		uint128 mediumServerPrice;
 		uint128 largeServerPrice;
-		uint16 defaultDaysForDelivery;
 		uint128 penaltyPerDay;
 		uint128 guaranteeRequired;
 		Attributes attr;
@@ -69,7 +70,6 @@ interface TenderDataInterface {
 	function getSmallServerPrice(uint32 contractId) external view returns (uint128);
 	function getMediumServerPrice(uint32 contractId) external view returns (uint128);
 	function getLargeServerPrice(uint32 contractId) external view returns (uint128);
-	function getDefaultDaysForDelivery(uint32 contractId) external view returns (uint16);
 	function getPenaltyPerDay(uint32 contractId) external view returns (uint128);
 	function getOperatorId(uint32 contractId) external view returns (uint32);
 	function getGuaranteeRequired(uint32 contractId) external view returns (uint128);
@@ -99,19 +99,22 @@ interface TenderDataInterface {
 	function migrateData(address oldTenderDataAddress) external;
 
 	//Adds a business contract instance to the smart contract
-	function addContract(uint32 contractId, address payable client, uint128[] calldata params128, uint32[] calldata params32, uint16[] calldata params16) external;
+	function addContract(uint32 contractId, address payable client, uint128[] calldata params128, uint32[] calldata params32) external;
+
+	//Sets the contract deadline
+	function setContractDeadline(uint32 contractId, uint128 newUtcDeadline) external;
+
+	//Sets the contract state
+	function setContractState(uint32 contractId, ContractState newState) external;
 
 	//Adds a new order to the specified contract
 	function addOrder(uint32 contractId, uint32 orderId, uint128[] calldata params128, uint32[] calldata params32) external;
 
-	//Sets the order state
-	function setOrderState(uint32 contractId, uint32 orderId, OrderState newState) external;
-
 	//Sets the order deadline
 	function setOrderDeadline(uint32 contractId, uint32 orderId, uint128 newUtcDeadline) external;
 
-	//Marks the contract as expired
-	function markExpired(uint32 contractId) external;
+	//Sets the order state
+	function setOrderState(uint32 contractId, uint32 orderId, OrderState newState) external;
 
 	//Kills the service
 	function endService(address payable targetWallet) external;
