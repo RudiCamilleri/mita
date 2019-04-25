@@ -1,108 +1,103 @@
-# Tender Smart Contract
+# Tender Smart Contracts
 
-Website repository can be found here: https://github.com/mathusummut/tender-website
+Smart contract environment setup is documented here: https://github.com/mathusummut/tender/blob/master/EnvSetup.md
 
-Smart contract documentation is located here: https://github.com/mathusummut/tender/blob/master/ContractDocs.md
+### Scope & Purpose
 
-## To set up local development environment for testing Solidity smart contracts:
+To fill...
 
-1. Install Visual Studio Code from https://aka.ms/win32-x64-user-stable and then install the Solidity extension by clicking the square icon on the left.
+### Structure & Reasoning
 
-2. Install Git from https://git-scm.com/download/win, then press Shift+RightMouseClick on the desktop and click `Open Powershell window here` and copy and paste the following command to obtain the development files:
+The Tender blockchain architecture is composed of 2 main modular smart contracts:
 
-       git clone https://github.com/mathusummut/tender.git
+```
+       Owner (Deployer's Wallet)
+                   │
+                   │
+                   ↓
+   TenderLogic (Business Logic Layer)
+                   │                ↘ references ↘
+                   │                               TenderDataInterface
+                   ↓                ↗ implements ↗
+TenderData (Storage & Data Access Layer)
+```
 
-	Note: Any time you want to update the files, open the project folder in Visual Studio Code, and in the Terminal tab (you might have to click `Teminal -> New Terminal`) write `git pull`.
+where TenderLogic and TenderData are hot-swappable with the aim of being upgradeable if necessary, which can be done by calling the `replaceTenderData` or `replaceTenderLogic` functions in the TenderLogic smart contract. Every layer can only be invoked by the layer above it for security purposes. The data is read-only to outsiders through public functions offered in TenderData, and the owner can only modify the parts of the data that can be modified through the provided TenderLogic functions. This is to prevent tampering or erroneous modification.
 
-3. Install Nodejs from https://nodejs.org/en by clicking on `64-bit` next to `Windows Installer`.
+The data structures and the functions related to data access are defined in TenderDataInterface. The interface should be designed to be set in stone and unmodified as much as possible after being deployed into a public blockchain environment.
 
-4. Press right-click on the Windows Start button and click `Windows PowerShell Admin`, and enter the following commands line by line:
+The design leverages separation of concern (modularity), reduced dependency coupling, planned upgradability and development flexibility. The contracts contain various checks and balances to avoid unwanted behaviour and block unauthorised callers.
 
-       npm install -g windows-build-tools
-       npm install -g truffle
-       npm install -g ganache-cli
-       npm install -g remixd              (only if you plan to use remix)
+The TenderLogic and TenderData smart contracts are designed to handle transactions for all relevant business contracts, meaning that transactions for all clients will be managed by the same instances of TenderLogic and TenderData. This is so that if a bug is found in the smart contract logic, they can be easily fixed and upgraded for all clients simultaneously as they will be using the same instances.
 
-	Technical Note: If `windows-build-tools` or `ganache-cli` freezes or fails to install, install `truffle` and `ganache-cli` and try again. If the installation still does not work, then you have to add Python 2.7 to PATH and try again, installing both `windows-build-tools` or `ganache-cli`. If that does not work, try installing Python manually. The important thing is for `ganache-cli` to work.
+### Process Flow
 
-5. (Optional) Install Geth from: https://ethereum.github.io/go-ethereum/downloads (the Windows installer)
+The smart contract is designed such that operations are to intended to follow the sequence outlined below, which should reflect a similar flow to the current business process. The steps for interacting with the smart contract are:
 
-6. ~~Run the following command in command prompt as well: `dotnet tool install -g dotnet-script`~~
+1. First, the TenderLogic and TenderData contracts have to be deployed
+2. The replaceTenderData() function in TenderLogic should be called to point to the address of TenderData, immediately after deployment.
+3. All read operations are done through calls to TenderData, and all state (write) operations are done through TenderLogic.
+4. To create a new business contract instance, call createContract() in TenderLogic with the appropriate parameters, whose description is outlined in the addContract() function in TenderData.
+5. 
 
-    Install Chocolatey by opening Powershell and entering this command:
+### Deployment & Testing
 
-       Set-ExecutionPolicy Bypass -Scope Process -Force;iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+The easiest way to test the smart contracts using C# is by using the Nethereum open-source library. After installing the necessary dependencies outlined in [EnvSetup.md](https://github.com/mathusummut/tender/blob/master/EnvSetup.md), one can simply launch `run-nethereum.bat` to deploy and test the smart contract.
 
-7. Then close the Powershell window and reopen it, and run the following command:
+Here are a few sample commands you can use to quickly interact with the smart contract:
 
-       choco install scriptcs
+    //Gets the small server price for contract #123
+    TenderData.CallRead("getSmallServerPrice", 123).Await();
 
-	Then (optionally) open the project folder in Visual Studio Code.
+    //Creates a new business contract instance within the smart contract
+    TenderLogic.CallWrite("createContract", Wallet, ClientWallet.Address,
+        new BigInteger[] {
+            10, 20, 30, //smallServerPrice, mediumServerPrice, largeServerPrice
+            2, //penaltyPerDay
+            1555337743, //creationDate in UTC time
+            1655337743, //expiryDate in UTC time
+            1, //guaranteeRequired
+        }, new uint[] {
+            123, //contractId
+            10987, //operatorId
+        }, new ushort[] { 1 } //daysForDelivery
+    ).Await();
 
-### i. Running the smart contract using Nethereum (recommended method)
+    //Creates a new order with ID #12 for contract #123 of 0 small servers, 3 medium servers and 1 large
+    TenderLogic.CallWrite("createOrder", Wallet, 123, 12, 0, 3, 1);
 
-8. Run the `run-nethereum.bat` script in the project folder
+    //Creates a new order with ID #12 for contract #123 of 0 small servers, 3 medium servers and 1 large
+    TenderLogic.CallWrite("createOrder", Wallet, 123, 12, 0, 3, 1);
 
-9. Call C# Nethereum commands directly from the command window. Side Note: The scriptcs_bin directory contents are copied from the build output of the ContractUtils library.
+    //Gets the state of order #12 for contract #123
+    TenderData.CallRead("getOrderState", 123, 12).Await();
 
-10. The project uses the ContractUtils library (created by MathuSum Mut). The library source code and documentation can be found here: https://github.com/mathusummut/ContractUtils
+    //Marks order #12 for contract #123 as cancelled
+    TenderLogic.CallWrite("cancelOrder", 123, 12).Await();
 
-### ii. Running the smart contract locally using Remix IDE
+## Appendix
 
-8. Start `run-remix.bat` in the project folder.
+PS: The best way to use the CallRead<T> function would be to give it a C# type that corresponds with the expected return type of the function in the smart contract, similar to this format:
 
-9. When Remix loads in the browser, delete the files under the `browser` dropdown.
+     TenderData.CallRead<BigInteger>("getSmallServerPrice", 123);
 
-10. Click the small chain icon top left (when hovering over it, it should be labelled `Connect to localhost`), and then click `Connect`.
+where the type parameter is provided in the angle brackets `<>`, and if omitted falls back to a generic `<object>` type. Here is a list of recommended type mappings that are most common in Nethereum:
 
-11. Click the `Run` tab, and set `Environment` to `Web3 Provider`, and click `OK`, then `OK` again.
-
-12. You can edit inside Remix or use Visual Studio Code to modify the files. Files should be updated automatically.
-
-**Warning: Deleting the files under `localhost` in Remix deletes the actual files permanently!!**
-
-13. You can compile and run from Remix at your own leisure.
-
-### iii. Running the smart contract using truffle (almost reliable method):
-
-8. Start `run-truffle.bat` in the project folder.
-
-9. ~~Run `start-ganache-cli.bat` in the project folder, then in the ganache-cli output under `Available Accounts` (scroll up), copy the address at (0) and paste it in the `truffle-config.js` file next to the `from` key~~;
-
-10. Copy and paste the following line into the truffle console and press enter (output should be `undefined`):
-
-        TenderAPIAbi.deployed().then(a=>{TenderAPI=a;TenderBLLAbi.deployed().then(t=>{TenderBLL=t;TenderAPI.replaceTenderBLL(TenderBLLAbi.address)})})
-
-11. Run console commands through Truffle, to close it simply close the console window or press Ctrl+C twice.
-
-### iv. Running the smart contract using geth (not working):
-
-8. Simply double-click `run-geth.bat`. To re-run, simply close the current console window (or press Ctrl+Break, then 'Y' and Enter) and re-open.
-
-## Additional Info
-
-In web3 there are two ways to call a function:
-
-       Read-only (not using call): TenderAPI.owner()
-       Write-only (using call):    TenderAPI.owner.call()
-
-Read-only executes the function and reads the return value of functions, but does not modify the state of the contract.
-
-Write-only executes the function, modifying the state if the function does so, but return value is not computed.
-
-In this smart contract, calls are to be made through TenderAPI.
-
-Type `eth` to see what's available.
-
-## Git Cheat Sheet
-
-Useful Commands:
-
-    git pull                           #pull updates
-
-    git add * :/                       #loads all file changes since last pull or commit
-    git commit -m "Changed A, B, C"    #commits the changes under the specified message
-    git push
-
-    git reset --hard                   #removes changes from last pull or commit
-    git mergetool                      #to fix merge conflicts (install TortoiseSVN)
+    Solidity   │    C#
+    ───────────│────────────────────────────
+    address    │    string
+    bool       │    bool
+    int8       │    sbyte
+    int16      │    short
+    int32      │    int
+    int64      │    long
+    int128     │    BigInteger/HexBigInteger
+    int256     │    BigInteger/HexBigInteger
+    uint8      │    byte
+    uint16     │    ushort
+    uint32     │    uint
+    uint64     │    ulong
+    uint128    │    BigInteger/HexBigInteger
+    uint256    │    BigInteger/HexBigInteger
+    string     │    string
+    bytes      │    byte[]
