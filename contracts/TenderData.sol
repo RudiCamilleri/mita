@@ -139,16 +139,27 @@ contract TenderData is TenderDataInterface {
 			largeServerPrice: params128[2],
 			penaltyPerDay: params128[3],
 			guaranteeRequired: params128[4],
+			guaranteePaid: false,
 			attr: TenderDataInterface.Attributes({
-				small: params32[0],
-				medium: params32[1],
-				large: params32[2],
-				maxSmall: params32[3],
-				maxMedium: params32[4],
-				maxLarge: params32[5],
+				small: 0,
+				medium: 0,
+				large: 0,
+				maxSmall: params32[0],
+				maxMedium: params32[1],
+				maxLarge: params32[2],
 				deadline: params128[5]
 			})
 		});
+	}
+
+	//Sets the contract client address
+	function setClient(uint32 contractId, address payable newClient) external restricted {
+		contracts[contractId].client = newClient;
+	}
+
+	//Sets the guarantee as paid
+	function setGuaranteePaid(uint32 contractId) external restricted {
+		contracts[contractId].guaranteePaid = true;
 	}
 
 	//Sets the contract deadline
@@ -166,15 +177,22 @@ contract TenderData is TenderDataInterface {
 		contracts[contractId].orders[orderId] = TenderDataInterface.Order({
 			state: TenderDataInterface.OrderState.Pending,
 			attr: TenderDataInterface.Attributes({
-				small: params32[0],
-				medium: params32[1],
-				large: params32[2],
-				maxSmall: params32[3],
-				maxMedium: params32[4],
-				maxLarge: params32[5],
+				small: 0,
+				medium: 0,
+				large: 0,
+				maxSmall: params32[0],
+				maxMedium: params32[1],
+				maxLarge: params32[2],
 				deadline: params128[0]
 			})
 		});
+	}
+
+	//Sets the maximum server quantities for the specified contract
+	function setContractMax(uint32 contractId, uint32 maxSmall, uint32 maxMedium, uint32 maxLarge) external restricted {
+		contracts[contractId].attr.maxSmall = maxSmall;
+		contracts[contractId].attr.maxMedium = maxMedium;
+		contracts[contractId].attr.maxLarge = maxLarge;
 	}
 
 	//Sets the order deadline

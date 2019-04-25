@@ -1,6 +1,6 @@
 ## Tender Smart Contracts
 
-#### Structure & Reasoning
+### Structure & Reasoning
 
 The Tender blockchain architecture is composed of 2 main modular smart contracts:
 
@@ -23,6 +23,16 @@ The data structures and the functions related to data access are defined in Tend
 The design leverages separation of concern (modularity), reduced dependency coupling, planned upgradability and development flexibility. The contracts contain various checks and balances to avoid unwanted behaviour and block unauthorised callers.
 
 The TenderLogic and TenderData smart contracts are designed to handle transactions for all relevant business contracts, meaning that transactions for all clients will be managed by the same instances of TenderLogic and TenderData. This is so that if a bug is found in the smart contract logic, they can be easily fixed and upgraded for all clients simultaneously as they will be using the same instances.
+
+### Process Flow
+
+The smart contract is designed such that operations are to intended to follow the sequence outlined below, which should reflect a similar flow to the current business process. The steps for interacting with the smart contract are:
+
+1. First, the TenderLogic and TenderData contracts have to be deployed
+2. The replaceTenderData() function in TenderLogic should be called to point to the address of TenderData, immediately after deployment.
+3. All read operations are done through calls to TenderData, and all state (write) operations are done through TenderLogic.
+4. To create a new business contract instance, call createContract() in TenderLogic with the appropriate parameters, whose description is outlined in the addContract() function in TenderData.
+5. 
 
 ### Deployment & Testing
 

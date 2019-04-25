@@ -60,6 +60,7 @@ interface TenderDataInterface {
 		uint128 largeServerPrice;
 		uint128 penaltyPerDay;
 		uint128 guaranteeRequired;
+		bool guaranteePaid;
 		Attributes attr;
 		mapping(uint32 => Order) orders;
 	}
@@ -107,8 +108,17 @@ interface TenderDataInterface {
 	//Sets the contract state
 	function setContractState(uint32 contractId, ContractState newState) external;
 
+	//Sets the guarantee as paid
+	function setGuaranteePaid(uint32 contractId) external;
+
+	//Sets the contract client address
+	function setClient(uint32 contractId, address payable newClient) external;
+
 	//Adds a new order to the specified contract
 	function addOrder(uint32 contractId, uint32 orderId, uint128[] calldata params128, uint32[] calldata params32) external;
+
+	//Sets the maximum server quantities for the specified contract
+	function setContractMax(uint32 contractId, uint32 maxSmall, uint32 maxMedium, uint32 maxLarge) external;
 
 	//Sets the order deadline
 	function setOrderDeadline(uint32 contractId, uint32 orderId, uint128 newUtcDeadline) external;
