@@ -22,7 +22,7 @@ The Tender blockchain architecture is composed of 2 main modular smart contracts
 TenderData (Storage & Data Access Layer)
 ```
 
-where TenderLogic and TenderData are hot-swappable with the aim of being upgradeable if necessary, which can be done by calling the `replaceTenderData` or `replaceTenderLogic` functions in the TenderLogic smart contract. Every layer can only be invoked by the layer above it for security purposes. The data is read-only to outsiders through public functions offered in TenderData, and the owner can only modify the parts of the data that can be modified through the provided TenderLogic functions. This is to prevent tampering or erroneous modification.
+where TenderLogic and TenderData are hot-swappable with the aim of being upgradeable if necessary, which can be done by calling the `replaceTenderData` or `replaceTenderLogic` functions in the TenderLogic smart contract. Every layer can only be invoked by the layer above it for security purposes. The data is read-only to outsiders through public functions offered in TenderData, and the owner can only modify the parts of the data that can be modified through the provided TenderLogic functions. This is to prevent external tampering or erroneous modification, by seperating read operations from write operations.
 
 The data structures and the functions related to data access are defined in TenderDataInterface. The interface should be designed to be set in stone and unmodified as much as possible after being deployed into a public blockchain environment.
 
@@ -38,11 +38,10 @@ The smart contract is designed such that operations are to intended to follow th
 
 1. First, the TenderLogic and TenderData contracts have to be deployed
 2. The replaceTenderData() function in TenderLogic should be called to point to the address of TenderData, immediately after deployment
-3. All read operations are done through calls to TenderData, and all state (write) operations are done through TenderLogic
-4. To create a new business contract instance, call createContract() in TenderLogic with the appropriate parameters, whose description is outlined in the addContract() function in TenderData
-5. Then, the client is to call payGuarantee() with a transfer of the Ether required by the contract
-6. Then, the owner can call createOrder() to create an order. createOrder() cannot be called if the client has not paid the performance guarantee
-7. 
+3. To create a new business contract instance, call createContract() in TenderLogic with the appropriate parameters, whose description is outlined in the addContract() function in TenderData
+4. Then, the client is to call payGuarantee() with a transfer of the Ether required by the contract
+5. Then, the owner can call createOrder() to create an order. createOrder() cannot be called if the client has not paid the performance guarantee
+6. 
 
 ##### Configurable Parameters
 
