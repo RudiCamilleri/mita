@@ -40,8 +40,8 @@ The smart contract is designed such that operations are to intended to follow th
 2. The replaceTenderData() function in TenderLogic should be called to point to the address of TenderData, immediately after deployment
 3. To create a new business contract instance, call createContract() in TenderLogic with the appropriate parameters, whose description is outlined in the addContract() function in TenderData
 4. Then, the client is to call payGuarantee() with a transfer of the Ether required by the contract
-5. Then, the owner can call createOrder() to create an order. createOrder() cannot be called if the client has not paid the performance guarantee
-6. 
+5. Then, the owner can call createOrder() to create an order. createOrder() cannot be called unless the client has paid the performance guarantee
+6. When any servers arrive and are accepted, the owner calls markServersDelivered() and specifies how many small, medium and large servers have arrived
 
 ##### Configurable Parameters
 
