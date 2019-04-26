@@ -61,8 +61,8 @@ contract TenderLogic {
 	//Functions that are used in the smart contract itself and are to be exported should be marked as public,
 	//whereas functions that are only called from outside should be marked as external
 
-	//Replaces the current owner of the contract (not recommended to use)
-	function replaceOwner(address newOwner) external restricted {
+	//Transfers the current owner of the contract
+	function transferOwner(address newOwner) external restricted {
 		owner = newOwner;
 	}
 
@@ -98,6 +98,7 @@ contract TenderLogic {
 	function createOrder(uint128 currentUtcDate, uint32 contractId, uint32 orderId, uint128[] calldata params128, uint32[] calldata params32) external restricted
 	contractActive(currentUtcDate, contractId) {
 		require(tenderData.getOrderState(contractId, orderId) == TenderDataInterface.OrderState.Null, "Order already exists with that ID");
+		require(tenderData.getGuaranteePaid(), "Performance guarantee must be paid to create an order");
 		tenderData.addOrder(contractId, orderId, params128, params32);
 	}
 
@@ -181,25 +182,25 @@ contract TenderLogic {
 	//======================= CALCULATIONS =======================
 
 	//Adds two positive integers
-	function safeAdd(uint256 a, uint256 b) internal pure returns (uint256 c) {
+	function safeAdd(uint256 a, uint256 b) private pure returns (uint256 c) {
 		c = a + b;
 		require(c >= a, "Wraparound occurred in addition");
 	}
 
 	//Subtracts a small positive integer from a larger positive integer
-	function safeSub(uint256 a, uint256 b) internal pure returns (uint256 c) {
+	function safeSub(uint256 a, uint256 b) private pure returns (uint256 c) {
 		require(b <= a, "Wraparound occurred in subtraction");
 		c = a - b;
 	}
 
 	//Multiplies two positive integers
-	function safeMul(uint256 a, uint256 b) internal pure returns (uint256 c) {
+	function safeMul(uint256 a, uint256 b) private pure returns (uint256 c) {
 		c = a * b;
 		require(a == 0 || c / a == b, "Wraparound occurred in multiplication");
 	}
 
 	//Divides a positive integer by another positive integer
-	function safeDiv(uint256 a, uint256 b) internal pure returns (uint256 c) {
+	function safeDiv(uint256 a, uint256 b) private pure returns (uint256 c) {
 		require(b > 0, "Cannot divide by 0");
 		c = a / b;
 	}

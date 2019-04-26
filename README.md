@@ -32,13 +32,33 @@ The TenderLogic and TenderData smart contracts are designed to handle transactio
 
 ### Process Flow
 
+##### Action Sequence
+
 The smart contract is designed such that operations are to intended to follow the sequence outlined below, which should reflect a similar flow to the current business process. The steps for interacting with the smart contract are:
 
 1. First, the TenderLogic and TenderData contracts have to be deployed
-2. The replaceTenderData() function in TenderLogic should be called to point to the address of TenderData, immediately after deployment.
-3. All read operations are done through calls to TenderData, and all state (write) operations are done through TenderLogic.
-4. To create a new business contract instance, call createContract() in TenderLogic with the appropriate parameters, whose description is outlined in the addContract() function in TenderData.
-5. 
+2. The replaceTenderData() function in TenderLogic should be called to point to the address of TenderData, immediately after deployment
+3. All read operations are done through calls to TenderData, and all state (write) operations are done through TenderLogic
+4. To create a new business contract instance, call createContract() in TenderLogic with the appropriate parameters, whose description is outlined in the addContract() function in TenderData
+5. Then, the client is to call payGuarantee() with a transfer of the Ether required by the contract
+6. Then, the owner can call createOrder() to create an order. createOrder() cannot be called if the client has not paid the performance guarantee
+
+##### Configurable Parameters
+
+- transferOwner: Transfers the TenderLogic smart contract to another owner
+- replaceTenderLogic: Upgrades the TenderLogic smart contract to a new address
+- replaceTenderData: Upgrades the TenderData smart contract to a new address
+- changeClient: Changes the client wallet address to a new address
+- updateContractMax: Increases the min, medium and max server limits of the contract to the specified account
+- extendOrderDeadline: Extends the order deadline to the 
+- extendContractDeadline: Extends the 
+
+##### Options for termination
+
+- cancelOrder
+- markContractExpired
+- terminateContract
+- endService
 
 ### Deployment & Testing
 

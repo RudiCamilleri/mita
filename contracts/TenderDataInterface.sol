@@ -74,6 +74,7 @@ interface TenderDataInterface {
 	function getPenaltyPerDay(uint32 contractId) external view returns (uint128);
 	function getOperatorId(uint32 contractId) external view returns (uint32);
 	function getGuaranteeRequired(uint32 contractId) external view returns (uint128);
+	function getGuaranteePaid(uint32 contractId) external view returns (bool);
 	function getContractState(uint32 contractId) external view returns (ContractState);
 	function getTotalSmallServersOrdered(uint32 contractId) external view returns (uint32);
 	function getTotalMediumServersOrdered(uint32 contractId) external view returns (uint32);
