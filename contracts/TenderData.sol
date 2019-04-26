@@ -205,8 +205,8 @@ contract TenderData is TenderDataInterface {
 		contracts[contractId].orders[orderId].state = newState;
 	}
 
-	//Kills the service
-	function endService(address payable targetWallet) external restricted {
+	//Kills the current TenderData contract and transfers its Ether to the owner
+	function destroyTenderData(address payable targetWallet) external restricted {
 		selfdestruct(targetWallet);
 	}
 }

@@ -5,7 +5,7 @@ import "./TenderDataInterface.sol";
 //Version 0.1
 //This is the Business Logic Layer functionality implementation
 contract TenderLogic {
-	address public owner; //the main wallet owner of the smart contract
+	address payable public owner; //the main wallet owner of the smart contract
 	TenderDataInterface public tenderData; //the current data contract implementation
 
 	//Initializes the smart contract
@@ -61,12 +61,12 @@ contract TenderLogic {
 	//Functions that are used in the smart contract itself and are to be exported should be marked as public,
 	//whereas functions that are only called from outside should be marked as external
 
-	//Transfers the current owner of the contract
+	//Transfers the current TenderLogic smart contract to another owner
 	function transferOwner(address newOwner) external restricted {
 		owner = newOwner;
 	}
 
-	//Replaces the current TenderLogic smart contract implementation
+	//Replaces the current TenderLogic smart contract implementation (for upgrading or bug fixes)
 	function replaceTenderLogic(address payable newTenderLogicAddress, bool killOldTenderLogic) external restricted {
 		require(newTenderLogicAddress != address(this), "Invalid newTenderLogicAddress in replaceTenderLogic TenderLogic");
 		if (address(tenderData) != address(0))
@@ -75,7 +75,7 @@ contract TenderLogic {
 			selfdestruct(newTenderLogicAddress);
 	}
 
-	//Sets or replaces the TenderDataInterface smart contract implementation
+	//Sets or replaces the TenderDataInterface smart contract implementation (for initialization or upgrading)
 	function replaceTenderData(address payable newTenderDataAddress, bool migrateOldData, bool killOldData) external restricted {
 		require(newTenderDataAddress != address(tenderData), "Invalid newTenderDataAddress in replaceTenderData TenderLogic");
 		TenderDataInterface oldTenderData = tenderData;
@@ -115,52 +115,52 @@ contract TenderLogic {
 		}
 	}
 
-	//Changes the contract client address
+	//Changes the client wallet address of a contract to a new address
 	function changeClient(uint128 currentUtcDate, uint32 contractId, address payable newClient) external restricted
 	contractActive(currentUtcDate, contractId) {
 		require(!(address(newClient) == address(0) || newClient == tenderData.getClient(contractId)), "New client address is zero or the same as the old one");
 		tenderData.setClient(contractId, newClient);
 	}
 
-	//TODO: Marks the order as cancelled
+	//TODO: Marks the order deadline as passed (only if the deadline has passed)
+	function markOrderDeadlinePassed(uint128 currentUtcDate, uint32 contractId, uint32 orderId) external restricted
+	orderActive(0, contractId, contractId) {
+		require(tenderData.getOrderDeadline(contractId, orderId) <= currentUtcDate, "Order deadline can be marked as passed only if deadline has passed");
+		if ()
+		tenderData.setContractState(contractId, TenderDataInterface.ContractState.Expired);
+	}
+
+	//TODO: Cancels the specified order
 	function cancelOrder(uint128 currentUtcDate, uint32 contractId, uint32 orderId, uint128 penalty) external restricted
 	orderActive(currentUtcDate, contractId, orderId) {
 		tenderData.setOrderState(contractId, orderId, TenderDataInterface.OrderState.Cancelled);
 		tenderData.setContract fgd
 	}
 
-	//TODO: Marks the order deadline as reached only if the deadline is reached
-	function markOrderDeadlineReached(uint128 currentUtcDate, uint32 contractId, uint32 orderId) external restricted
-	orderActive(0, contractId, contractId) {
-		require(tenderData.getOrderDeadline(contractId, orderId) <= currentUtcDate, "Order deadline can be marked as reached only if deadline is reached");
-		if ()
-		tenderData.setContractState(contractId, TenderDataInterface.ContractState.Expired);
-	}
-
-	//Updates the maximum server quantities for the specified contract
+	//Increases the min, medium and max server limits of the contract to the specified amount
 	function updateContractMax(uint128 currentUtcDate, uint32 contractId, uint32 maxSmall, uint32 maxMedium, uint32 maxLarge) external restricted
 	contractActive(currentUtcDate, contractId) {
 		require(maxSmall >= tenderData.getMaxSmallServers(contractId) &&
 				maxMedium >= tenderData.getMaxMediumServers(contractId) &&
-				maxLarge >= tenderData.getMaxLargeServers(contractId), "Max server quantities can only be increased")
+				maxLarge >= tenderData.getMaxLargeServers(contractId), "Max server quantities can only be increased");
 		tenderData.setContractMax(contractId, maxSmall, maxMedium, maxLarge);
 	}
 
-	//Extends the deadline of an order
+	//Extends the order deadline to the specified date
 	function extendOrderDeadline(uint128 currentUtcDate, uint32 contractId, uint32 orderId, uint128 newUtcDeadline) external restricted
 	orderActive(0, contractId, orderId) {
 		require(tenderData.getOrderDeadline(contractId, orderId) < newUtcDeadline, "New order deadline cannot be older than the current order deadline");
 		tenderData.setOrderDeadline(contractId, orderId, newUtcDeadline);
 	}
 
-	//Extends the deadline of a contract
+	//Extends the contract deadline to the specified date
 	function extendContractDeadline(uint128 currentUtcDate, uint32 contractId, uint128 newUtcDeadline) external restricted
 	contractActive(0, contractId) {
 		require(tenderData.getContractDeadline(contractId) < newUtcDeadline, "New contract deadline cannot be older than the current order deadline");
 		tenderData.setContractDeadline(contractId, newUtcDeadline);
 	}
 
-	//Marks the contract as expired only if it is already expired
+	//Marks the contract as expired (only if it is already expired)
 	function markContractExpired(uint128 currentUtcDate, uint32 contractId) external restricted
 	contractActive(0, contractId) {
 		require(tenderData.getContractDeadline(contractId) <= currentUtcDate, "Contract can be marked as expired only if deadline is reached");
@@ -173,10 +173,14 @@ contract TenderLogic {
 		tenderData.setContractState(contractId, TenderDataInterface.ContractState.Terminated);
 	}
 
-	//Kills the service
-	function endService(address payable targetWallet) external restricted {
-		tenderData.endService(targetWallet);
-		selfdestruct(targetWallet);
+	//Kills the current TenderData contract and transfers its Ether to the owner
+	function destroyTenderData() external restricted {
+		tenderData.destroyTenderData(owner);
+	}
+
+	//Kills the current TenderLogic contract and transfers its Ether to the owner
+	function destroyTenderLogic() external restricted {
+		selfdestruct(owner);
 	}
 
 	//======================= CALCULATIONS =======================

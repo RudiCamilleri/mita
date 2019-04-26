@@ -42,23 +42,26 @@ The smart contract is designed such that operations are to intended to follow th
 4. To create a new business contract instance, call createContract() in TenderLogic with the appropriate parameters, whose description is outlined in the addContract() function in TenderData
 5. Then, the client is to call payGuarantee() with a transfer of the Ether required by the contract
 6. Then, the owner can call createOrder() to create an order. createOrder() cannot be called if the client has not paid the performance guarantee
+7. 
 
 ##### Configurable Parameters
 
-- transferOwner: Transfers the TenderLogic smart contract to another owner
-- replaceTenderLogic: Upgrades the TenderLogic smart contract to a new address
-- replaceTenderData: Upgrades the TenderData smart contract to a new address
-- changeClient: Changes the client wallet address to a new address
-- updateContractMax: Increases the min, medium and max server limits of the contract to the specified account
-- extendOrderDeadline: Extends the order deadline to the 
-- extendContractDeadline: Extends the 
+- transferOwner: Transfers the current TenderLogic smart contract to another owner
+- replaceTenderLogic: Replaces the current TenderLogic smart contract implementation (for upgrading or bug fixes)
+- replaceTenderData: Sets or replaces the TenderDataInterface smart contract implementation (for initialization or upgrading)
+- changeClient: Changes the client wallet address of a contract to a new address
+- updateContractMax: Increases the min, medium and max server limits of the contract to the specified amount
+- extendOrderDeadline: Extends the order deadline to the specified date
+- extendContractDeadline: Extends the contract deadline to the specified date
 
 ##### Options for termination
 
-- cancelOrder
-- markContractExpired
-- terminateContract
-- endService
+- cancelOrder: Cancels the specified order
+- markOrderDeadlinePassed: Marks the order deadline as passed (only if the deadline has passed)
+- markContractExpired: Marks the contract as expired (only if it is already expired)
+- terminateContract: Terminates the contract abnormally (possibly due to breach)
+- destroyTenderData: Kills the current TenderData contract and transfers its Ether to the owner
+- destroyTenderLogic: Kills the current TenderLogic contract and transfers its Ether to the owner
 
 ### Deployment & Testing
 
