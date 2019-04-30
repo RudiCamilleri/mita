@@ -75,6 +75,7 @@ interface TenderDataInterface {
 	function getOperatorId(uint32 contractId) external view returns (uint32);
 	function getGuaranteeRequired(uint32 contractId) external view returns (uint128);
 	function getGuaranteePaid(uint32 contractId) external view returns (bool);
+	function getClientPot(uint128 contractId) external view returns (uint128);
 	function getContractState(uint32 contractId) external view returns (ContractState);
 	function getTotalSmallServersOrdered(uint32 contractId) external view returns (uint32);
 	function getTotalMediumServersOrdered(uint32 contractId) external view returns (uint32);
@@ -82,6 +83,7 @@ interface TenderDataInterface {
 	function getMaxSmallServers(uint32 contractId) external view returns (uint32);
 	function getMaxMediumServers(uint32 contractId) external view returns (uint32);
 	function getMaxLargeServers(uint32 contractId) external view returns (uint32);
+	function getContractStartDate(uint32 contractId) external view returns (uint128);
 	function getContractDeadline(uint32 contractId) external view returns (uint128);
 	//====================== Order Data ===========================
 	function getOrderState(uint32 contractId, uint32 orderId) external view returns (OrderState);
@@ -91,6 +93,7 @@ interface TenderDataInterface {
 	function getSmallServersOrdered(uint32 contractId, uint32 orderId) external view returns (uint32);
 	function getMediumServersOrdered(uint32 contractId, uint32 orderId) external view returns (uint32);
 	function getLargeServersOrdered(uint32 contractId, uint32 orderId) external view returns (uint32);
+	function getOrderCreationDate(uint32 contractId, uint32 orderId) external view returns (uint128);
 	function getOrderDeadline(uint32 contractId, uint32 orderId) external view returns (uint128);
 
 	//===================== DATA SECTION ==========================
@@ -108,6 +111,9 @@ interface TenderDataInterface {
 
 	//Sets the contract state
 	function setContractState(uint32 contractId, ContractState newState) external;
+
+	//Sets the balance of the client pot to the specified amount
+	function setClientPot(uint32 contractId, uint128 newValue) external;
 
 	//Sets the guarantee as paid
 	function setGuaranteePaid(uint32 contractId) external;

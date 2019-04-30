@@ -1,12 +1,13 @@
 pragma solidity >=0.5.0;
 
 import "./TenderDataInterface.sol";
+import "./TenderStructs.sol";
 
 //Version 0.1
 //This is the contract data storage layer
 contract TenderData is TenderDataInterface {
 	address public tenderLogic; //the parent TenderLogic smart contract instance
-	mapping(uint32 => TenderDataInterface.Contract) contracts; //the legal contracts that are represented in this instance
+	mapping(uint32 => TenderStructs.Contract) contracts; //the legal contracts that are represented in this instance
 
 	//Initializes the smart contract
 	constructor(address tenderLogicAddress) public {
@@ -46,6 +47,10 @@ contract TenderData is TenderDataInterface {
 		return contracts[contractId].guaranteeRequired;
 	}
 
+	function getClientPot(uint32 contractId) external view returns (uint128) {
+		return contracts[contractId].clientPot;
+	}
+
 	function getContractState(uint32 contractId) external view returns (TenderDataInterface.ContractState) {
 		return contracts[contractId].state;
 	}
@@ -72,6 +77,10 @@ contract TenderData is TenderDataInterface {
 
 	function getMaxLargeServers(uint32 contractId) external view returns (uint32) {
 		return contracts[contractId].attr.maxLarge;
+	}
+
+	function getContractStartDate(uint32 contractId) external view returns (uint128) {
+		return contracts[contractId].attr.startDate;
 	}
 
 	function getContractDeadline(uint32 contractId) external view returns (uint128) {
@@ -107,6 +116,10 @@ contract TenderData is TenderDataInterface {
 		return contracts[contractId].orders[orderId].attr.maxLarge;
 	}
 
+	function getOrderCreationDate(uint32 contractId, uint32 orderId) external view returns (uint128) {
+		return contracts[contractId].orders[orderId].attr.startDate;
+	}
+
 	function getOrderDeadline(uint32 contractId, uint32 orderId) external view returns (uint128) {
 		return contracts[contractId].orders[orderId].attr.deadline;
 	}
@@ -131,7 +144,7 @@ contract TenderData is TenderDataInterface {
 
 	//Adds a business contract instance to the smart contract
 	function addContract(uint32 contractId, address payable client, uint128[] calldata params128, uint32[] calldata params32) external restricted {
-		contracts[contractId] = TenderDataInterface.Contract({
+		contracts[contractId] = TenderStructs.Contract({
 			client: client,
 			state: TenderDataInterface.ContractState.Active,
 			smallServerPrice: params128[0],
@@ -140,14 +153,16 @@ contract TenderData is TenderDataInterface {
 			penaltyPerDay: params128[3],
 			guaranteeRequired: params128[4],
 			guaranteePaid: false,
-			attr: TenderDataInterface.Attributes({
+			clientPot: 0,
+			attr: TenderStructs.Attributes({
 				small: 0,
 				medium: 0,
 				large: 0,
 				maxSmall: params32[0],
 				maxMedium: params32[1],
 				maxLarge: params32[2],
-				deadline: params128[5]
+				startDate: params128[5],
+				deadline: params128[6]
 			})
 		});
 	}
@@ -162,6 +177,11 @@ contract TenderData is TenderDataInterface {
 		contracts[contractId].guaranteePaid = true;
 	}
 
+	//Sets the balance of the client pot to the specified amount
+	function setClientPot(uint32 contractId, uint128 newValue) external restricted {
+		contracts[contractId].clientPot = newValue;
+	}
+
 	//Sets the contract deadline
 	function setContractDeadline(uint32 contractId, uint128 newUtcDeadline) external restricted {
 		contracts[contractId].attr.deadline = newUtcDeadline;
@@ -174,16 +194,17 @@ contract TenderData is TenderDataInterface {
 
 	//Adds a new order to the specified contract
 	function addOrder(uint32 contractId, uint32 orderId, uint128[] calldata params128, uint32[] calldata params32) external restricted {
-		contracts[contractId].orders[orderId] = TenderDataInterface.Order({
+		contracts[contractId].orders[orderId] = TenderStructs.Order({
 			state: TenderDataInterface.OrderState.Pending,
-			attr: TenderDataInterface.Attributes({
+			attr: TenderStructs.Attributes({
 				small: 0,
 				medium: 0,
 				large: 0,
 				maxSmall: params32[0],
 				maxMedium: params32[1],
 				maxLarge: params32[2],
-				deadline: params128[0]
+				startDate: params128[0],
+				deadline: params128[1]
 			})
 		});
 	}

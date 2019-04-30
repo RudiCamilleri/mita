@@ -20,38 +20,58 @@ contract TenderLogic {
 	}
 
 	//Makes sure that the contract is active
-	modifier contractActive(uint128 currentUtcDate, uint32 contractId) {
-		require(tenderData.getContractState(contractId) == TenderDataInterface.ContractState.Active &&
-			tenderData.getContractDeadline(contractId) > currentUtcDate, "Specified contract is expired or invalid");
+	modifier contractActive(uint32 contractId) {
+		require(tenderData.getContractState(contractId) == TenderDataInterface.ContractState.Active, "Specified contract is expired or invalid");
 		_;
 	}
 
-	//Makes sure that the contract is active and the order is Pending or BeingDelivered (ie. not finalized)
-	modifier orderActive(uint128 currentUtcDate, uint32 contractId, uint32 orderId) {
-		//contractActive
+	//Makes sure that the contract is active and check that the date is valid for the contract
+	modifier contractActiveCheckDate(uint128 currentUtcDate, uint32 contractId) {
 		require(tenderData.getContractState(contractId) == TenderDataInterface.ContractState.Active &&
-			tenderData.getContractDeadline(contractId) > currentUtcDate, "Specified contract is expired or invalid");
+			tenderData.getContractStartDate(contractId) <= currentUtcDate &&
+			tenderData.getContractDeadline(contractId) > currentUtcDate, "Specified contract is pending, expired or invalid");
+		_;
+	}
 
-		require(tenderData.getOrderDeadline(contractId, orderId) <= currentUtcDate, "Order is expired");
+	//Makes sure that the order is Pending or BeingDelivered (ie. not finalized)
+	modifier orderActive(uint32 contractId, uint32 orderId) {
+		//contractActive
 		TenderDataInterface.OrderState state = tenderData.getOrderState(contractId, orderId);
 		require(state == TenderDataInterface.OrderState.Pending || state == TenderDataInterface.OrderState.BeingDelivered, "Order state must be Pending or BeingDelivered to be modified");
 		_;
 	}
+
+	/*//Makes sure that the contract is active and the order is Pending or BeingDelivered (ie. not finalized)
+	modifier orderActiveCheckDate(uint128 currentUtcDate, uint32 contractId, uint32 orderId) {
+		//contractActiveCheckDate
+		require(tenderData.getContractState(contractId) == TenderDataInterface.ContractState.Active &&
+			tenderData.getContractStartDate(contractId) <= currentUtcDate &&
+			tenderData.getContractDeadline(contractId) > currentUtcDate, "Specified contract is pending, expired or invalid");
+
+		require(tenderData.getOrderCreationDate(contractId, orderId) <= currentUtcDate &&
+			tenderData.getOrderDeadline(contractId, orderId) > currentUtcDate, "Order is not created or it is expired");
+		TenderDataInterface.OrderState state = tenderData.getOrderState(contractId, orderId);
+		require(state == TenderDataInterface.OrderState.Pending || state == TenderDataInterface.OrderState.BeingDelivered, "Order state must be Pending or BeingDelivered to be modified");
+		_;
+	}*/
 
 	//=====================================
 	//=== PUBLIC CLIENT FUNCTIONS BELOW ===
 	//=====================================
 	//The client shoud call this function to pay the performance guarantee
 	function payGuarantee(uint128 currentUtcDate, uint32 contractId) external
-	contractActive(currentUtcDate, contractId) {
-		require(msg.sender == tenderData.getClient(contractId) && msg.value == tenderData.getGuaranteeRequired(contractId), "Incorrect client or amount for performance guarantee");
+	contractActiveCheckDate(currentUtcDate, contractId) {
+		require(msg.value != 0 && msg.sender == tenderData.getClient(contractId) &&
+			msg.value == tenderData.getGuaranteeRequired(contractId) && !tenderData.getGuaranteePaid(), "Incorrect client or amount for performance guarantee, or already paid");
 		tenderData.setGuaranteePaid(contractId);
+		tenderData.setClientPot(contractId, safeAdd(tenderData.getClientPot(contractId), msg.value));
 	}
 
-	//TODO: Tops up the penalty required
+	//Tops up the penalty required
 	function topUpPenalty(uint128 currentUtcDate, uint32 contractId) external
-	contractActive(currentUtcDate, contractId) {
-
+	contractActiveCheckDate(currentUtcDate, contractId) {
+		require(msg.value != 0 && msg.sender == tenderData.getClient(contractId) && tenderData.getGuaranteePaid(), "Incorrect client or amount 0 for performance guarantee or guarantee not paid");
+		tenderData.setClientPot(contractId, safeAdd(tenderData.getClientPot(contractId), msg.value));
 	}
 
 	//=======================================================
@@ -96,7 +116,7 @@ contract TenderLogic {
 
 	//Creates an order
 	function createOrder(uint128 currentUtcDate, uint32 contractId, uint32 orderId, uint128[] calldata params128, uint32[] calldata params32) external restricted
-	contractActive(currentUtcDate, contractId) {
+	contractActiveCheckDate(currentUtcDate, contractId) {
 		require(tenderData.getOrderState(contractId, orderId) == TenderDataInterface.OrderState.Null, "Order already exists with that ID");
 		require(tenderData.getGuaranteePaid(), "Performance guarantee must be paid to create an order");
 		tenderData.addOrder(contractId, orderId, params128, params32);
@@ -104,7 +124,7 @@ contract TenderLogic {
 
 	//TODO: Marks servers as delivered
 	function markServersDelivered(uint128 currentUtcDate, uint32 contractId, uint32 orderId, uint32 small, uint32 medium, uint32 large) external restricted
-	orderActive(currentUtcDate, contractId, orderId) {
+	orderActive(contractId, orderId) {
 		if () {
 			tenderData.setOrderState(contractId, orderId, TenderDataInterface.OrderState.Delivered);
 			tenderData.getClient(contractId).transfer(safeAdd(safeAdd(
@@ -115,16 +135,9 @@ contract TenderLogic {
 		}
 	}
 
-	//Changes the client wallet address of a contract to a new address
-	function changeClient(uint128 currentUtcDate, uint32 contractId, address payable newClient) external restricted
-	contractActive(currentUtcDate, contractId) {
-		require(!(address(newClient) == address(0) || newClient == tenderData.getClient(contractId)), "New client address is zero or the same as the old one");
-		tenderData.setClient(contractId, newClient);
-	}
-
 	//TODO: Marks the order deadline as passed (only if the deadline has passed)
 	function markOrderDeadlinePassed(uint128 currentUtcDate, uint32 contractId, uint32 orderId) external restricted
-	orderActive(0, contractId, contractId) {
+	orderActive(contractId, contractId) {
 		require(tenderData.getOrderDeadline(contractId, orderId) <= currentUtcDate, "Order deadline can be marked as passed only if deadline has passed");
 		if ()
 		tenderData.setContractState(contractId, TenderDataInterface.ContractState.Expired);
@@ -137,9 +150,24 @@ contract TenderLogic {
 		tenderData.setContract fgd
 	}
 
+	//Collects money from the client pot (which includes performance guarantee and penalty money)
+	function collectFromPot(uint32 contractId, uint128 amount) external restricted
+	contractActive(contractId) {
+		require(tenderData.getGuaranteePaid(), "Performance guarantee must be paid to collect from pot");
+		tenderData.setClientPot(contractId, safeSub(tenderData.getClientPot(contractId), amount));
+		owner.transfer(amount);
+	}
+
+	//Changes the client wallet address of a contract to a new address
+	function changeClient(uint128 currentUtcDate, uint32 contractId, address payable newClient) external restricted
+	contractActiveCheckDate(currentUtcDate, contractId) {
+		require(!(address(newClient) == address(0) || newClient == tenderData.getClient(contractId)), "New client address is zero or the same as the old one");
+		tenderData.setClient(contractId, newClient);
+	}
+
 	//Increases the min, medium and max server limits of the contract to the specified amount
 	function updateContractMax(uint128 currentUtcDate, uint32 contractId, uint32 maxSmall, uint32 maxMedium, uint32 maxLarge) external restricted
-	contractActive(currentUtcDate, contractId) {
+	contractActiveCheckDate(currentUtcDate, contractId) {
 		require(maxSmall >= tenderData.getMaxSmallServers(contractId) &&
 				maxMedium >= tenderData.getMaxMediumServers(contractId) &&
 				maxLarge >= tenderData.getMaxLargeServers(contractId), "Max server quantities can only be increased");
@@ -148,28 +176,28 @@ contract TenderLogic {
 
 	//Extends the order deadline to the specified date
 	function extendOrderDeadline(uint128 currentUtcDate, uint32 contractId, uint32 orderId, uint128 newUtcDeadline) external restricted
-	orderActive(0, contractId, orderId) {
+	orderActive(contractId, orderId) {
 		require(tenderData.getOrderDeadline(contractId, orderId) < newUtcDeadline, "New order deadline cannot be older than the current order deadline");
 		tenderData.setOrderDeadline(contractId, orderId, newUtcDeadline);
 	}
 
 	//Extends the contract deadline to the specified date
 	function extendContractDeadline(uint128 currentUtcDate, uint32 contractId, uint128 newUtcDeadline) external restricted
-	contractActive(0, contractId) {
+	contractActive(contractId) {
 		require(tenderData.getContractDeadline(contractId) < newUtcDeadline, "New contract deadline cannot be older than the current order deadline");
 		tenderData.setContractDeadline(contractId, newUtcDeadline);
 	}
 
 	//Marks the contract as expired (only if it is already expired)
 	function markContractExpired(uint128 currentUtcDate, uint32 contractId) external restricted
-	contractActive(0, contractId) {
+	contractActive(contractId) {
 		require(tenderData.getContractDeadline(contractId) <= currentUtcDate, "Contract can be marked as expired only if deadline is reached");
 		tenderData.setContractState(contractId, TenderDataInterface.ContractState.Expired);
 	}
 
-	//TODO: Terminates the contract abnormally (possibly due to breach)
+	//Terminates the contract abnormally (possibly due to breach)
 	function terminateContract(uint128 currentUtcDate, uint32 contractId) external restricted
-	contractActive(currentUtcDate, contractId) {
+	contractActiveCheckDate(currentUtcDate, contractId) {
 		tenderData.setContractState(contractId, TenderDataInterface.ContractState.Terminated);
 	}
 
@@ -186,26 +214,28 @@ contract TenderLogic {
 	//======================= CALCULATIONS =======================
 
 	//Adds two positive integers
-	function safeAdd(uint256 a, uint256 b) private pure returns (uint256 c) {
-		c = a + b;
-		require(c >= a, "Wraparound occurred in addition");
+	function safeAdd(uint256 a, uint256 b) private pure returns (uint256) {
+		uint256 result = a + b;
+		require(result >= a, "Wraparound occurred in addition");
+		return result;
 	}
 
 	//Subtracts a small positive integer from a larger positive integer
-	function safeSub(uint256 a, uint256 b) private pure returns (uint256 c) {
+	function safeSub(uint256 a, uint256 b) private pure returns (uint256) {
 		require(b <= a, "Wraparound occurred in subtraction");
-		c = a - b;
+		return a - b;
 	}
 
 	//Multiplies two positive integers
-	function safeMul(uint256 a, uint256 b) private pure returns (uint256 c) {
-		c = a * b;
-		require(a == 0 || c / a == b, "Wraparound occurred in multiplication");
+	function safeMul(uint256 a, uint256 b) private pure returns (uint256) {
+		uint256 result = a * b;
+		require(a == 0 || result / a == b, "Wraparound occurred in multiplication");
+		return result;
 	}
 
 	//Divides a positive integer by another positive integer
-	function safeDiv(uint256 a, uint256 b) private pure returns (uint256 c) {
+	function safeDiv(uint256 a, uint256 b) private pure returns (uint256) {
 		require(b > 0, "Cannot divide by 0");
-		c = a / b;
+		return a / b;
 	}
 }
