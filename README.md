@@ -4,7 +4,11 @@ Smart contract environment setup is documented here: https://github.com/mathusum
 
 ### Scope & Purpose
 
-To fill...
+The purpose of this smart contract implementation is to serve as a prototype for the business process of issuing tenders for MITA servers, taking care of order state management, payments to the Economic Operator (referred to as "client" in the smart contract), and collection of performance guarantee and penalty money from the Economic Operator ("client").
+
+The smart contract is intended to be invoked by the backend of a website that handles the state management, where clients and officers would be able to log in and perform the necessary actions to view and update the state of the smart contract depending on their authorization. Payments to the smart contract by the client, however, should be done manually from outside the website domain, to make sure that the their private keys are never shared with the service for privacy and security reasons.
+
+The smart contract handles payments for servers that are marked as ordered. Order states can be changed only by the authorized officers in charge, who will be given access to the services provided by the management server. All states, actions, payments and data in the smart contract will be publicly accessibly and visible in the Ethereum blockchain ledger. This will introduce greater transparency of the tender process to the public, which is one of the possible perks of smart contracts. Another perk would be the ease and speed of payment, where payments can be directly passed without any invovement of a central middle-man entity.
 
 ### Structure & Reasoning
 
@@ -42,6 +46,7 @@ The smart contract is designed such that operations are to intended to follow th
 4. Then, the client is to call payGuarantee() with a transfer of the Ether required by the contract
 5. Then, the owner can call createOrder() to create an order. createOrder() cannot be called unless the client has paid the performance guarantee
 6. When any servers arrive and are accepted, the owner calls markServersDelivered() and specifies how many small, medium and large servers have arrived
+7. 
 
 ##### Configurable Parameters
 
