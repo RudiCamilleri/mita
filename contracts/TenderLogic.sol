@@ -68,14 +68,14 @@ contract TenderLogic {
 		require(msg.value > 0 && msg.sender == tenderData.getClient(contractId) &&
 			msg.value == tenderData.getGuaranteeRequired(contractId) && !tenderData.getGuaranteePaid(), "Incorrect client or amount for performance guarantee, or already paid");
 		tenderData.setGuaranteePaid(contractId);
-		tenderData.setClientPot(contractId, safeAdd(tenderData.getClientPot(contractId), msg.value));
+		tenderData.setClientPot(contractId, safeAdd256(tenderData.getClientPot(contractId), msg.value));
 	}
 
 	//The client calls this function to top up the penalty required
 	function topUpPenalty(uint128 currentUtcDate, uint32 contractId) external
 	contractActiveCheckDate(currentUtcDate, contractId) {
 		require(msg.value > 0 && msg.sender == tenderData.getClient(contractId) && tenderData.getGuaranteePaid(), "Incorrect client or amount 0 for performance guarantee or guarantee not paid");
-		tenderData.setClientPot(contractId, safeAdd(tenderData.getClientPot(contractId), msg.value));
+		tenderData.setClientPot(contractId, safeAdd256(tenderData.getClientPot(contractId), msg.value));
 	}
 
 	//=======================================================
@@ -124,9 +124,9 @@ contract TenderLogic {
 		require(startDate < deadline, "Deadline cannot be before start date");
 		require(tenderData.getOrderState(contractId, orderId) == TenderDataInterface.OrderState.Null, "Order already exists with that ID");
 		require(tenderData.getGuaranteePaid(), "Performance guarantee must be paid to create an order");
-		uint32 newSmall = tenderData.getTotalSmallServersOrdered(contractId) + small;
-		uint32 newMedium = tenderData.getTotalMediumServersOrdered(contractId) + medium;
-		uint32 newLarge = tenderData.getTotalLargeServersOrdered(contractId) + large;
+		uint32 newSmall = safeAdd32(tenderData.getTotalSmallServersOrdered(contractId), small);
+		uint32 newMedium = safeAdd32(tenderData.getTotalMediumServersOrdered(contractId), medium);
+		uint32 newLarge = safeAdd32(tenderData.getTotalLargeServersOrdered(contractId), large);
 		require(newSmall <= tenderData.getMaxSmallServers(contractId), "Cannot exceed max small server count. To extend the amount, use updateContractMax()");
 		require(newMedium <= tenderData.getMaxMediumServers(contractId), "Cannot exceed max medium server count. To extend the amount, use updateContractMax()");
 		require(newLarge <= tenderData.getMaxLargeServers(contractId), "Cannot exceed max large server count. To extend the amount, use updateContractMax()");
@@ -147,33 +147,33 @@ contract TenderLogic {
 		if () {
 			tenderData.setOrderState(contractId, orderId, TenderDataInterface.OrderState.Delivered);
 			if (payClientIfCompleted) {
-				tenderData.getClient(contractId).transfer(safeAdd(safeAdd(
-					safeMul(tenderData.getSmallServerPrice(contractId), tenderData.getSmallServersOrdered(contractId, orderId)),
-					safeMul(tenderData.getMediumServerPrice(contractId), tenderData.getMediumServersOrdered(contractId, orderId))),
-					safeMul(tenderData.getLargeServerPrice(contractId), tenderData.getLargeServersOrdered(contractId, orderId)))
+				tenderData.getClient(contractId).transfer(safeAdd256(safeAdd256(
+					safeMul256(tenderData.getSmallServerPrice(contractId), tenderData.getSmallServersOrdered(contractId, orderId)),
+					safeMul256(tenderData.getMediumServerPrice(contractId), tenderData.getMediumServersOrdered(contractId, orderId))),
+					safeMul256(tenderData.getLargeServerPrice(contractId), tenderData.getLargeServersOrdered(contractId, orderId)))
 				);
 			}
 		}
 	}
 
-	//Marks the order deadline as passed (only if the deadline has passed). To collect penalty fee, call collectFromPot() with the desired amount
-	function markOrderDeadlinePassed(uint128 currentUtcDate, uint32 contractId, uint32 orderId) external restricted
+	//TODO: Marks the order deadline as passed (only if the deadline has passed). To collect penalty fee, call collectFromPot() with the desired amount
+	function markOrderDeadlinePassed(uint128 currentUtcDate, uint32 contractId, uint32 orderId, bool subtractFromContactTotal) external restricted
 	orderActive(contractId, contractId) {
 		require(tenderData.getOrderDeadline(contractId, orderId) <= currentUtcDate, "Order deadline can be marked as passed only if deadline has passed");
 		tenderData.setOrderState(contractId, orderId, TenderDataInterface.ContractState.Expired);
 	}
 
-	//Cancels the specified order. To collect penalty fee, call collectFromPot() with the desired amount
-	function cancelOrder(uint32 contractId, uint32 orderId) external restricted
+	//TODO: Cancels the specified order. To collect penalty fee, call collectFromPot() with the desired amount
+	function cancelOrder(uint32 contractId, uint32 orderId, bool subtractFromContactTotal) external restricted
 	orderActive(contractId, orderId) {
 		tenderData.setOrderState(contractId, orderId, TenderDataInterface.OrderState.Cancelled);
 	}
 
 	//Collects fees from the client pot (which includes performance guarantee and penalty money)
-	function collectFromPot(uint32 contractId, uint128 amount) external restricted {
+	function collectFromPot(uint32 contractId, uint256 amount) external restricted {
 		require(amount > 0, "Cannot collect 0");
 		require(tenderData.getGuaranteePaid(contractId), "Performance guarantee must be paid to collect from pot");
-		tenderData.setClientPot(contractId, safeSub(tenderData.getClientPot(contractId), amount));
+		tenderData.setClientPot(contractId, safeSub256(tenderData.getClientPot(contractId), amount));
 		owner.transfer(amount);
 	}
 
@@ -234,27 +234,34 @@ contract TenderLogic {
 	//======================= CALCULATIONS =======================
 
 	//Adds two positive integers
-	function safeAdd(uint256 a, uint256 b) private pure returns (uint256) {
+	function safeAdd32(uint32 a, uint32 b) private pure returns (uint32) {
+		uint32 result = a + b;
+		require(result >= a, "Wraparound occurred in addition");
+		return result;
+	}
+
+	//Adds two positive integers
+	function safeAdd256(uint256 a, uint256 b) private pure returns (uint256) {
 		uint256 result = a + b;
 		require(result >= a, "Wraparound occurred in addition");
 		return result;
 	}
 
 	//Subtracts a small positive integer from a larger positive integer
-	function safeSub(uint256 a, uint256 b) private pure returns (uint256) {
+	function safeSub256(uint256 a, uint256 b) private pure returns (uint256) {
 		require(b <= a, "Wraparound occurred in subtraction");
 		return a - b;
 	}
 
 	//Multiplies two positive integers
-	function safeMul(uint256 a, uint256 b) private pure returns (uint256) {
+	function safeMul256(uint256 a, uint256 b) private pure returns (uint256) {
 		uint256 result = a * b;
 		require(a == 0 || result / a == b, "Wraparound occurred in multiplication");
 		return result;
 	}
 
 	//Divides a positive integer by another positive integer
-	function safeDiv(uint256 a, uint256 b) private pure returns (uint256) {
+	function safeDiv256(uint256 a, uint256 b) private pure returns (uint256) {
 		require(b > 0, "Cannot divide by 0");
 		return a / b;
 	}

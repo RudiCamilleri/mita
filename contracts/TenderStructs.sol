@@ -48,7 +48,7 @@ interface TenderStructs {
 		uint128 largeServerPrice;
 		uint128 penaltyPerDay;
 		uint128 guaranteeRequired;
-		uint128 clientPot;
+		uint256 clientPot;
 		bool guaranteePaid;
 		Attributes attr;
 		mapping(uint32 => Order) orders;

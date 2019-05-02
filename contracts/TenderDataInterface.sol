@@ -73,7 +73,7 @@ interface TenderDataInterface {
 	function getOperatorId(uint32 contractId) external view returns (uint32);
 	function getGuaranteeRequired(uint32 contractId) external view returns (uint128);
 	function getGuaranteePaid(uint32 contractId) external view returns (bool);
-	function getClientPot(uint128 contractId) external view returns (uint128);
+	function getClientPot(uint256 contractId) external view returns (uint256);
 	function getContractState(uint32 contractId) external view returns (ContractState);
 	function getTotalSmallServersOrdered(uint32 contractId) external view returns (uint32);
 	function getTotalMediumServersOrdered(uint32 contractId) external view returns (uint32);
@@ -111,7 +111,7 @@ interface TenderDataInterface {
 	function setContractState(uint32 contractId, ContractState newState) external;
 
 	//Sets the balance of the client pot to the specified amount
-	function setClientPot(uint32 contractId, uint128 newValue) external;
+	function setClientPot(uint32 contractId, uint256 newValue) external;
 
 	//Sets the guarantee as paid
 	function setGuaranteePaid(uint32 contractId) external;

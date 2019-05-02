@@ -47,7 +47,7 @@ contract TenderData is TenderDataInterface {
 		return contracts[contractId].guaranteeRequired;
 	}
 
-	function getClientPot(uint32 contractId) external view returns (uint128) {
+	function getClientPot(uint32 contractId) external view returns (uint256) {
 		return contracts[contractId].clientPot;
 	}
 
@@ -185,7 +185,7 @@ contract TenderData is TenderDataInterface {
 	}
 
 	//Sets the balance of the client pot to the specified amount
-	function setClientPot(uint32 contractId, uint128 newValue) external restricted {
+	function setClientPot(uint32 contractId, uint256 newValue) external restricted {
 		contracts[contractId].clientPot = newValue;
 	}
 
