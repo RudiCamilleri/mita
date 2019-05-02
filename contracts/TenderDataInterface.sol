@@ -15,10 +15,8 @@ interface TenderDataInterface {
 	enum OrderState {
 		Null, //not set
 		Pending, //order is created and pending
-		BeingDelivered, //order servers are being delivered (ie. one or more servers was already delivered and accepted)
-		PartiallyDelivered, //deadline reached before all of the order was delivered and accepted
-		Delivered, //the order was delivered and accepted successfully
-		Cancelled //the order was cancelled, and possibly a penalty was issued
+		Delivered, //the order was fully delivered and accepted successfully
+		Cancelled //the order was cancelled before the servers arrived fully, possibly a penalty was issued as well
 	}
 
 	struct Attributes {
@@ -117,6 +115,9 @@ interface TenderDataInterface {
 
 	//Sets the guarantee as paid
 	function setGuaranteePaid(uint32 contractId) external;
+
+	//Sets the total number of servers ordered so far for the specified contract
+	function setTotalServersOrdered(uint32 contractId, uint32 small, uint32 medium, uint32 large) external;
 
 	//Sets the contract client address
 	function setClient(uint32 contractId, address payable newClient) external;

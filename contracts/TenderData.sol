@@ -167,6 +167,13 @@ contract TenderData is TenderDataInterface {
 		});
 	}
 
+	//Sets the total number of servers ordered so far for the specified contract
+	function setTotalServersOrdered(uint32 contractId, uint32 small, uint32 medium, uint32 large) external restricted {
+		contracts[contractId].attr.small = small;
+		contracts[contractId].attr.medium = medium;
+		contracts[contractId].attr.large = large;
+	}
+
 	//Sets the contract client address
 	function setClient(uint32 contractId, address payable newClient) external restricted {
 		contracts[contractId].client = newClient;
@@ -193,18 +200,18 @@ contract TenderData is TenderDataInterface {
 	}
 
 	//Adds a new order to the specified contract
-	function addOrder(uint32 contractId, uint32 orderId, uint128[] calldata params128, uint32[] calldata params32) external restricted {
+	function addOrder(uint32 contractId, uint32 orderId, uint32 small, uint32 medium, uint32 large, uint128 startDate, uint128 deadline) external restricted {
 		contracts[contractId].orders[orderId] = TenderStructs.Order({
 			state: TenderDataInterface.OrderState.Pending,
 			attr: TenderStructs.Attributes({
 				small: 0,
 				medium: 0,
 				large: 0,
-				maxSmall: params32[0],
-				maxMedium: params32[1],
-				maxLarge: params32[2],
-				startDate: params128[0],
-				deadline: params128[1]
+				maxSmall: small,
+				maxMedium: medium,
+				maxLarge: large,
+				startDate: startDate,
+				deadline: deadline
 			})
 		});
 	}

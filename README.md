@@ -46,7 +46,6 @@ The smart contract is designed such that operations are to intended to follow th
 4. Then, the client is to call payGuarantee() with a transfer of the Ether required by the contract
 5. Then, the owner can call createOrder() to create an order. createOrder() cannot be called unless the client has paid the performance guarantee
 6. When any servers arrive and are accepted, the owner calls markServersDelivered() and specifies how many small, medium and large servers have arrived
-7. 
 
 ##### Configurable Parameters
 
@@ -56,6 +55,7 @@ The smart contract is designed such that operations are to intended to follow th
 - changeClient: Changes the client wallet address of a contract to a new address
 - updateContractMax: Increases the min, medium and max server limits of the contract to the specified amount
 - collectFromPot: Collects Ether from the client's performance guarantee and penalty total
+- payClient: Pays the client the specified amount (use only for special cases)
 - extendOrderDeadline: Extends the order deadline to the specified date
 - extendContractDeadline: Extends the contract deadline to the specified date
 
