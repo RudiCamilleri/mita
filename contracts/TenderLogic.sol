@@ -156,17 +156,27 @@ contract TenderLogic {
 		}
 	}
 
-	//TODO: Marks the order deadline as passed (only if the deadline has passed). To collect penalty fee, call collectFromPot() with the desired amount
-	function markOrderDeadlinePassed(uint128 currentUtcDate, uint32 contractId, uint32 orderId, bool subtractFromContactTotal) external restricted
+	//Marks the order deadline as passed (only if the deadline has passed). To collect penalty fee, call collectFromPot() with the desired amount
+	function markOrderDeadlinePassed(uint128 currentUtcDate, uint32 contractId, uint32 orderId, bool subtractFromContractTotal) external restricted
 	orderActive(contractId, contractId) {
 		require(tenderData.getOrderDeadline(contractId, orderId) <= currentUtcDate, "Order deadline can be marked as passed only if deadline has passed");
 		tenderData.setOrderState(contractId, orderId, TenderDataInterface.ContractState.Expired);
+		if (subtractFromContactTotal) {
+			tenderData.setTotalSmallServersOrdered(safeSub32(tenderData.getTotalSmallServersOrdered(contractId), small));
+			tenderData.setTotalMediumServersOrdered(safeSub32(tenderData.getTotalMediumServersOrdered(contractId), medium));
+			tenderData.setTotalLargeServersOrdered(safeSub32(tenderData.getTotalLargeServersOrdered(contractId), large));
+		}
 	}
 
-	//TODO: Cancels the specified order. To collect penalty fee, call collectFromPot() with the desired amount
-	function cancelOrder(uint32 contractId, uint32 orderId, bool subtractFromContactTotal) external restricted
+	//Cancels the specified order. To collect penalty fee, call collectFromPot() with the desired amount
+	function cancelOrder(uint32 contractId, uint32 orderId, bool subtractFromCrontactTotal) external restricted
 	orderActive(contractId, orderId) {
 		tenderData.setOrderState(contractId, orderId, TenderDataInterface.OrderState.Cancelled);
+		if (subtractFromContactTotal) {
+			tenderData.setTotalSmallServersOrdered(safeSub32(tenderData.getTotalSmallServersOrdered(contractId), small));
+			tenderData.setTotalMediumServersOrdered(safeSub32(tenderData.getTotalMediumServersOrdered(contractId), medium));
+			tenderData.setTotalLargeServersOrdered(safeSub32(tenderData.getTotalLargeServersOrdered(contractId), large));
+		}
 	}
 
 	//Collects fees from the client pot (which includes performance guarantee and penalty money)
@@ -245,6 +255,12 @@ contract TenderLogic {
 		uint256 result = a + b;
 		require(result >= a, "Wraparound occurred in addition");
 		return result;
+	}
+
+	//Subtracts a small positive integer from a larger positive integer
+	function safeSub32(uint32 a, uint32 b) private pure returns (uint32) {
+		require(b <= a, "Wraparound occurred in subtraction");
+		return a - b;
 	}
 
 	//Subtracts a small positive integer from a larger positive integer
