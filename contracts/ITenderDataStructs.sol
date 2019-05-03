@@ -5,7 +5,7 @@ import "./ITenderData.sol";
 //Version 0.1
 //This interface serves to contain the definitions of the data structures that are used solely by the internals of TenderData.
 //The only reason these structs are not placed within the TenderData smart contract itself is to make the code more organized.
-interface ITenderStructs {
+interface ITenderDataStructs {
 	struct Attributes {
 		//Contract: current number of small servers ordered
 		//Order: current number of small servers that arrived

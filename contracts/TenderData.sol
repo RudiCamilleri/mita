@@ -1,13 +1,13 @@
 pragma solidity >=0.5.0;
 
 import "./ITenderData.sol";
-import "./ITenderStructs.sol";
+import "./ITenderDataStructs.sol";
 
 //Version 0.1
 //This is the contract data storage layer
 contract TenderData is ITenderData {
 	address public tenderLogic; //the parent TenderLogic smart contract instance
-	mapping(uint32 => ITenderStructs.Contract) contracts; //the legal contracts that are represented in this instance
+	mapping(uint32 => ITenderDataStructs.Contract) contracts; //the legal contracts that are represented in this instance
 
 	//Initializes the smart contract
 	constructor(address tenderLogicAddress) public {
@@ -144,7 +144,7 @@ contract TenderData is ITenderData {
 
 	//Adds a business contract instance to the smart contract
 	function addContract(uint32 contractId, address payable client, uint128[] calldata params128, uint32[] calldata params32) external restricted {
-		contracts[contractId] = ITenderStructs.Contract({
+		contracts[contractId] = ITenderDataStructs.Contract({
 			client: client,
 			state: ITenderData.ContractState.Active,
 			smallServerPrice: params128[0],
@@ -154,7 +154,7 @@ contract TenderData is ITenderData {
 			guaranteeRequired: params128[4],
 			guaranteePaid: false,
 			clientPot: 0,
-			attr: ITenderStructs.Attributes({
+			attr: ITenderDataStructs.Attributes({
 				small: 0,
 				medium: 0,
 				large: 0,
@@ -208,9 +208,9 @@ contract TenderData is ITenderData {
 
 	//Adds a new order to the specified contract
 	function addOrder(uint32 contractId, uint32 orderId, uint32 small, uint32 medium, uint32 large, uint128 startDate, uint128 deadline) external restricted {
-		contracts[contractId].orders[orderId] = ITenderStructs.Order({
+		contracts[contractId].orders[orderId] = ITenderDataStructs.Order({
 			state: ITenderData.OrderState.Pending,
-			attr: ITenderStructs.Attributes({
+			attr: ITenderDataStructs.Attributes({
 				small: 0,
 				medium: 0,
 				large: 0,

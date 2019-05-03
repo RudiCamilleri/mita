@@ -23,7 +23,7 @@ The Tender blockchain architecture is composed of 2 main modular smart contracts
                    │                ↘ references ↘
                    │                               ITenderData
                    ↓                ↗ implements ↗
-TenderData (Storage & Data Access Layer) → (internally uses structs defined in TenderStructs)
+TenderData (Storage & Data Access Layer) → (internally uses structs defined in ITenderDataStructs)
 ```
 
 where TenderLogic and TenderData are hot-swappable with the aim of being upgradeable if necessary, which can be done by calling the `replaceTenderData` or `replaceTenderLogic` functions in the TenderLogic smart contract. Every layer can only be invoked by the layer above it for security purposes. The data is read-only to outsiders through public functions offered in TenderData, and the owner can only modify the parts of the data that can be modified through the provided TenderLogic functions. This is to prevent external tampering or erroneous modification, by seperating read operations from write operations.
