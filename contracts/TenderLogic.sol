@@ -1,12 +1,12 @@
 pragma solidity >=0.5.0;
 
-import "./TenderDataInterface.sol";
+import "./ITenderData.sol";
 
 //Version 0.1
 //This is the Business Logic Layer functionality implementation
 contract TenderLogic {
 	address payable public owner; //the main wallet owner of the smart contract
-	TenderDataInterface public tenderData; //the current data contract implementation
+	ITenderData public tenderData; //the current data contract implementation
 
 	//Initializes the smart contract
 	constructor() public {
@@ -21,13 +21,13 @@ contract TenderLogic {
 
 	//Makes sure that the contract is active
 	modifier contractActive(uint32 contractId) {
-		require(tenderData.getContractState(contractId) == TenderDataInterface.ContractState.Active, "Specified contract is expired or invalid");
+		require(tenderData.getContractState(contractId) == ITenderData.ContractState.Active, "Specified contract is expired or invalid");
 		_;
 	}
 
 	//Makes sure that the contract is active and check that the date is valid for the contract
 	modifier contractActiveCheckDate(uint128 currentUtcDate, uint32 contractId) {
-		require(tenderData.getContractState(contractId) == TenderDataInterface.ContractState.Active &&
+		require(tenderData.getContractState(contractId) == ITenderData.ContractState.Active &&
 			tenderData.getContractStartDate(contractId) <= currentUtcDate &&
 			tenderData.getContractDeadline(contractId) > currentUtcDate, "Specified contract is pending, expired or invalid");
 		_;
@@ -36,26 +36,27 @@ contract TenderLogic {
 	//Makes sure that the order is Pending (ie. not finalized)
 	modifier orderActive(uint32 contractId, uint32 orderId) {
 		//contractActive
-		TenderDataInterface.OrderState state = tenderData.getOrderState(contractId, orderId);
-		require(state == TenderDataInterface.OrderState.Pending, "Order state must be Pending to be modified");
+		ITenderData.OrderState state = tenderData.getOrderState(contractId, orderId);
+		require(state == ITenderData.OrderState.Pending, "Order state must be Pending to be modified");
 		_;
 	}
 
 	modifier validateAddress(address addr) {
 		require(!(addr == address(0) || addr == address(this) || addr == address(tenderData)), "Invalid target address");
+		_;
 	}
 
 	/*//Makes sure that the contract is active and the order is Pending (ie. not finalized)
 	modifier orderActiveCheckDate(uint128 currentUtcDate, uint32 contractId, uint32 orderId) {
 		//contractActiveCheckDate
-		require(tenderData.getContractState(contractId) == TenderDataInterface.ContractState.Active &&
+		require(tenderData.getContractState(contractId) == ITenderData.ContractState.Active &&
 			tenderData.getContractStartDate(contractId) <= currentUtcDate &&
 			tenderData.getContractDeadline(contractId) > currentUtcDate, "Specified contract is pending, expired or invalid");
 
 		require(tenderData.getOrderCreationDate(contractId, orderId) <= currentUtcDate &&
 			tenderData.getOrderDeadline(contractId, orderId) > currentUtcDate, "Order is not created or it is expired");
-		TenderDataInterface.OrderState state = tenderData.getOrderState(contractId, orderId);
-		require(state == TenderDataInterface.OrderState.Pending, "Order state must be Pending to be modified");
+		ITenderData.OrderState state = tenderData.getOrderState(contractId, orderId);
+		require(state == ITenderData.OrderState.Pending, "Order state must be Pending to be modified");
 		_;
 	}*/
 
@@ -63,18 +64,18 @@ contract TenderLogic {
 	//=== PUBLIC CLIENT FUNCTIONS BELOW ===
 	//=====================================
 	//The client calls this function to pay the performance guarantee
-	function payGuarantee(uint128 currentUtcDate, uint32 contractId) external
+	function payGuarantee(uint128 currentUtcDate, uint32 contractId) public payable
 	contractActiveCheckDate(currentUtcDate, contractId) {
 		require(msg.value > 0 && msg.sender == tenderData.getClient(contractId) &&
-			msg.value == tenderData.getGuaranteeRequired(contractId) && !tenderData.getGuaranteePaid(), "Incorrect client or amount for performance guarantee, or already paid");
+			msg.value == tenderData.getGuaranteeRequired(contractId) && !tenderData.getGuaranteePaid(contractId), "Incorrect client or amount for performance guarantee, or already paid");
 		tenderData.setGuaranteePaid(contractId);
 		tenderData.setClientPot(contractId, safeAdd256(tenderData.getClientPot(contractId), msg.value));
 	}
 
 	//The client calls this function to top up the penalty required
-	function topUpPenalty(uint128 currentUtcDate, uint32 contractId) external
+	function topUpPenalty(uint128 currentUtcDate, uint32 contractId) public payable
 	contractActiveCheckDate(currentUtcDate, contractId) {
-		require(msg.value > 0 && msg.sender == tenderData.getClient(contractId) && tenderData.getGuaranteePaid(), "Incorrect client or amount 0 for performance guarantee or guarantee not paid");
+		require(msg.value > 0 && msg.sender == tenderData.getClient(contractId) && tenderData.getGuaranteePaid(contractId), "Incorrect client or amount 0 for performance guarantee or guarantee not paid");
 		tenderData.setClientPot(contractId, safeAdd256(tenderData.getClientPot(contractId), msg.value));
 	}
 
@@ -86,7 +87,7 @@ contract TenderLogic {
 	//whereas functions that are only called from outside should be marked as external
 
 	//Transfers the current TenderLogic smart contract to another owner
-	function transferOwner(address newOwner) external restricted {
+	function transferOwner(address payable newOwner) external restricted {
 		owner = newOwner;
 	}
 
@@ -98,23 +99,23 @@ contract TenderLogic {
 			selfdestruct(newTenderLogicAddress);
 	}
 
-	//Sets or replaces the TenderDataInterface smart contract implementation (for initialization or upgrading)
+	//Sets or replaces the ITenderData smart contract implementation (for initialization or upgrading)
 	function replaceTenderData(address payable newTenderDataAddress, bool migrateOldData, bool killOldData) external restricted
 	validateAddress(newTenderDataAddress) {
-		TenderDataInterface oldTenderData = tenderData;
-		tenderData = TenderDataInterface(newTenderDataAddress); //cast contract to TenderDataInterface
+		ITenderData oldTenderData = tenderData;
+		tenderData = ITenderData(newTenderDataAddress); //cast contract to ITenderData
 		if (address(tenderData) != address(0)) {
 			if (migrateOldData)
 				tenderData.migrateData(address(oldTenderData));
 			if (killOldData)
-				oldTenderData.endService(newTenderDataAddress);
+				oldTenderData.destroyTenderData(newTenderDataAddress);
 		}
 	}
 
 	//Creates a contract instance
 	function createContract(uint32 contractId, address payable client, uint128[] calldata params128, uint32[] calldata params32) external restricted {
 		require(params128[5] < params128[6], "Deadline cannot be before start date");
-		require(tenderData.getContractState(contractId) == TenderDataInterface.ContractState.Null, "Contract already exists with that ID");
+		require(tenderData.getContractState(contractId) == ITenderData.ContractState.Null, "Contract already exists with that ID");
 		tenderData.addContract(contractId, client, params128, params32);
 	}
 
@@ -122,8 +123,8 @@ contract TenderLogic {
 	function createOrder(uint128 currentUtcDate, uint32 contractId, uint32 orderId, uint32 small, uint32 medium, uint32 large, uint128 startDate, uint128 deadline) external restricted
 	contractActiveCheckDate(currentUtcDate, contractId) {
 		require(startDate < deadline, "Deadline cannot be before start date");
-		require(tenderData.getOrderState(contractId, orderId) == TenderDataInterface.OrderState.Null, "Order already exists with that ID");
-		require(tenderData.getGuaranteePaid(), "Performance guarantee must be paid to create an order");
+		require(tenderData.getOrderState(contractId, orderId) == ITenderData.OrderState.Null, "Order already exists with that ID");
+		require(tenderData.getGuaranteePaid(contractId), "Performance guarantee must be paid to create an order");
 		uint32 newSmall = safeAdd32(tenderData.getTotalSmallServersOrdered(contractId), small);
 		uint32 newMedium = safeAdd32(tenderData.getTotalMediumServersOrdered(contractId), medium);
 		uint32 newLarge = safeAdd32(tenderData.getTotalLargeServersOrdered(contractId), large);
@@ -141,16 +142,26 @@ contract TenderLogic {
 		tenderData.getClient(contractId).transfer(amount);
 	}
 
-	//TODO: Marks servers as delivered
+	//Marks servers as delivered
 	function markServersDelivered(uint32 contractId, uint32 orderId, uint32 small, uint32 medium, uint32 large, bool payClientIfCompleted) external restricted
 	orderActive(contractId, orderId) {
-		if () {
-			tenderData.setOrderState(contractId, orderId, TenderDataInterface.OrderState.Delivered);
+		uint32 newSmall = safeAdd32(tenderData.getSmallServersDelivered(contractId, orderId), small);
+		uint32 newMedium = safeAdd32(tenderData.getMediumServersDelivered(contractId, orderId), medium);
+		uint32 newLarge = safeAdd32(tenderData.getLargeServersDelivered(contractId, orderId), large);
+		uint32 orderedSmall = tenderData.getSmallServersOrdered(contractId, orderId);
+		uint32 orderedMedium = tenderData.getMediumServersOrdered(contractId, orderId);
+		uint32 orderedLarge = tenderData.getLargeServersOrdered(contractId, orderId);
+		require(newSmall <= orderedSmall, "Cannot exceed ordered small server amount");
+		require(newMedium <= orderedMedium, "Cannot exceed ordered medium server amount");
+		require(newLarge <= orderedLarge, "Cannot exceed ordered large server amount");
+		tenderData.setTotalServersDelivered(contractId, orderId, newSmall, newMedium, newLarge);
+		if (newSmall == orderedSmall && newMedium == orderedMedium && newLarge == orderedLarge) {
+			tenderData.setOrderState(contractId, orderId, ITenderData.OrderState.Delivered);
 			if (payClientIfCompleted) {
 				tenderData.getClient(contractId).transfer(safeAdd256(safeAdd256(
-					safeMul256(tenderData.getSmallServerPrice(contractId), tenderData.getSmallServersOrdered(contractId, orderId)),
-					safeMul256(tenderData.getMediumServerPrice(contractId), tenderData.getMediumServersOrdered(contractId, orderId))),
-					safeMul256(tenderData.getLargeServerPrice(contractId), tenderData.getLargeServersOrdered(contractId, orderId)))
+					safeMul256(tenderData.getSmallServerPrice(contractId), orderedSmall),
+					safeMul256(tenderData.getMediumServerPrice(contractId), orderedMedium)),
+					safeMul256(tenderData.getLargeServerPrice(contractId), orderedLarge))
 				);
 			}
 		}
@@ -160,22 +171,24 @@ contract TenderLogic {
 	function markOrderDeadlinePassed(uint128 currentUtcDate, uint32 contractId, uint32 orderId, bool subtractFromContractTotal) external restricted
 	orderActive(contractId, contractId) {
 		require(tenderData.getOrderDeadline(contractId, orderId) <= currentUtcDate, "Order deadline can be marked as passed only if deadline has passed");
-		tenderData.setOrderState(contractId, orderId, TenderDataInterface.ContractState.Expired);
-		if (subtractFromContactTotal) {
-			tenderData.setTotalSmallServersOrdered(safeSub32(tenderData.getTotalSmallServersOrdered(contractId), small));
-			tenderData.setTotalMediumServersOrdered(safeSub32(tenderData.getTotalMediumServersOrdered(contractId), medium));
-			tenderData.setTotalLargeServersOrdered(safeSub32(tenderData.getTotalLargeServersOrdered(contractId), large));
+		tenderData.setOrderState(contractId, orderId, ITenderData.OrderState.Cancelled);
+		if (subtractFromContractTotal) {
+			tenderData.setTotalServersOrdered(contractId,
+				safeSub32(tenderData.getTotalSmallServersOrdered(contractId), tenderData.getSmallServersOrdered(contractId, orderId)),
+				safeSub32(tenderData.getTotalMediumServersOrdered(contractId), tenderData.getMediumServersOrdered(contractId, orderId)),
+				safeSub32(tenderData.getTotalLargeServersOrdered(contractId), tenderData.getLargeServersOrdered(contractId, orderId)));
 		}
 	}
 
 	//Cancels the specified order. To collect penalty fee, call collectFromPot() with the desired amount
-	function cancelOrder(uint32 contractId, uint32 orderId, bool subtractFromCrontactTotal) external restricted
+	function cancelOrder(uint32 contractId, uint32 orderId, bool subtractFromContractTotal) external restricted
 	orderActive(contractId, orderId) {
-		tenderData.setOrderState(contractId, orderId, TenderDataInterface.OrderState.Cancelled);
-		if (subtractFromContactTotal) {
-			tenderData.setTotalSmallServersOrdered(safeSub32(tenderData.getTotalSmallServersOrdered(contractId), small));
-			tenderData.setTotalMediumServersOrdered(safeSub32(tenderData.getTotalMediumServersOrdered(contractId), medium));
-			tenderData.setTotalLargeServersOrdered(safeSub32(tenderData.getTotalLargeServersOrdered(contractId), large));
+		tenderData.setOrderState(contractId, orderId, ITenderData.OrderState.Cancelled);
+		if (subtractFromContractTotal) {
+			tenderData.setTotalServersOrdered(contractId,
+				safeSub32(tenderData.getTotalSmallServersOrdered(contractId), tenderData.getSmallServersOrdered(contractId, orderId)),
+				safeSub32(tenderData.getTotalMediumServersOrdered(contractId), tenderData.getMediumServersOrdered(contractId, orderId)),
+				safeSub32(tenderData.getTotalLargeServersOrdered(contractId), tenderData.getLargeServersOrdered(contractId, orderId)));
 		}
 	}
 
@@ -222,13 +235,13 @@ contract TenderLogic {
 	function markContractExpired(uint128 currentUtcDate, uint32 contractId) external restricted
 	contractActive(contractId) {
 		require(tenderData.getContractDeadline(contractId) <= currentUtcDate, "Contract can be marked as expired only if deadline is reached");
-		tenderData.setContractState(contractId, TenderDataInterface.ContractState.Expired);
+		tenderData.setContractState(contractId, ITenderData.ContractState.Expired);
 	}
 
 	//Terminates the contract abnormally (possibly due to breach)
 	function terminateContract(uint128 currentUtcDate, uint32 contractId) external restricted
 	contractActiveCheckDate(currentUtcDate, contractId) {
-		tenderData.setContractState(contractId, TenderDataInterface.ContractState.Terminated);
+		tenderData.setContractState(contractId, ITenderData.ContractState.Terminated);
 	}
 
 	//Kills the current TenderData contract and transfers its Ether to the owner

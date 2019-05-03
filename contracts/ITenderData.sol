@@ -2,7 +2,7 @@ pragma solidity >=0.5.0;
 
 //Version 0.1
 //This interface serves to expose data layer functionality
-interface TenderDataInterface {
+interface ITenderData {
 	//Represents the current state of a legal contract
 	enum ContractState {
 		Null, //not set
@@ -119,11 +119,14 @@ interface TenderDataInterface {
 	//Sets the total number of servers ordered so far for the specified contract
 	function setTotalServersOrdered(uint32 contractId, uint32 small, uint32 medium, uint32 large) external;
 
+	//Sets the total number of servers delivered so far for the specified order
+	function setTotalServersDelivered(uint32 contractId, uint32 orderId, uint32 small, uint32 medium, uint32 large) external;
+
 	//Sets the contract client address
 	function setClient(uint32 contractId, address payable newClient) external;
 
 	//Adds a new order to the specified contract
-	function addOrder(uint32 contractId, uint32 orderId, uint128[] calldata params128, uint32[] calldata params32) external;
+	function addOrder(uint32 contractId, uint32 orderId, uint32 small, uint32 medium, uint32 large, uint128 startDate, uint128 deadline) external;
 
 	//Sets the maximum server quantities for the specified contract
 	function setContractMax(uint32 contractId, uint32 maxSmall, uint32 maxMedium, uint32 maxLarge) external;
@@ -134,6 +137,6 @@ interface TenderDataInterface {
 	//Sets the order state
 	function setOrderState(uint32 contractId, uint32 orderId, OrderState newState) external;
 
-	//Kills the service
-	function endService(address payable targetWallet) external;
+	//Kills the current TenderData contract and transfers its Ether to the owner
+	function destroyTenderData(address payable targetWallet) external;
 }

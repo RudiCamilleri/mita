@@ -1,13 +1,13 @@
 pragma solidity >=0.5.0;
 
-import "./TenderDataInterface.sol";
-import "./TenderStructs.sol";
+import "./ITenderData.sol";
+import "./ITenderStructs.sol";
 
 //Version 0.1
 //This is the contract data storage layer
-contract TenderData is TenderDataInterface {
+contract TenderData is ITenderData {
 	address public tenderLogic; //the parent TenderLogic smart contract instance
-	mapping(uint32 => TenderStructs.Contract) contracts; //the legal contracts that are represented in this instance
+	mapping(uint32 => ITenderStructs.Contract) contracts; //the legal contracts that are represented in this instance
 
 	//Initializes the smart contract
 	constructor(address tenderLogicAddress) public {
@@ -51,7 +51,7 @@ contract TenderData is TenderDataInterface {
 		return contracts[contractId].clientPot;
 	}
 
-	function getContractState(uint32 contractId) external view returns (TenderDataInterface.ContractState) {
+	function getContractState(uint32 contractId) external view returns (ITenderData.ContractState) {
 		return contracts[contractId].state;
 	}
 
@@ -88,7 +88,7 @@ contract TenderData is TenderDataInterface {
 	}
 
 	//====================== Order Data ===========================
-	function getOrderState(uint32 contractId, uint32 orderId) external view returns (TenderDataInterface.OrderState) {
+	function getOrderState(uint32 contractId, uint32 orderId) external view returns (ITenderData.OrderState) {
 		return contracts[contractId].orders[orderId].state;
 	}
 
@@ -138,15 +138,15 @@ contract TenderData is TenderDataInterface {
 		tenderLogic = newTenderLogicAddress;
 	}
 
-	//Migrates the data from an old TenderDataInterface instance to a new one
+	//Migrates the data from an old ITenderData instance to a new one
 	function migrateData(address oldTenderDataAddress) external restricted {
 	}
 
 	//Adds a business contract instance to the smart contract
 	function addContract(uint32 contractId, address payable client, uint128[] calldata params128, uint32[] calldata params32) external restricted {
-		contracts[contractId] = TenderStructs.Contract({
+		contracts[contractId] = ITenderStructs.Contract({
 			client: client,
-			state: TenderDataInterface.ContractState.Active,
+			state: ITenderData.ContractState.Active,
 			smallServerPrice: params128[0],
 			mediumServerPrice: params128[1],
 			largeServerPrice: params128[2],
@@ -154,7 +154,7 @@ contract TenderData is TenderDataInterface {
 			guaranteeRequired: params128[4],
 			guaranteePaid: false,
 			clientPot: 0,
-			attr: TenderStructs.Attributes({
+			attr: ITenderStructs.Attributes({
 				small: 0,
 				medium: 0,
 				large: 0,
@@ -172,6 +172,13 @@ contract TenderData is TenderDataInterface {
 		contracts[contractId].attr.small = small;
 		contracts[contractId].attr.medium = medium;
 		contracts[contractId].attr.large = large;
+	}
+
+	//Sets the total number of servers delivered so far for the specified order
+	function setTotalServersDelivered(uint32 contractId, uint32 orderId, uint32 small, uint32 medium, uint32 large) external restricted {
+		contracts[contractId].orders[orderId].attr.small = small;
+		contracts[contractId].orders[orderId].attr.medium = medium;
+		contracts[contractId].orders[orderId].attr.large = large;
 	}
 
 	//Sets the contract client address
@@ -195,15 +202,15 @@ contract TenderData is TenderDataInterface {
 	}
 
 	//Sets the contract state
-	function setContractState(uint32 contractId, TenderDataInterface.ContractState newState) external restricted {
+	function setContractState(uint32 contractId, ITenderData.ContractState newState) external restricted {
 		contracts[contractId].state = newState;
 	}
 
 	//Adds a new order to the specified contract
 	function addOrder(uint32 contractId, uint32 orderId, uint32 small, uint32 medium, uint32 large, uint128 startDate, uint128 deadline) external restricted {
-		contracts[contractId].orders[orderId] = TenderStructs.Order({
-			state: TenderDataInterface.OrderState.Pending,
-			attr: TenderStructs.Attributes({
+		contracts[contractId].orders[orderId] = ITenderStructs.Order({
+			state: ITenderData.OrderState.Pending,
+			attr: ITenderStructs.Attributes({
 				small: 0,
 				medium: 0,
 				large: 0,
@@ -229,7 +236,7 @@ contract TenderData is TenderDataInterface {
 	}
 
 	//Sets the order state
-	function setOrderState(uint32 contractId, uint32 orderId, TenderDataInterface.OrderState newState) external restricted {
+	function setOrderState(uint32 contractId, uint32 orderId, ITenderData.OrderState newState) external restricted {
 		contracts[contractId].orders[orderId].state = newState;
 	}
 
