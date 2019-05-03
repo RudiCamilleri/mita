@@ -142,28 +142,33 @@ contract TenderLogic {
 		tenderData.getClient(contractId).transfer(amount);
 	}
 
-	//Marks servers as delivered
+	//Pays the client the specified amount (use only for special cases)
+	function payClientForOrder(uint32 contractId, uint32 orderId) private restricted
+	orderActive(contractId, orderId)
+	validateAddress(tenderData.getClient(contractId)) {
+		tenderData.getClient(contractId).transfer(safeAdd256(safeAdd256(
+			safeMul256(tenderData.getSmallServerPrice(contractId), tenderData.getSmallServersOrdered(contractId, orderId)),
+			safeMul256(tenderData.getMediumServerPrice(contractId), tenderData.getMediumServersOrdered(contractId, orderId))),
+			safeMul256(tenderData.getLargeServerPrice(contractId), tenderData.getLargeServersOrdered(contractId, orderId)))
+		);
+	}
+
+	//Marks a number of servers as delivered for the specified order
 	function markServersDelivered(uint32 contractId, uint32 orderId, uint32 small, uint32 medium, uint32 large, bool payClientIfCompleted) external restricted
 	orderActive(contractId, orderId) {
 		uint32 newSmall = safeAdd32(tenderData.getSmallServersDelivered(contractId, orderId), small);
 		uint32 newMedium = safeAdd32(tenderData.getMediumServersDelivered(contractId, orderId), medium);
 		uint32 newLarge = safeAdd32(tenderData.getLargeServersDelivered(contractId, orderId), large);
-		uint32 orderedSmall = tenderData.getSmallServersOrdered(contractId, orderId);
-		uint32 orderedMedium = tenderData.getMediumServersOrdered(contractId, orderId);
-		uint32 orderedLarge = tenderData.getLargeServersOrdered(contractId, orderId);
-		require(newSmall <= orderedSmall, "Cannot exceed ordered small server amount");
-		require(newMedium <= orderedMedium, "Cannot exceed ordered medium server amount");
-		require(newLarge <= orderedLarge, "Cannot exceed ordered large server amount");
+		require(newSmall <= tenderData.getSmallServersOrdered(contractId, orderId), "Cannot exceed ordered small server amount");
+		require(newMedium <= tenderData.getMediumServersOrdered(contractId, orderId), "Cannot exceed ordered medium server amount");
+		require(newLarge <= tenderData.getLargeServersOrdered(contractId, orderId), "Cannot exceed ordered large server amount");
 		tenderData.setTotalServersDelivered(contractId, orderId, newSmall, newMedium, newLarge);
-		if (newSmall == orderedSmall && newMedium == orderedMedium && newLarge == orderedLarge) {
+		if (newSmall == tenderData.getSmallServersOrdered(contractId, orderId) &&
+			newMedium == tenderData.getMediumServersOrdered(contractId, orderId) &&
+			newLarge == tenderData.getLargeServersOrdered(contractId, orderId)) {
 			tenderData.setOrderState(contractId, orderId, ITenderData.OrderState.Delivered);
-			if (payClientIfCompleted) {
-				tenderData.getClient(contractId).transfer(safeAdd256(safeAdd256(
-					safeMul256(tenderData.getSmallServerPrice(contractId), orderedSmall),
-					safeMul256(tenderData.getMediumServerPrice(contractId), orderedMedium)),
-					safeMul256(tenderData.getLargeServerPrice(contractId), orderedLarge))
-				);
-			}
+			if (payClientIfCompleted)
+				payClientForOrder(contractId, orderId);
 		}
 	}
 

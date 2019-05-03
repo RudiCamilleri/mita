@@ -127,25 +127,24 @@ static void ViewGanacheLog() {
 	Console.Write("Function call transaction: ");
 	Console.WriteLine(GetReceipt(TenderLogic.CallWrite("replaceTenderData", Wallet, TenderData, false, false)));
 
-	Console.WriteLine("\nCalling TenderLogic.createContract(ClientWallet, [10, 20, 30, 2, 1555337743, 1655337743, 1], [123, 10987], [1])...");
+	Console.WriteLine("\nCalling TenderLogic.createContract(123, ClientWallet, [10, 20, 30, 2, 1, 1555337743, 1655337743], [30, 30, 30])...");
 	Console.Write("Function call transaction: ");
-	Console.WriteLine(GetReceipt(TenderLogic.CallWrite("createContract", Wallet, ClientWallet,
+	Console.WriteLine(GetReceipt(TenderLogic.CallWrite("createContract", Wallet, 123, ClientWallet,
 		new BigInteger[] {
 			10, 20, 30, //smallServerPrice, mediumServerPrice, largeServerPrice
 			2, //penaltyPerDay
-			1555337743, //creationDate in UTC time
-			1655337743, //expiryDate in UTC time
-			1 //guaranteeRequired
+			1, //guaranteeRequired
+			ContractUtil.Utc, //creationDate in UTC time
+			ContractUtil.ToUtc(DateTime.UtcNow.AddYears(1)) //expiryDate in UTC time
 		}, new uint[] {
-			123, //contractId
-			10987, //operatorId
-		}, new ushort[] { 1 } //daysForDelivery
+			30, 30, 30 //max small, medium, large
+		}
 	)));
 
-	Console.WriteLine("\nCalling TenderLogic.createOrder(123, 12, 0, 3, 1)...");
+	Console.WriteLine("\nCalling TenderLogic.createOrder(ContractUtil.Utc, 123, 12, 0, 3, 1, ContractUtil.Utc, ContractUtil.ToUtc(DateTime.UtcNow.AddYears(1)))...");
 	Console.Write("Function call transaction: ");
 	//uint32 contractId, uint32 orderId, uint16 small, uint16 medium, uint16 large
-	Console.WriteLine(GetReceipt(TenderLogic.CallWrite("createOrder", Wallet, 123, 12, 0, 3, 1)));
+	Console.WriteLine(GetReceipt(TenderLogic.CallWrite("createOrder", Wallet, ContractUtil.Utc, 123, 12, 0, 3, 1, ContractUtil.Utc, ContractUtil.ToUtc(DateTime.UtcNow.AddYears(1)))));
 	Console.WriteLine("\nReady!\n");
 //} catch (Exception ex) {
 //	ErrorHandler.Show("An error occurred while executing init-nethereum.csx", ex);

@@ -71,10 +71,21 @@
             Contains conversion functions between common Ethereum units
             </summary>
         </member>
+        <member name="P:ContractUtils.ContractUtil.Utc">
+            <summary>
+            Gets the current UTC time stamp
+            </summary>
+        </member>
         <member name="M:ContractUtils.ContractUtil.#cctor">
             <summary>
             Initializes Web3 configuration
             </summary>
+        </member>
+        <member name="M:ContractUtils.ContractUtil.ToUtc(System.DateTime)">
+            <summary>
+            Gets the UTC timestamp of the specified DateTime
+            </summary>
+            <param name="date">The date whose timestamp to obtain</param>
         </member>
         <member name="M:ContractUtils.ContractUtil.GetWalletAddressFromGanacheLog(System.String,System.Int32,System.Int32)">
             <summary>

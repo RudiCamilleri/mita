@@ -45,7 +45,7 @@ The smart contract is designed such that operations are to intended to follow th
 3. To create a new business contract instance, call createContract() in TenderLogic with the appropriate parameters, whose description is outlined in the addContract() function in TenderData
 4. Then, the client is to call payGuarantee() with a transfer of the Ether required by the contract
 5. Then, the owner can call createOrder() to create an order. createOrder() cannot be called unless the client has paid the performance guarantee
-6. When any servers arrive and are accepted, the owner calls markServersDelivered() and specifies how many small, medium and large servers have arrived
+6. When any servers arrive and are accepted, the owner calls markServersDelivered() and specifies how many small, medium and large servers have arrived for a particular order
 
 ##### Configurable Parameters
 
@@ -78,21 +78,17 @@ Here are a few sample commands you can use to quickly interact with the smart co
     TenderData.CallRead("getSmallServerPrice", 123).Await();
 
     //Creates a new business contract instance within the smart contract
-    TenderLogic.CallWrite("createContract", Wallet, ClientWallet.Address,
-        new BigInteger[] {
-            10, 20, 30, //smallServerPrice, mediumServerPrice, largeServerPrice
-            2, //penaltyPerDay
-            1555337743, //creationDate in UTC time
-            1655337743, //expiryDate in UTC time
-            1, //guaranteeRequired
-        }, new uint[] {
-            123, //contractId
-            10987, //operatorId
-        }, new ushort[] { 1 } //daysForDelivery
-    ).Await();
-
-    //Creates a new order with ID #12 for contract #123 of 0 small servers, 3 medium servers and 1 large
-    TenderLogic.CallWrite("createOrder", Wallet, 123, 12, 0, 3, 1);
+    TenderLogic.CallWrite("createContract", Wallet, 123, ClientWallet,
+		new BigInteger[] {
+			10, 20, 30, //smallServerPrice, mediumServerPrice, largeServerPrice
+			2, //penaltyPerDay
+			1, //guaranteeRequired
+			1555337743, //creationDate in UTC time
+			1655337743 //expiryDate in UTC time
+		}, new uint[] {
+			30, 30, 30 //max small, medium, large
+		}
+	).Await();
 
     //Creates a new order with ID #12 for contract #123 of 0 small servers, 3 medium servers and 1 large
     TenderLogic.CallWrite("createOrder", Wallet, 123, 12, 0, 3, 1);
@@ -101,7 +97,7 @@ Here are a few sample commands you can use to quickly interact with the smart co
     TenderData.CallRead("getOrderState", 123, 12).Await();
 
     //Marks order #12 for contract #123 as cancelled
-    TenderLogic.CallWrite("cancelOrder", 123, 12).Await();
+    TenderLogic.CallWrite("cancelOrder", 123, 12, true).Await();
 
 ## Appendix
 
