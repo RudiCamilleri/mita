@@ -92,6 +92,10 @@ contract TenderData is ITenderData {
 		return contracts[contractId].orders[orderId].state;
 	}
 
+	function getOrderPaid(uint32 contractId, uint32 orderId) external view returns (bool) {
+		return contracts[contractId].orders[orderId].orderPaid;
+	}
+
 	function getSmallServersDelivered(uint32 contractId, uint32 orderId) external view returns (uint32) {
 		return contracts[contractId].orders[orderId].attr.small;
 	}
@@ -210,6 +214,7 @@ contract TenderData is ITenderData {
 	function addOrder(uint32 contractId, uint32 orderId, uint32 small, uint32 medium, uint32 large, uint128 startDate, uint128 deadline) external restricted {
 		contracts[contractId].orders[orderId] = ITenderDataStructs.Order({
 			state: ITenderData.OrderState.Pending,
+			orderPaid: false,
 			attr: ITenderDataStructs.Attributes({
 				small: 0,
 				medium: 0,
@@ -238,6 +243,11 @@ contract TenderData is ITenderData {
 	//Sets the order state
 	function setOrderState(uint32 contractId, uint32 orderId, ITenderData.OrderState newState) external restricted {
 		contracts[contractId].orders[orderId].state = newState;
+	}
+
+	//Sets whether the order was paid
+	function setOrderPaid(uint32 contractId, uint32 orderId, bool paid) external restricted {
+		contracts[contractId].orders[orderId].orderPaid = paid;
 	}
 
 	//Kills the current TenderData contract and transfers its Ether to the owner

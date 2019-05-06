@@ -6,6 +6,7 @@ import "./ITenderData.sol";
 //This is the Business Logic Layer functionality implementation
 contract TenderLogic {
 	address payable public owner; //the main wallet owner of the smart contract
+	uint256 public ownerBalance; //the pending balance of owner top-ups to the smart contract
 	ITenderData public tenderData; //the current data contract implementation
 
 	//Initializes the smart contract
@@ -35,9 +36,7 @@ contract TenderLogic {
 
 	//Makes sure that the order is Pending (ie. not finalized)
 	modifier orderActive(uint32 contractId, uint32 orderId) {
-		//contractActive
-		ITenderData.OrderState state = tenderData.getOrderState(contractId, orderId);
-		require(state == ITenderData.OrderState.Pending, "Order state must be Pending to be modified");
+		require(tenderData.getOrderState(contractId, orderId) == ITenderData.OrderState.Pending, "Order state must be Pending to be modified");
 		_;
 	}
 
@@ -64,7 +63,7 @@ contract TenderLogic {
 	//=== PUBLIC CLIENT FUNCTIONS BELOW ===
 	//=====================================
 	//The client calls this function to pay the performance guarantee
-	function payGuarantee(uint128 currentUtcDate, uint32 contractId) public payable
+	function payGuarantee(uint128 currentUtcDate, uint32 contractId) external payable
 	contractActiveCheckDate(currentUtcDate, contractId) {
 		require(msg.value > 0 && msg.sender == tenderData.getClient(contractId) &&
 			msg.value == tenderData.getGuaranteeRequired(contractId) && !tenderData.getGuaranteePaid(contractId), "Incorrect client or amount for performance guarantee, or already paid");
@@ -73,10 +72,16 @@ contract TenderLogic {
 	}
 
 	//The client calls this function to top up the penalty required
-	function topUpPenalty(uint128 currentUtcDate, uint32 contractId) public payable
+	function topUpPenalty(uint128 currentUtcDate, uint32 contractId) external payable
 	contractActiveCheckDate(currentUtcDate, contractId) {
 		require(msg.value > 0 && msg.sender == tenderData.getClient(contractId) && tenderData.getGuaranteePaid(contractId), "Incorrect client or amount 0 for performance guarantee or guarantee not paid");
 		tenderData.setClientPot(contractId, safeAdd256(tenderData.getClientPot(contractId), msg.value));
+	}
+
+	//Tops up the pending balance of the smart contract for payments to client
+	function topUpPaymentsToClient() external payable restricted {
+		require(msg.value > 0 && msg.sender == owner, "Only the owner can top-up the client payments balance with a value greater than 0");
+		ownerBalance = safeAdd256(ownerBalance, msg.value);
 	}
 
 	//=======================================================
@@ -139,18 +144,21 @@ contract TenderLogic {
 	function payClient(uint32 contractId, uint128 amount) external restricted
 	validateAddress(tenderData.getClient(contractId)) {
 		require(amount > 0, "Amount must be greater than 0");
+		ownerBalance = safeSub256(ownerBalance, amount);
 		tenderData.getClient(contractId).transfer(amount);
 	}
 
-	//Pays the client the specified amount (use only for special cases)
-	function payClientForOrder(uint32 contractId, uint32 orderId) private restricted
-	orderActive(contractId, orderId)
+	//Pays the client for the specified order delivery
+	function payClientForOrder(uint32 contractId, uint32 orderId) public restricted
 	validateAddress(tenderData.getClient(contractId)) {
-		tenderData.getClient(contractId).transfer(safeAdd256(safeAdd256(
+		markOrderPaid(contractId, orderId);
+		uint256 amount = safeAdd256(safeAdd256(
 			safeMul256(tenderData.getSmallServerPrice(contractId), tenderData.getSmallServersOrdered(contractId, orderId)),
 			safeMul256(tenderData.getMediumServerPrice(contractId), tenderData.getMediumServersOrdered(contractId, orderId))),
-			safeMul256(tenderData.getLargeServerPrice(contractId), tenderData.getLargeServersOrdered(contractId, orderId)))
-		);
+			safeMul256(tenderData.getLargeServerPrice(contractId), tenderData.getLargeServersOrdered(contractId, orderId)));
+		require(amount > 0, "Balance must be greater than 0");
+		ownerBalance = safeSub256(ownerBalance, amount);
+		tenderData.getClient(contractId).transfer(amount);
 	}
 
 	//Marks a number of servers as delivered for the specified order
@@ -185,6 +193,13 @@ contract TenderLogic {
 		}
 	}
 
+	//Marks the order as paid (only call if the order was actually paid)
+	function markOrderPaid(uint32 contractId, uint32 orderId) public restricted {
+		require(tenderData.getOrderState(contractId, orderId) == ITenderData.OrderState.Delivered &&
+			!tenderData.getOrderPaid(contractId, orderId), "Order must be delivered and unpaid to be paid");
+		tenderData.setOrderPaid(contractId, orderId, true);
+	}
+
 	//Cancels the specified order. To collect penalty fee, call collectFromPot() with the desired amount
 	function cancelOrder(uint32 contractId, uint32 orderId, bool subtractFromContractTotal) external restricted
 	orderActive(contractId, orderId) {
@@ -198,10 +213,17 @@ contract TenderLogic {
 	}
 
 	//Collects fees from the client pot (which includes performance guarantee and penalty money)
-	function collectFromPot(uint32 contractId, uint256 amount) external restricted {
+	function collectFromClientPot(uint32 contractId, uint256 amount) external restricted {
 		require(amount > 0, "Cannot collect 0");
 		require(tenderData.getGuaranteePaid(contractId), "Performance guarantee must be paid to collect from pot");
 		tenderData.setClientPot(contractId, safeSub256(tenderData.getClientPot(contractId), amount));
+		owner.transfer(amount);
+	}
+
+	//Refunds the specified amount back to the owner
+	function collectFromOwnerBalance(uint256 amount) external restricted {
+		require(amount > 0, "Cannot collect 0");
+		ownerBalance = safeSub256(ownerBalance, amount);
 		owner.transfer(amount);
 	}
 

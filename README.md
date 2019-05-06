@@ -54,7 +54,9 @@ The smart contract is designed such that operations are to intended to follow th
 - replaceTenderData: Sets or replaces the ITenderData smart contract implementation (for initialization or upgrading)
 - changeClient: Changes the client wallet address of a contract to a new address
 - updateContractMax: Increases the min, medium and max server limits of the contract to the specified amount
-- collectFromPot: Collects Ether from the client's performance guarantee and penalty total
+- collectFromClientPot: Collects Ether from the client's performance guarantee and penalty total
+- collectFromOwnerBalance: Refunds the specified amount back to the owner
+- payClientForOrder: Pays the client for the specified order delivery
 - payClient: Pays the client the specified amount (use only for special cases)
 - extendOrderDeadline: Extends the order deadline to the specified date
 - extendContractDeadline: Extends the contract deadline to the specified date
@@ -62,6 +64,7 @@ The smart contract is designed such that operations are to intended to follow th
 ##### Options for termination
 
 - cancelOrder: Cancels the specified order
+- markOrderPaid: Marks the order as paid (only call if the order was actually paid)
 - markOrderDeadlinePassed: Marks the order deadline as passed (only if the deadline has passed)
 - markContractExpired: Marks the contract as expired (only if it is already expired)
 - terminateContract: Terminates the contract abnormally (possibly due to breach)

@@ -36,6 +36,7 @@ interface ITenderDataStructs {
 	//Defines an order for a contract
 	struct Order {
 		ITenderData.OrderState state;
+		bool orderPaid;
 		Attributes attr;
 	}
 

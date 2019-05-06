@@ -19,50 +19,6 @@ interface ITenderData {
 		Cancelled //the order was cancelled before the servers arrived fully, possibly a penalty was issued as well
 	}
 
-	struct Attributes {
-		//Contract: current number of small servers ordered
-		//Order: current number of small servers that arrived
-		uint32 small;
-		//Contract: current number of medium servers ordered
-		//Order: current number of medium servers that arrived
-		uint32 medium;
-		//Contract: current number of large servers ordered
-		//Order: current number of large servers that arrived
-		uint32 large;
-		//Contract: max number of small servers that can be ordered
-		//Order: the number of small servers ordered
-		uint32 maxSmall;
-		//Contract: max number of medium servers that can be ordered
-		//Order: the number of medium servers ordered
-		uint32 maxMedium;
-		//Contract: max number of medium servers that can be ordered
-		//Order: the number of medium servers ordered
-		uint32 maxLarge;
-		//Contract: the contract expiry date in UTC time
-		//Order: the order deadline in UTC time
-		uint128 deadline;
-	}
-
-	//Defines an order for a contract
-	struct Order {
-		OrderState state;
-		Attributes attr;
-	}
-
-	//Defines a legal contract instance
-	struct Contract {
-		address payable client;
-		ContractState state;
-		uint128 smallServerPrice;
-		uint128 mediumServerPrice;
-		uint128 largeServerPrice;
-		uint128 penaltyPerDay;
-		uint128 guaranteeRequired;
-		bool guaranteePaid;
-		Attributes attr;
-		mapping(uint32 => Order) orders;
-	}
-
 	//=============== PUBLIC READ-ONLY SECTION ====================
 	//==================== Contract Data ==========================
 	function getClient(uint32 contractId) external view returns (address payable);
@@ -85,6 +41,7 @@ interface ITenderData {
 	function getContractDeadline(uint32 contractId) external view returns (uint128);
 	//====================== Order Data ===========================
 	function getOrderState(uint32 contractId, uint32 orderId) external view returns (OrderState);
+	function getOrderPaid(uint32 contractId, uint32 orderId) external view returns (bool);
 	function getSmallServersDelivered(uint32 contractId, uint32 orderId) external view returns (uint32);
 	function getMediumServersDelivered(uint32 contractId, uint32 orderId) external view returns (uint32);
 	function getLargeServersDelivered(uint32 contractId, uint32 orderId) external view returns (uint32);
@@ -136,6 +93,9 @@ interface ITenderData {
 
 	//Sets the order state
 	function setOrderState(uint32 contractId, uint32 orderId, OrderState newState) external;
+
+	//Sets whether the order was paid
+	function setOrderPaid(uint32 contractId, uint32 orderId, bool paid) external;
 
 	//Kills the current TenderData contract and transfers its Ether to the owner
 	function destroyTenderData(address payable targetWallet) external;
