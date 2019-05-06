@@ -71,7 +71,7 @@ contract TenderLogic {
 		tenderData.setClientPot(contractId, safeAdd256(tenderData.getClientPot(contractId), msg.value));
 	}
 
-	//The client calls this function to top up the penalty required
+	//The client calls this function to top up the penalty balance
 	function topUpPenalty(uint128 currentUtcDate, uint32 contractId) external payable
 	contractActiveCheckDate(currentUtcDate, contractId) {
 		require(msg.value > 0 && msg.sender == tenderData.getClient(contractId) && tenderData.getGuaranteePaid(contractId), "Incorrect client or amount 0 for performance guarantee or guarantee not paid");

@@ -47,6 +47,10 @@ contract TenderData is ITenderData {
 		return contracts[contractId].guaranteeRequired;
 	}
 
+	function getGuaranteePaid(uint32 contractId) external view returns (bool) {
+		return contracts[contractId].guaranteePaid;
+	}
+
 	function getClientPot(uint32 contractId) external view returns (uint256) {
 		return contracts[contractId].clientPot;
 	}

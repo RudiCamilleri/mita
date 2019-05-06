@@ -46,6 +46,7 @@ The smart contract is designed such that operations are to intended to follow th
 4. Then, the client is to call payGuarantee() with a transfer of the Ether required by the contract
 5. Then, the owner can call createOrder() to create an order. createOrder() cannot be called unless the client has paid the performance guarantee
 6. When any servers arrive and are accepted, the owner calls markServersDelivered() and specifies how many small, medium and large servers have arrived for a particular order
+7. To pay the client for the order, the owner has to top up the smart contract balance by calling the topUpPaymentsToClient() function
 
 ##### Configurable Parameters
 
@@ -58,6 +59,8 @@ The smart contract is designed such that operations are to intended to follow th
 - collectFromOwnerBalance: Refunds the specified amount back to the owner
 - payClientForOrder: Pays the client for the specified order delivery
 - payClient: Pays the client the specified amount (use only for special cases)
+- topUpPenalty: The client calls this function to top up the penalty balance
+- topUpPaymentsToClient: Tops up the pending balance of the smart contract for payments to client
 - extendOrderDeadline: Extends the order deadline to the specified date
 - extendContractDeadline: Extends the contract deadline to the specified date
 

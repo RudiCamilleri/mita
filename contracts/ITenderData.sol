@@ -26,10 +26,9 @@ interface ITenderData {
 	function getMediumServerPrice(uint32 contractId) external view returns (uint128);
 	function getLargeServerPrice(uint32 contractId) external view returns (uint128);
 	function getPenaltyPerDay(uint32 contractId) external view returns (uint128);
-	function getOperatorId(uint32 contractId) external view returns (uint32);
 	function getGuaranteeRequired(uint32 contractId) external view returns (uint128);
 	function getGuaranteePaid(uint32 contractId) external view returns (bool);
-	function getClientPot(uint256 contractId) external view returns (uint256);
+	function getClientPot(uint32 contractId) external view returns (uint256);
 	function getContractState(uint32 contractId) external view returns (ContractState);
 	function getTotalSmallServersOrdered(uint32 contractId) external view returns (uint32);
 	function getTotalMediumServersOrdered(uint32 contractId) external view returns (uint32);
@@ -61,18 +60,6 @@ interface ITenderData {
 	//Adds a business contract instance to the smart contract
 	function addContract(uint32 contractId, address payable client, uint128[] calldata params128, uint32[] calldata params32) external;
 
-	//Sets the contract deadline
-	function setContractDeadline(uint32 contractId, uint128 newUtcDeadline) external;
-
-	//Sets the contract state
-	function setContractState(uint32 contractId, ContractState newState) external;
-
-	//Sets the balance of the client pot to the specified amount
-	function setClientPot(uint32 contractId, uint256 newValue) external;
-
-	//Sets the guarantee as paid
-	function setGuaranteePaid(uint32 contractId) external;
-
 	//Sets the total number of servers ordered so far for the specified contract
 	function setTotalServersOrdered(uint32 contractId, uint32 small, uint32 medium, uint32 large) external;
 
@@ -81,6 +68,18 @@ interface ITenderData {
 
 	//Sets the contract client address
 	function setClient(uint32 contractId, address payable newClient) external;
+
+	//Sets the guarantee as paid
+	function setGuaranteePaid(uint32 contractId) external;
+
+	//Sets the balance of the client pot to the specified amount
+	function setClientPot(uint32 contractId, uint256 newValue) external;
+
+	//Sets the contract deadline
+	function setContractDeadline(uint32 contractId, uint128 newUtcDeadline) external;
+
+	//Sets the contract state
+	function setContractState(uint32 contractId, ContractState newState) external;
 
 	//Adds a new order to the specified contract
 	function addOrder(uint32 contractId, uint32 orderId, uint32 small, uint32 medium, uint32 large, uint128 startDate, uint128 deadline) external;
