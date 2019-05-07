@@ -100,6 +100,10 @@ contract TenderData is ITenderData {
 		return contracts[contractId].orders[orderId].orderPaid;
 	}
 
+	function getOrderCancelledDate(uint32 contractId, uint32 orderId) external view returns (uint128) {
+		return contracts[contractId].orders[orderId].cancelledDate;
+	}
+
 	function getSmallServersDelivered(uint32 contractId, uint32 orderId) external view returns (uint32) {
 		return contracts[contractId].orders[orderId].attr.small;
 	}
@@ -252,6 +256,10 @@ contract TenderData is ITenderData {
 	//Sets whether the order was paid
 	function setOrderPaid(uint32 contractId, uint32 orderId, bool paid) external restricted {
 		contracts[contractId].orders[orderId].orderPaid = paid;
+	}
+
+	function setOrderCancelledDate(uint32 contractId, uint32 orderId, uint128 cancelledDate) external restricted {
+		contracts[contractId].orders[orderId].cancelledDate = cancelledDate;
 	}
 
 	//Kills the current TenderData contract and transfers its Ether to the owner

@@ -33,13 +33,6 @@ interface ITenderDataStructs {
 		uint128 deadline;
 	}
 
-	//Defines an order for a contract
-	struct Order {
-		ITenderData.OrderState state;
-		bool orderPaid;
-		Attributes attr;
-	}
-
 	//Defines a legal contract instance
 	struct Contract {
 		address payable client;
@@ -53,5 +46,13 @@ interface ITenderDataStructs {
 		bool guaranteePaid;
 		Attributes attr;
 		mapping(uint32 => Order) orders;
+	}
+
+	//Defines an order for a contract
+	struct Order {
+		ITenderData.OrderState state;
+		uint128 cancelledDate;
+		bool orderPaid;
+		Attributes attr;
 	}
 }

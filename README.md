@@ -71,7 +71,6 @@ The smart contract is designed such that operations are to intended to follow th
 
 - cancelOrder: Cancels the specified order
 - markOrderPaid: Marks the order as paid (only call if the order was actually paid)
-- markOrderDeadlinePassed: Marks the order deadline as passed (only if the deadline has passed)
 - markContractExpired: Marks the contract as expired (only if it is already expired)
 - terminateContract: Terminates the contract abnormally (possibly due to breach)
 - destroyTenderData: Kills the current TenderData contract and transfers its Ether to the owner
@@ -92,21 +91,21 @@ Here are a few sample commands you can use to quickly interact with the smart co
 			10, 20, 30, //smallServerPrice, mediumServerPrice, largeServerPrice
 			2, //penaltyPerDay
 			1, //guaranteeRequired
-			1555337743, //creationDate in UTC time
-			1655337743 //expiryDate in UTC time
+			ContractUtil.Utc, //start date in UTC time
+			ContractUtil.ToUtc(DateTime.UtcNow.AddYears(1)) //expiry date in UTC time
 		}, new uint[] {
 			30, 30, 30 //max small, medium, large
 		}
 	).Await();
 
     //Creates a new order with ID #12 for contract #123 of 0 small servers, 3 medium servers and 1 large
-    TenderLogic.CallWrite("createOrder", Wallet, 123, 12, 0, 3, 1);
+    TenderLogic.CallWrite("createOrder", Wallet, ContractUtil.Utc, 123, 12, 0, 3, 1, ContractUtil.Utc, ContractUtil.ToUtc(DateTime.UtcNow.AddYears(1)))
 
     //Gets the state of order #12 for contract #123
     TenderData.CallRead("getOrderState", 123, 12).Await();
 
     //Marks order #12 for contract #123 as cancelled
-    TenderLogic.CallWrite("cancelOrder", 123, 12, true).Await();
+    TenderLogic.CallWrite("cancelOrder", ContractUtil.Utc, 123, 12, true).Await();
 
 ## Appendix
 

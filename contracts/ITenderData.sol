@@ -40,6 +40,7 @@ interface ITenderData {
 	function getContractDeadline(uint32 contractId) external view returns (uint128);
 	//====================== Order Data ===========================
 	function getOrderState(uint32 contractId, uint32 orderId) external view returns (OrderState);
+	function getOrderCancelledDate(uint32 contractId, uint32 orderId) external view returns (uint128);
 	function getOrderPaid(uint32 contractId, uint32 orderId) external view returns (bool);
 	function getSmallServersDelivered(uint32 contractId, uint32 orderId) external view returns (uint32);
 	function getMediumServersDelivered(uint32 contractId, uint32 orderId) external view returns (uint32);
@@ -95,6 +96,8 @@ interface ITenderData {
 
 	//Sets whether the order was paid
 	function setOrderPaid(uint32 contractId, uint32 orderId, bool paid) external;
+
+	function setOrderCancelledDate(uint32 contractId, uint32 orderId, uint128 cancelledDate) external;
 
 	//Kills the current TenderData contract and transfers its Ether to the owner
 	function destroyTenderData(address payable targetWallet) external;

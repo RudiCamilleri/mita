@@ -88,7 +88,7 @@ static void ViewGanacheLog() {
 	Console.WriteLine("Wallet unlocked: " + ContractUtil.UnlockWallet(Wallet, Password).Await() + "\n");*/
 
 	Console.WriteLine("\nDeploying TenderLogic contract...");
-	var TenderLogicCompiled = ContractUtil.GetCompiledContract(@"build\contracts\TenderLogic.json");
+	var TenderLogicCompiled = ContractUtil.GetCompiledContractFromFile(@"build\contracts\TenderLogic.json");
 	var TenderLogicAbi = TenderLogicCompiled.Abi;
 	var TenderLogicByteCode = TenderLogicCompiled.ByteCode;
 	var TenderLogicDeployment = ContractUtil.DeployContract(TenderLogicCompiled, Wallet).Await();
@@ -97,7 +97,7 @@ static void ViewGanacheLog() {
 	Console.WriteLine("TenderLogicReceipt: " + ToJson(TenderLogicReceipt));
 
 	Console.WriteLine("\nDeploying TenderData contract...");
-	var TenderDataCompiled = ContractUtil.GetCompiledContract(@"build\contracts\TenderData.json");
+	var TenderDataCompiled = ContractUtil.GetCompiledContractFromFile(@"build\contracts\TenderData.json");
 	var TenderDataAbi = TenderDataCompiled.Abi;
 	var TenderDataByteCode = TenderDataCompiled.ByteCode;
 	var TenderDataDeployment = ContractUtil.DeployContract(TenderDataCompiled, Wallet, TenderLogic).Await();
@@ -134,8 +134,8 @@ static void ViewGanacheLog() {
 			10, 20, 30, //smallServerPrice, mediumServerPrice, largeServerPrice
 			2, //penaltyPerDay
 			1, //guaranteeRequired
-			ContractUtil.Utc, //creationDate in UTC time
-			ContractUtil.ToUtc(DateTime.UtcNow.AddYears(1)) //expiryDate in UTC time
+			ContractUtil.Utc, //start date in UTC time
+			ContractUtil.ToUtc(DateTime.UtcNow.AddYears(1)) //expiry date in UTC time
 		}, new uint[] {
 			30, 30, 30 //max small, medium, large
 		}
