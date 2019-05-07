@@ -11,17 +11,19 @@
         </member>
         <member name="F:ContractUtils.ConfigParams.DefaultGas">
             <summary>
-            The default gas value (0x6691b7)
+            The default gas value in Wei (0x6691b7)
+            The maximum amount of gas you are willing to spend on a particular transaction
             </summary>
         </member>
         <member name="F:ContractUtils.ConfigParams.DefaultGasPrice">
             <summary>
-            The default gas price (0x77359400)
+            The default gas price in Wei (0x77359400)
+            The amount of Ether you are willing to pay for every unit of gas
             </summary>
         </member>
         <member name="F:ContractUtils.ConfigParams.DefaultValue">
             <summary>
-            The default transaction value (zero)
+            The default transaction value in Wei (zero)
             </summary>
         </member>
         <member name="F:ContractUtils.ConfigParams.NodeUrl">

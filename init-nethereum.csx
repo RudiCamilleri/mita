@@ -141,9 +141,13 @@ static void ViewGanacheLog() {
 		}
 	)));
 
+	Console.WriteLine("\nCalling TenderLogic.payGuarantee(ContractUtil.Utc, 123) wth value 0x1...");
+	Console.Write("Function call transaction: ");
+	Console.WriteLine(GetReceipt(TenderLogic.CallWrite("payGuarantee", ClientWallet, ConfigParams.DefaultGas, ConfigParams.DefaultGasPrice, new HexBigInteger("0x1"), ContractUtil.Utc, 123)));
+
 	Console.WriteLine("\nCalling TenderLogic.createOrder(ContractUtil.Utc, 123, 12, 0, 3, 1, ContractUtil.Utc, ContractUtil.ToUtc(DateTime.UtcNow.AddYears(1)))...");
 	Console.Write("Function call transaction: ");
-	//uint32 contractId, uint32 orderId, uint16 small, uint16 medium, uint16 large
+	//uint128 currentUtcDate, uint32 contractId, uint32 orderId, uint32 small, uint32 medium, uint32 large, uint128 startDate, uint128 deadline
 	Console.WriteLine(GetReceipt(TenderLogic.CallWrite("createOrder", Wallet, ContractUtil.Utc, 123, 12, 0, 3, 1, ContractUtil.Utc, ContractUtil.ToUtc(DateTime.UtcNow.AddYears(1)))));
 	Console.WriteLine("\nReady!\n");
 //} catch (Exception ex) {

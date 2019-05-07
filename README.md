@@ -34,6 +34,9 @@ The design leverages separation of concern (modularity), reduced dependency coup
 
 The TenderLogic and TenderData smart contracts are designed to handle transactions for all relevant business contracts, meaning that transactions for all clients will be managed by the same instances of TenderLogic and TenderData. This is so that if a bug is found in the smart contract logic, they can be easily fixed and upgraded for all clients simultaneously as they will be using the same instances.
 
+Side-note: The bytecodes of the contracts, when compiled, are larger than the public Ethereum smart contract size limit of 24KB per contract.
+On public deployment, reason strings should be removed to reduce contract size. If that is not enough to bring the contracts under 24KB, the contract structure can be modified to use the ERC1538 Transparent Contract Standard, which is basically a technique of splitting functions into multiple contracts and using delegates athat redirect function calls through a gateway contract, like a multiplexor (one to many).
+
 ### Process Flow
 
 ##### Action Sequence

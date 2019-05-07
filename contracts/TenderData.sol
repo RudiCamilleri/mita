@@ -160,8 +160,8 @@ contract TenderData is ITenderData {
 			largeServerPrice: params128[2],
 			penaltyPerDay: params128[3],
 			guaranteeRequired: params128[4],
-			guaranteePaid: false,
 			clientPot: 0,
+			guaranteePaid: false,
 			attr: ITenderDataStructs.Attributes({
 				small: 0,
 				medium: 0,

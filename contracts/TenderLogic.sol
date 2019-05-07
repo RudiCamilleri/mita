@@ -129,7 +129,7 @@ contract TenderLogic {
 	contractActiveCheckDate(currentUtcDate, contractId) {
 		require(startDate < deadline, "Deadline cannot be before start date");
 		require(tenderData.getOrderState(contractId, orderId) == ITenderData.OrderState.Null, "Order already exists with that ID");
-		require(tenderData.getGuaranteePaid(contractId), "Performance guarantee must be paid to create an order");
+		require(tenderData.getGuaranteePaid(contractId) || tenderData.getGuaranteeRequired(contractId) == 0, "Performance guarantee must be paid to create an order");
 		uint32 newSmall = safeAdd32(tenderData.getTotalSmallServersOrdered(contractId), small);
 		uint32 newMedium = safeAdd32(tenderData.getTotalMediumServersOrdered(contractId), medium);
 		uint32 newLarge = safeAdd32(tenderData.getTotalLargeServersOrdered(contractId), large);
@@ -215,7 +215,7 @@ contract TenderLogic {
 	//Collects fees from the client pot (which includes performance guarantee and penalty money)
 	function collectFromClientPot(uint32 contractId, uint256 amount) external restricted {
 		require(amount > 0, "Cannot collect 0");
-		require(tenderData.getGuaranteePaid(contractId), "Performance guarantee must be paid to collect from pot");
+		require(tenderData.getGuaranteePaid(contractId) || tenderData.getGuaranteeRequired(contractId) == 0, "Performance guarantee must be paid to collect from pot");
 		tenderData.setClientPot(contractId, safeSub256(tenderData.getClientPot(contractId), amount));
 		owner.transfer(amount);
 	}
