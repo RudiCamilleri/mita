@@ -109,7 +109,7 @@ contract TenderLogic {
 	validateAddress(newTenderDataAddress) {
 		ITenderData oldTenderData = tenderData;
 		tenderData = ITenderData(newTenderDataAddress); //cast contract to ITenderData
-		if (address(tenderData) != address(0)) {
+		if (address(oldTenderData) != address(0)) {
 			if (migrateOldData)
 				tenderData.migrateData(address(oldTenderData));
 			if (killOldData)

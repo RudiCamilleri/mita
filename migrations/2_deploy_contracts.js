@@ -13,4 +13,4 @@ module.exports = function(deployer) {
 			TenderData = tenderData;
 		}); 
 	});
-});
+}
