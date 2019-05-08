@@ -42,7 +42,8 @@ interface ITenderDataStructs {
 		uint128 largeServerPrice;
 		uint128 penaltyPerDay;
 		uint128 guaranteeRequired;
-		uint256 clientPot;
+		uint256 clientGuaranteeBalance;
+		uint256 clientPenaltyBalance;
 		bool guaranteePaid;
 		Attributes attr;
 		mapping(uint32 => Order) orders;
@@ -52,6 +53,7 @@ interface ITenderDataStructs {
 	struct Order {
 		ITenderData.OrderState state;
 		uint128 cancelledDate;
+		uint128 lastPenaltyDateCount;
 		bool orderPaid;
 		Attributes attr;
 	}

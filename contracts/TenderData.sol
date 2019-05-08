@@ -51,8 +51,12 @@ contract TenderData is ITenderData {
 		return contracts[contractId].guaranteePaid;
 	}
 
-	function getClientPot(uint32 contractId) external view returns (uint256) {
-		return contracts[contractId].clientPot;
+	function getClientGuaranteeBalance(uint32 contractId) external view returns (uint256) {
+		return contracts[contractId].clientGuaranteeBalance;
+	}
+
+	function getClientPenaltyBalance(uint32 contractId) external view returns (uint256) {
+		return contracts[contractId].clientPenaltyBalance;
 	}
 
 	function getContractState(uint32 contractId) external view returns (ITenderData.ContractState) {
@@ -102,6 +106,10 @@ contract TenderData is ITenderData {
 
 	function getOrderCancelledDate(uint32 contractId, uint32 orderId) external view returns (uint128) {
 		return contracts[contractId].orders[orderId].cancelledDate;
+	}
+
+	function getLastPenaltyDateCount(uint32 contractId, uint32 orderId) external view returns (uint128) {
+		return contracts[contractId].orders[orderId].lastPenaltyDateCount;
 	}
 
 	function getSmallServersDelivered(uint32 contractId, uint32 orderId) external view returns (uint32) {
@@ -164,7 +172,8 @@ contract TenderData is ITenderData {
 			largeServerPrice: params128[2],
 			penaltyPerDay: params128[3],
 			guaranteeRequired: params128[4],
-			clientPot: 0,
+			clientGuaranteeBalance: 0,
+			clientPenaltyBalance: 0,
 			guaranteePaid: false,
 			attr: ITenderDataStructs.Attributes({
 				small: 0,
@@ -203,9 +212,14 @@ contract TenderData is ITenderData {
 		contracts[contractId].guaranteePaid = true;
 	}
 
-	//Sets the balance of the client pot to the specified amount
-	function setClientPot(uint32 contractId, uint256 newValue) external restricted {
-		contracts[contractId].clientPot = newValue;
+	//Sets the balance of the client's performance guarantee to the specified amount
+	function setClientGuaranteeBalance(uint32 contractId, uint256 newValue) external restricted {
+		contracts[contractId].clientGuaranteeBalance = newValue;
+	}
+
+	//Sets the balance of the client's penalty to the specified amount
+	function setClientPenaltyBalance(uint32 contractId, uint256 newValue) external restricted {
+		contracts[contractId].clientPenaltyBalance = newValue;
 	}
 
 	//Sets the contract deadline
@@ -222,6 +236,8 @@ contract TenderData is ITenderData {
 	function addOrder(uint32 contractId, uint32 orderId, uint32 small, uint32 medium, uint32 large, uint128 startDate, uint128 deadline) external restricted {
 		contracts[contractId].orders[orderId] = ITenderDataStructs.Order({
 			state: ITenderData.OrderState.Pending,
+			cancelledDate: 0,
+			lastPenaltyDateCount: 0,
 			orderPaid: false,
 			attr: ITenderDataStructs.Attributes({
 				small: 0,
@@ -258,8 +274,14 @@ contract TenderData is ITenderData {
 		contracts[contractId].orders[orderId].orderPaid = paid;
 	}
 
+	//Sets the date when the order was cancelled
 	function setOrderCancelledDate(uint32 contractId, uint32 orderId, uint128 cancelledDate) external restricted {
 		contracts[contractId].orders[orderId].cancelledDate = cancelledDate;
+	}
+
+	//Sets the count of the number of days since the order deadline has passed
+	function setLastPenaltyDateCount(uint32 contractId, uint32 orderId, uint128 lastPenaltyDateCount) external restricted {
+		contracts[contractId].orders[orderId].lastPenaltyDateCount = lastPenaltyDateCount;
 	}
 
 	//Kills the current TenderData contract and transfers its Ether to the owner

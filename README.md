@@ -58,8 +58,10 @@ The smart contract is designed such that operations are to intended to follow th
 - replaceTenderData: Sets or replaces the ITenderData smart contract implementation (for initialization or upgrading)
 - changeClient: Changes the client wallet address of a contract to a new address
 - updateContractMax: Increases the min, medium and max server limits of the contract to the specified amount
-- collectFromClientPot: Collects Ether from the client's performance guarantee and penalty total
-- collectFromOwnerBalance: Refunds the specified amount back to the owner
+- collectDuePenaltyFromClient: Collects the due penalty fees from the client balance for an order that has its deadline due
+- collectFromClientPenaltyBalance: Collects fees from the client's penalty balance
+- collectFromClientGuaranteeBalance: Collects fees from the client's performance guarantee
+- refundOwnerBalance: Refunds the specified amount back to the owner
 - payClientForOrder: Pays the client for the specified order delivery
 - payClient: Pays the client the specified amount (use only for special cases)
 - topUpPenalty: The client calls this function to top up the penalty balance
@@ -98,14 +100,20 @@ Here are a few sample commands you can use to quickly interact with the smart co
 		}
 	).Await();
 
-    //Creates a new order with ID #12 for contract #123 of 0 small servers, 3 medium servers and 1 large
-    TenderLogic.CallWrite("createOrder", Wallet, ContractUtil.Utc, 123, 12, 0, 3, 1, ContractUtil.Utc, ContractUtil.ToUtc(DateTime.UtcNow.AddYears(1)))
+	//Creates a new order with ID #12 for contract #123 of 0 small servers, 3 medium servers and 1 large
+	TenderLogic.CallWrite("createOrder", Wallet, ContractUtil.Utc, 123, 12, 0, 3, 1, ContractUtil.Utc, ContractUtil.ToUtc(DateTime.UtcNow.AddYears(1)))
 
-    //Gets the state of order #12 for contract #123
-    TenderData.CallRead("getOrderState", 123, 12).Await();
+	//Tops up the smart contract's balance by 1000000wei to be able to pay the client
+	TenderLogic.CallWrite("topUpPaymentsToClient", Wallet, ConfigParams.DefaultGas, ConfigParams.DefaultGasPrice, new HexBigInteger("1000000")).Await();
 
-    //Marks order #12 for contract #123 as cancelled
-    TenderLogic.CallWrite("cancelOrder", ContractUtil.Utc, 123, 12, true).Await();
+	//Marks that 0 small, 3 medium and 1 large servers have been delivered and accepted for order #12 for contract #123, and to pay the client if the order is completed
+	TenderLogic.CallWrite("markServersDelivered", Wallet, 123, 12, 0, 3, 1, true).Await();
+
+	//Gets the state of order #12 for contract #123
+	TenderData.CallRead("getOrderState", 123, 12).Await();
+
+	//Marks order #12 for contract #123 as cancelled
+	TenderLogic.CallWrite("cancelOrder", ContractUtil.Utc, 123, 12, true).Await();
 
 ## Appendix
 
