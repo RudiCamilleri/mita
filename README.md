@@ -91,11 +91,11 @@ The easiest way to test the smart contracts using C# is by using the Nethereum o
 
 Here are a few sample commands you can use to quickly interact with the smart contract:
 
-    //Gets the small server price for contract #123
-    TenderData.CallRead("getSmallServerPrice", 123).Await();
+	//Gets the small server price for contract #123
+	TenderData.CallRead("getSmallServerPrice", 123).Await();
 
-    //Creates a new business contract instance within the smart contract
-    TenderLogic.CallWrite("createContract", Wallet, 123, ClientWallet,
+	//Creates a new business contract instance within the smart contract
+	TenderLogic.CallWrite("createContract", Wallet, 123, ClientWallet,
 		new BigInteger[] {
 			10, 20, 30, //smallServerPrice, mediumServerPrice, largeServerPrice
 			2, //penaltyPerDay
@@ -122,9 +122,11 @@ Here are a few sample commands you can use to quickly interact with the smart co
 	//Marks order #12 for contract #123 as cancelled
 	TenderLogic.CallWrite("cancelOrder", ContractUtil.Utc, 123, 12, true).Await();
 
+**PS: For final deployment into the public Ethereum blockchain, it is recommended to use the Remix IDE as it is the simplest and most reliable way to deploy.**
+
 ## Appendix
 
-PS: The best way to use the CallRead<T> function would be to give it a C# type that corresponds with the expected return type of the function in the smart contract, similar to this format:
+The best way to use the CallRead<T> function would be to give it a C# type that corresponds with the expected return type of the function in the smart contract, similar to this format:
 
      TenderData.CallRead<BigInteger>("getSmallServerPrice", 123);
 

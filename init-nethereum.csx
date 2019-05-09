@@ -141,7 +141,7 @@ static void ViewGanacheLog() {
 		}
 	)));
 
-	Console.WriteLine("\nCalling TenderLogic.payGuarantee(ContractUtil.Utc, 123) wth value 0x1...");
+	Console.WriteLine("\nCalling TenderLogic.payGuarantee(ContractUtil.Utc, 123) with value 0x1 wei...");
 	Console.Write("Function call transaction: ");
 	Console.WriteLine(GetReceipt(TenderLogic.CallWrite("payGuarantee", ClientWallet, ConfigParams.DefaultGas, ConfigParams.DefaultGasPrice, new HexBigInteger("0x1"), ContractUtil.Utc, 123)));
 
