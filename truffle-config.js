@@ -9,9 +9,9 @@ module.exports = {
 			host: "127.0.0.1", //localhost
 			port: 8545, //default ganache-cli port
 			network_id: "*", //match any network id
-			gas: 2573636023, //gas limit used for deploys
-			gasPrice: 2000000000, //Gas price used for deploys (default: 100 Shannon = 100000000000)
-			contracts_build_directory: "./build"
+			gas: 2573636023, //the maximum amount of gas you are willing to spend on a particular transaction (can be the same as "default_gas" in /scriptcs_bin/contract_defaults.json, but in decimal instead of hex)
+			gasPrice: 2000000000, //the amount of Ether you are willing to pay for every unit of gas (can be the same as "default_gas_price" in /scriptcs_bin/contract_defaults.json, but in decimal instead of hex)
+			contracts_build_directory: "./build" //specifies the build directory (required for some setups)
 		}
 	},
 	compilers: {
