@@ -53,16 +53,6 @@ The smart contract is designed such that operations are to intended to follow th
 
 *The parameters of the following functions can be viewed in the code of TenderLogic.sol in the `contracts` directory:*
 
-##### Configurable Parameters
-
-- transferOwner: Transfers the current TenderLogic smart contract to another owner
-- replaceTenderLogic: Replaces the current TenderLogic smart contract implementation (for upgrading or bug fixes)
-- replaceTenderData: Sets or replaces the ITenderData smart contract implementation (for initialization or upgrading)
-- changeClient: Changes the client wallet address of a contract to a new address
-- updateContractMax: Increases the min, medium and max server limits of the contract to the specified amount
-- extendOrderDeadline: Extends the order deadline to the specified date
-- extendContractDeadline: Extends the contract deadline to the specified date
-
 ##### Transaction Handling
 
 - collectDuePenaltyFromClient: The owner collects the due penalty fees from the client balance for an order that has its deadline overdue
@@ -75,6 +65,16 @@ The smart contract is designed such that operations are to intended to follow th
 - payClient: The smart contract pays the client the specified amount (use only for special cases)
 - topUpPenalty: The client calls this function to top up the penalty balance
 - topUpPaymentsToClient: The owner tops up the pending balance of the smart contract for pending payments to client
+
+##### Configurable Parameters
+
+- transferOwner: Transfers the current TenderLogic smart contract to another owner
+- replaceTenderLogic: Replaces the current TenderLogic smart contract implementation (for upgrading or bug fixes)
+- replaceTenderData: Sets or replaces the ITenderData smart contract implementation (for initialization or upgrading)
+- changeClient: Changes the client wallet address of a contract to a new address
+- updateContractMax: Increases the min, medium and max server limits of the contract to the specified amount
+- extendOrderDeadline: Extends the order deadline to the specified date
+- extendContractDeadline: Extends the contract deadline to the specified date
 
 ##### Options for termination
 
