@@ -63,6 +63,11 @@ static string GetReceipt(Task<string> transactionHash) {
 	return GetReceipt(transactionHash.Await());
 }
 
+static void PrintTransaction(Task<string> transactionHash) {
+	Console.Write("Transaction receipt: ");
+	Console.WriteLine(GetReceipt(transactionHash));
+}
+
 static void ViewGanacheLog() {
 	Process.Start(GanacheLogPath);
 }
@@ -124,12 +129,10 @@ static void ViewGanacheLog() {
 	}*/
 
 	Console.WriteLine("\nCalling TenderLogic.replaceTenderData(TenderData, false, false)...");
-	Console.Write("Function call transaction: ");
-	Console.WriteLine(GetReceipt(TenderLogic.CallWrite("replaceTenderData", Wallet, TenderData, false, false)));
+	PrintTransaction(TenderLogic.CallWrite("replaceTenderData", Wallet, TenderData, false, false));
 
 	Console.WriteLine("\nCalling TenderLogic.createContract(123, ClientWallet, [10, 20, 30, 2, 1, 1555337743, 1655337743], [30, 30, 30])...");
-	Console.Write("Function call transaction: ");
-	Console.WriteLine(GetReceipt(TenderLogic.CallWrite("createContract", Wallet, 123, ClientWallet,
+	PrintTransaction(TenderLogic.CallWrite("createContract", Wallet, 123, ClientWallet,
 		new BigInteger[] {
 			10, 20, 30, //smallServerPrice, mediumServerPrice, largeServerPrice
 			2, //penaltyPerDay
@@ -139,16 +142,15 @@ static void ViewGanacheLog() {
 		}, new uint[] {
 			30, 30, 30 //max small, medium, large
 		}
-	)));
+	));
 
 	Console.WriteLine("\nCalling TenderLogic.payGuarantee(ContractUtil.Utc, 123) with value 0x1 wei...");
-	Console.Write("Function call transaction: ");
-	Console.WriteLine(GetReceipt(TenderLogic.CallWrite("payGuarantee", ClientWallet, ConfigParams.DefaultGas, ConfigParams.DefaultGasPrice, new HexBigInteger("0x1"), ContractUtil.Utc, 123)));
+	PrintTransaction(TenderLogic.CallWrite("payGuarantee", ClientWallet, ConfigParams.DefaultGas, ConfigParams.DefaultGasPrice, new HexBigInteger("0x1"), ContractUtil.Utc, 123));
 
 	Console.WriteLine("\nCalling TenderLogic.createOrder(ContractUtil.Utc, 123, 12, 0, 3, 1, ContractUtil.Utc, ContractUtil.ToUtc(DateTime.UtcNow.AddYears(1)))...");
-	Console.Write("Function call transaction: ");
 	//uint128 currentUtcDate, uint32 contractId, uint32 orderId, uint32 small, uint32 medium, uint32 large, uint128 startDate, uint128 deadline
-	Console.WriteLine(GetReceipt(TenderLogic.CallWrite("createOrder", Wallet, ContractUtil.Utc, 123, 12, 0, 3, 1, ContractUtil.Utc, ContractUtil.ToUtc(DateTime.UtcNow.AddYears(1)))));
+	PrintTransaction(TenderLogic.CallWrite("createOrder", Wallet, ContractUtil.Utc, 123, 12, 0, 3, 1, ContractUtil.Utc, ContractUtil.ToUtc(DateTime.UtcNow.AddYears(1))));
+
 	Console.WriteLine("\nReady!\n");
 //} catch (Exception ex) {
 //	ErrorHandler.Show("An error occurred while executing init-nethereum.csx", ex);
