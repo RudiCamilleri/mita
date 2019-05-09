@@ -51,6 +51,8 @@ The smart contract is designed such that operations are to intended to follow th
 6. When any servers arrive and are accepted, the owner calls markServersDelivered() and specifies how many small, medium and large servers have arrived for a particular order
 7. To pay the client for the order, the owner has to top up the smart contract balance by calling the topUpPaymentsToClient() function
 
+*The parameters of the following functions can be viewed in the code of TenderLogic.sol in the `contracts` directory:*
+
 ##### Configurable Parameters
 
 - transferOwner: Transfers the current TenderLogic smart contract to another owner
@@ -58,18 +60,21 @@ The smart contract is designed such that operations are to intended to follow th
 - replaceTenderData: Sets or replaces the ITenderData smart contract implementation (for initialization or upgrading)
 - changeClient: Changes the client wallet address of a contract to a new address
 - updateContractMax: Increases the min, medium and max server limits of the contract to the specified amount
-- collectDuePenaltyFromClient: Collects the due penalty fees from the client balance for an order that has its deadline due
-- collectFromClientPenaltyBalance: Collects fees from the client's penalty balance
-- collectFromClientGuaranteeBalance: Collects fees from the client's performance guarantee
-- refundOwnerBalance: Refunds the specified amount back to the owner
-- refundClientGuaranteeBalance: Refunds the remaining performance guarantee balance to the client if the contract is expired or terminated
-- refundClientPenaltyBalance: Refunds the remaining pending penalty balance to the client
-- payClientForOrder: Pays the client for the specified order delivery
-- payClient: Pays the client the specified amount (use only for special cases)
-- topUpPenalty: The client calls this function to top up the penalty balance
-- topUpPaymentsToClient: Tops up the pending balance of the smart contract for payments to client
 - extendOrderDeadline: Extends the order deadline to the specified date
 - extendContractDeadline: Extends the contract deadline to the specified date
+
+##### Transaction Handling
+
+- collectDuePenaltyFromClient: The owner collects the due penalty fees from the client balance for an order that has its deadline overdue
+- collectFromClientPenaltyBalance: The owner collects fees from the client's penalty balance
+- collectFromClientGuaranteeBalance: The owner collects fees from the client's performance guarantee
+- refundOwnerBalance: The smart contract refunds the specified amount back to the owner
+- refundClientGuaranteeBalance: The smart contract refunds the remaining performance guarantee balance to the client if the contract is expired or terminated
+- refundClientPenaltyBalance: The smart contract refunds the remaining pending penalty balance to the client
+- payClientForOrder: The smart contract pays the client for the specified order delivery
+- payClient: The smart contract pays the client the specified amount (use only for special cases)
+- topUpPenalty: The client calls this function to top up the penalty balance
+- topUpPaymentsToClient: The owner tops up the pending balance of the smart contract for pending payments to client
 
 ##### Options for termination
 

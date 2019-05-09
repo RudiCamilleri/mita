@@ -45,20 +45,6 @@ contract TenderLogic {
 		_;
 	}
 
-	/*//Makes sure that the contract is active and the order is Pending (ie. not finalized)
-	modifier orderActiveCheckDate(uint128 currentUtcDate, uint32 contractId, uint32 orderId) {
-		//contractActiveCheckDate
-		require(tenderData.getContractState(contractId) == ITenderData.ContractState.Active &&
-			tenderData.getContractStartDate(contractId) <= currentUtcDate &&
-			tenderData.getContractDeadline(contractId) > currentUtcDate, "Specified contract is pending, expired or invalid");
-
-		require(tenderData.getOrderCreationDate(contractId, orderId) <= currentUtcDate &&
-			tenderData.getOrderDeadline(contractId, orderId) > currentUtcDate, "Order is not created or it is expired");
-		ITenderData.OrderState state = tenderData.getOrderState(contractId, orderId);
-		require(state == ITenderData.OrderState.Pending, "Order state must be Pending to be modified");
-		_;
-	}*/
-
 	//=====================================
 	//=== PUBLIC CLIENT FUNCTIONS BELOW ===
 	//=====================================
