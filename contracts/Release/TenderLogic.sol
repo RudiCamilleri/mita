@@ -54,20 +54,14 @@ contract TenderLogic {
 		require(msg.value > 0 && msg.sender == tenderData.getClient(contractId) &&
 			msg.value == tenderData.getGuaranteeRequired(contractId) && !tenderData.getGuaranteePaid(contractId));
 		tenderData.setGuaranteePaid(contractId);
-		tenderData.setClientPot(contractId, safeAdd256(tenderData.getClientPot(contractId), msg.value));
+		tenderData.setClientGuaranteeBalance(contractId, msg.value);
 	}
 
 	//The client calls this function to top up the penalty balance
 	function topUpPenalty(uint128 currentUtcDate, uint32 contractId) external payable
 	contractActiveCheckDate(currentUtcDate, contractId) {
 		require(msg.value > 0 && msg.sender == tenderData.getClient(contractId) && tenderData.getGuaranteePaid(contractId));
-		tenderData.setClientPot(contractId, safeAdd256(tenderData.getClientPot(contractId), msg.value));
-	}
-
-	//Tops up the pending balance of the smart contract for payments to client
-	function topUpPaymentsToClient() external payable restricted {
-		require(msg.value > 0 && msg.sender == owner);
-		ownerBalance = safeAdd256(ownerBalance, msg.value);
+		tenderData.setClientPenaltyBalance(contractId, safeAdd256(tenderData.getClientPenaltyBalance(contractId), msg.value));
 	}
 
 	//=======================================================
@@ -147,6 +141,44 @@ contract TenderLogic {
 		tenderData.getClient(contractId).transfer(amount);
 	}
 
+	//Tops up the pending balance of the smart contract for payments to client
+	function topUpPaymentsToClient() external payable restricted {
+		require(msg.value > 0);
+		ownerBalance = safeAdd256(ownerBalance, msg.value);
+	}
+
+	//Collects fees from the client's penalty balance
+	function collectFromClientPenaltyBalance(uint32 contractId, uint256 amount) public restricted {
+		require(amount > 0);
+		require(tenderData.getGuaranteePaid(contractId) || tenderData.getGuaranteeRequired(contractId) == 0);
+		tenderData.setClientPenaltyBalance(contractId, safeSub256(tenderData.getClientPenaltyBalance(contractId), amount));
+		owner.transfer(amount);
+	}
+
+	//Collects fees from the client's performance guarantee
+	function collectFromClientGuaranteeBalance(uint32 contractId, uint256 amount) external restricted {
+		require(amount > 0);
+		require(tenderData.getGuaranteePaid(contractId) || tenderData.getGuaranteeRequired(contractId) == 0);
+		tenderData.setClientGuaranteeBalance(contractId, safeSub256(tenderData.getClientGuaranteeBalance(contractId), amount));
+		owner.transfer(amount);
+	}
+
+	//Collects the due penalty fees from the client balance for an order that has its deadline due
+	function collectDuePenaltyFromClient(uint128 currentUtcDate, uint32 contractId, uint32 orderId) public restricted {
+		ITenderData.OrderState state = tenderData.getOrderState(contractId, orderId);
+		require(state == ITenderData.OrderState.Pending || state == ITenderData.OrderState.Cancelled);
+		uint128 lastDate;
+		if (state == ITenderData.OrderState.Cancelled)
+			lastDate = tenderData.getOrderCancelledDate(contractId, orderId);
+		else
+			lastDate = currentUtcDate;
+		uint128 daysOverdue = safeDiv128(safeSub128(lastDate, tenderData.getOrderDeadline(contractId, orderId)), 86400);
+		uint128 daysUnpaidOverdue = safeSub128(daysOverdue, tenderData.getLastPenaltyDateCount(contractId, orderId));
+		require(daysUnpaidOverdue > 0);
+		tenderData.setLastPenaltyDateCount(contractId, orderId, daysOverdue);
+		collectFromClientPenaltyBalance(contractId, safeMul256(tenderData.getPenaltyPerDay(contractId), daysUnpaidOverdue));
+	}
+
 	//Marks a number of servers as delivered for the specified order
 	function markServersDelivered(uint32 contractId, uint32 orderId, uint32 small, uint32 medium, uint32 large, bool payClientIfCompleted) external restricted
 	orderActive(contractId, orderId) {
@@ -166,19 +198,6 @@ contract TenderLogic {
 		}
 	}
 
-	//Marks the order deadline as passed (only if the deadline has passed). To collect penalty fee, call collectFromPot() with the desired amount
-	function markOrderDeadlinePassed(uint128 currentUtcDate, uint32 contractId, uint32 orderId, bool subtractFromContractTotal) external restricted
-	orderActive(contractId, contractId) {
-		require(tenderData.getOrderDeadline(contractId, orderId) <= currentUtcDate);
-		tenderData.setOrderState(contractId, orderId, ITenderData.OrderState.Cancelled);
-		if (subtractFromContractTotal) {
-			tenderData.setTotalServersOrdered(contractId,
-				safeSub32(tenderData.getTotalSmallServersOrdered(contractId), tenderData.getSmallServersOrdered(contractId, orderId)),
-				safeSub32(tenderData.getTotalMediumServersOrdered(contractId), tenderData.getMediumServersOrdered(contractId, orderId)),
-				safeSub32(tenderData.getTotalLargeServersOrdered(contractId), tenderData.getLargeServersOrdered(contractId, orderId)));
-		}
-	}
-
 	//Marks the order as paid (only call if the order was actually paid)
 	function markOrderPaid(uint32 contractId, uint32 orderId) public restricted {
 		require(tenderData.getOrderState(contractId, orderId) == ITenderData.OrderState.Delivered &&
@@ -186,31 +205,17 @@ contract TenderLogic {
 		tenderData.setOrderPaid(contractId, orderId, true);
 	}
 
-	//Cancels the specified order. To collect penalty fee, call collectFromPot() with the desired amount
-	function cancelOrder(uint32 contractId, uint32 orderId, bool subtractFromContractTotal) external restricted
+	//Cancels the specified order. To collect fee, call collectFromPot() with the desired amount
+	function cancelOrder(uint32 currentUtcDate, uint32 contractId, uint32 orderId, bool collectDuePenalty) external restricted
 	orderActive(contractId, orderId) {
+		tenderData.setOrderCancelledDate(contractId, orderId, currentUtcDate);
 		tenderData.setOrderState(contractId, orderId, ITenderData.OrderState.Cancelled);
-		if (subtractFromContractTotal) {
-			tenderData.setTotalServersOrdered(contractId,
-				safeSub32(tenderData.getTotalSmallServersOrdered(contractId), tenderData.getSmallServersOrdered(contractId, orderId)),
-				safeSub32(tenderData.getTotalMediumServersOrdered(contractId), tenderData.getMediumServersOrdered(contractId, orderId)),
-				safeSub32(tenderData.getTotalLargeServersOrdered(contractId), tenderData.getLargeServersOrdered(contractId, orderId)));
-		}
-	}
-
-	//Collects fees from the client pot (which includes performance guarantee and penalty money)
-	function collectFromClientPot(uint32 contractId, uint256 amount) external restricted {
-		require(amount > 0);
-		require(tenderData.getGuaranteePaid(contractId) || tenderData.getGuaranteeRequired(contractId) == 0);
-		tenderData.setClientPot(contractId, safeSub256(tenderData.getClientPot(contractId), amount));
-		owner.transfer(amount);
-	}
-
-	//Refunds the specified amount back to the owner
-	function collectFromOwnerBalance(uint256 amount) external restricted {
-		require(amount > 0);
-		ownerBalance = safeSub256(ownerBalance, amount);
-		owner.transfer(amount);
+		tenderData.setTotalServersOrdered(contractId,
+			safeSub32(tenderData.getTotalSmallServersOrdered(contractId), tenderData.getSmallServersOrdered(contractId, orderId)),
+			safeSub32(tenderData.getTotalMediumServersOrdered(contractId), tenderData.getMediumServersOrdered(contractId, orderId)),
+			safeSub32(tenderData.getTotalLargeServersOrdered(contractId), tenderData.getLargeServersOrdered(contractId, orderId)));
+		if (collectDuePenalty)
+			collectDuePenaltyFromClient(currentUtcDate, contractId, orderId);
 	}
 
 	//Changes the client wallet address of a contract to a new address
@@ -244,17 +249,51 @@ contract TenderLogic {
 		tenderData.setContractDeadline(contractId, newUtcDeadline);
 	}
 
+	//Refunds the specified amount back to the owner
+	function refundOwnerBalance(uint256 amount) external restricted {
+		require(amount > 0);
+		ownerBalance = safeSub256(ownerBalance, amount);
+		owner.transfer(amount);
+	}
+
+	//Refunds the remaining performance guarantee balance to the client if the contract is expired or terminated
+	function refundClientGuaranteeBalance(uint32 contractId) public restricted {
+		ITenderData.ContractState state = tenderData.getContractState(contractId);
+		require(state == ITenderData.ContractState.Expired || state == ITenderData.ContractState.Terminated);
+		uint256 balance = tenderData.getClientGuaranteeBalance(contractId);
+		tenderData.setClientGuaranteeBalance(contractId, 0);
+		tenderData.getClient(contractId).transfer(balance);
+	}
+
+	//Refunds the remaining pending penalty balance to the client
+	function refundClientPenaltyBalance(uint32 contractId) public restricted {
+		uint256 balance = tenderData.getClientPenaltyBalance(contractId);
+		tenderData.setClientPenaltyBalance(contractId, 0);
+		tenderData.getClient(contractId).transfer(balance);
+	}
+
 	//Marks the contract as expired (only if it is already expired)
-	function markContractExpired(uint128 currentUtcDate, uint32 contractId) external restricted
+	function markContractExpired(uint128 currentUtcDate, uint32 contractId, bool refundGuarantee, bool refundPenaltyBalance) external restricted
 	contractActive(contractId) {
 		require(tenderData.getContractDeadline(contractId) <= currentUtcDate);
 		tenderData.setContractState(contractId, ITenderData.ContractState.Expired);
+		uint256 balance = tenderData.getClientGuaranteeBalance(contractId);
+		tenderData.setClientGuaranteeBalance(contractId, 0);
+		tenderData.getClient(contractId).transfer(balance);
+		if (refundGuarantee)
+			refundClientGuaranteeBalance(contractId);
+		if (refundPenaltyBalance)
+			refundClientPenaltyBalance(contractId);
 	}
 
 	//Terminates the contract abnormally (possibly due to breach)
-	function terminateContract(uint128 currentUtcDate, uint32 contractId) external restricted
+	function terminateContract(uint128 currentUtcDate, uint32 contractId, bool refundGuarantee, bool refundPenaltyBalance) external restricted
 	contractActiveCheckDate(currentUtcDate, contractId) {
 		tenderData.setContractState(contractId, ITenderData.ContractState.Terminated);
+		if (refundGuarantee)
+			refundClientGuaranteeBalance(contractId);
+		if (refundPenaltyBalance)
+			refundClientPenaltyBalance(contractId);
 	}
 
 	//Kills the current TenderData contract and transfers its Ether to the owner
@@ -290,6 +329,12 @@ contract TenderLogic {
 	}
 
 	//Subtracts a small positive integer from a larger positive integer
+	function safeSub128(uint128 a, uint128 b) private pure returns (uint128) {
+		require(b <= a);
+		return a - b;
+	}
+
+	//Subtracts a small positive integer from a larger positive integer
 	function safeSub256(uint256 a, uint256 b) private pure returns (uint256) {
 		require(b <= a);
 		return a - b;
@@ -303,7 +348,7 @@ contract TenderLogic {
 	}
 
 	//Divides a positive integer by another positive integer
-	function safeDiv256(uint256 a, uint256 b) private pure returns (uint256) {
+	function safeDiv128(uint128 a, uint128 b) private pure returns (uint128) {
 		require(b > 0);
 		return a / b;
 	}

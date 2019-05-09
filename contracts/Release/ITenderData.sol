@@ -28,7 +28,8 @@ interface ITenderData {
 	function getPenaltyPerDay(uint32 contractId) external view returns (uint128);
 	function getGuaranteeRequired(uint32 contractId) external view returns (uint128);
 	function getGuaranteePaid(uint32 contractId) external view returns (bool);
-	function getClientPot(uint32 contractId) external view returns (uint256);
+	function getClientGuaranteeBalance(uint32 contractId) external view returns (uint256);
+	function getClientPenaltyBalance(uint32 contractId) external view returns (uint256);
 	function getContractState(uint32 contractId) external view returns (ContractState);
 	function getTotalSmallServersOrdered(uint32 contractId) external view returns (uint32);
 	function getTotalMediumServersOrdered(uint32 contractId) external view returns (uint32);
@@ -40,6 +41,8 @@ interface ITenderData {
 	function getContractDeadline(uint32 contractId) external view returns (uint128);
 	//====================== Order Data ===========================
 	function getOrderState(uint32 contractId, uint32 orderId) external view returns (OrderState);
+	function getOrderCancelledDate(uint32 contractId, uint32 orderId) external view returns (uint128);
+	function getLastPenaltyDateCount(uint32 contractId, uint32 orderId) external view returns (uint128);
 	function getOrderPaid(uint32 contractId, uint32 orderId) external view returns (bool);
 	function getSmallServersDelivered(uint32 contractId, uint32 orderId) external view returns (uint32);
 	function getMediumServersDelivered(uint32 contractId, uint32 orderId) external view returns (uint32);
@@ -72,8 +75,11 @@ interface ITenderData {
 	//Sets the guarantee as paid
 	function setGuaranteePaid(uint32 contractId) external;
 
-	//Sets the balance of the client pot to the specified amount
-	function setClientPot(uint32 contractId, uint256 newValue) external;
+	//Sets the balance of the client's performance guarantee to the specified amount
+	function setClientGuaranteeBalance(uint32 contractId, uint256 newValue) external;
+
+	//Sets the balance of the client's penalty to the specified amount
+	function setClientPenaltyBalance(uint32 contractId, uint256 newValue) external;
 
 	//Sets the contract deadline
 	function setContractDeadline(uint32 contractId, uint128 newUtcDeadline) external;
@@ -95,6 +101,12 @@ interface ITenderData {
 
 	//Sets whether the order was paid
 	function setOrderPaid(uint32 contractId, uint32 orderId, bool paid) external;
+
+	//Sets the date when the order was cancelled
+	function setOrderCancelledDate(uint32 contractId, uint32 orderId, uint128 cancelledDate) external;
+
+	//Sets the count of the number of days since the order deadline has passed
+	function setLastPenaltyDateCount(uint32 contractId, uint32 orderId, uint128 lastPenaltyDateCount) external;
 
 	//Kills the current TenderData contract and transfers its Ether to the owner
 	function destroyTenderData(address payable targetWallet) external;
