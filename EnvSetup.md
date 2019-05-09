@@ -67,7 +67,7 @@
 
 10. Copy and paste the following line into the truffle console and press enter (output should be `undefined`):
 
-        TenderAPIAbi.deployed().then(a=>{TenderAPI=a;TenderBLLAbi.deployed().then(t=>{TenderBLL=t;TenderAPI.replaceTenderBLL(TenderBLLAbi.address)})})
+        TenderLogicAbi.deployed().then(a=>{TenderLogic=a;TenderDataAbi.deployed().then(t=>{TenderData=t;TenderLogic.replaceTenderData(TenderDataAbi.address, false, false)})})
 
 11. Run console commands through Truffle, to close it simply close the console window or press Ctrl+C twice.
 

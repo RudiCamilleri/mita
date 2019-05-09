@@ -5,12 +5,11 @@ Testing snippets are provided below for easy debugging and code demonstrations.
 ### i. Nethereum
 
 1. Double-click `run-nethereum.bat`
-2. If the script launches properly and a "Ready!" message appears, then one can start invoking smart contract functionality from the console.
+2. If the script launches properly and a "Ready!" message appears, then one can start invoking smart contract functionality from the console
 
 Here are a few sample commands you can use to quickly interact with the smart contract:
 
-	//Gets the small server price for contract #123
-	TenderData.CallRead("getSmallServerPrice", 123).Await();
+	Write Functions:
 
 	//Creates a new business contract instance within the smart contract
 	TenderLogic.CallWrite("createContract", Wallet, 123, ClientWallet,
@@ -34,11 +33,16 @@ Here are a few sample commands you can use to quickly interact with the smart co
 	//Marks that 0 small, 3 medium and 1 large servers have been delivered and accepted for order #12 for contract #123, and to pay the client if the order is completed
 	TenderLogic.CallWrite("markServersDelivered", Wallet, 123, 12, 0, 3, 1, true).Await();
 
+	//Marks order #12 for contract #123 as cancelled
+	TenderLogic.CallWrite("cancelOrder", ContractUtil.Utc, 123, 12, true).Await();
+
+	Read Functions:
+
 	//Gets the state of order #12 for contract #123
 	TenderData.CallRead("getOrderState", 123, 12).Await();
 
-	//Marks order #12 for contract #123 as cancelled
-	TenderLogic.CallWrite("cancelOrder", ContractUtil.Utc, 123, 12, true).Await();
+	//Gets the small server price for contract #123
+	TenderData.CallRead("getSmallServerPrice", 123).Await();
 
 ### ii. Remix
 

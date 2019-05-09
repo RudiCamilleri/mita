@@ -1,7 +1,5 @@
 # Tender Smart Contracts
 
-Smart contract environment setup is documented here: https://github.com/mathusummut/tender/blob/master/EnvSetup.md
-
 ### Scope & Purpose
 
 The purpose of this smart contract implementation is to serve as a prototype for the business process of issuing tenders for MITA servers, taking care of order state management, payments to the Economic Operator (referred to as "client" in the smart contract), and collection of performance guarantee and penalty money from the Economic Operator ("client").
@@ -44,7 +42,7 @@ On public deployment, reason strings should be removed to reduce contract size. 
 The smart contract is designed such that operations are to intended to follow the sequence outlined below, which should reflect a similar flow to the current business process. The steps for interacting with the smart contract are:
 
 1. First, the TenderLogic and TenderData contracts have to be deployed
-2. The replaceTenderData() function in TenderLogic should be called to point to the address of TenderData, immediately after deployment
+2. The replaceTenderData(TenderDataAddress, false, false) function in TenderLogic should be called to point to the address of TenderData, immediately after deployment
 3. To create a new business contract instance, call createContract() in TenderLogic with the appropriate parameters, whose description is outlined in the addContract() function in TenderData
 4. Then, the client is to call payGuarantee() with a transfer of the Ether required by the contract
 5. Then, the owner can call createOrder() to create an order. createOrder() cannot be called unless the client has paid the performance guarantee
@@ -87,7 +85,7 @@ The smart contract is designed such that operations are to intended to follow th
 
 ### Deployment & Testing
 
-The easiest way to test the smart contracts using C# is by using the Nethereum open-source library. After installing the necessary dependencies outlined in [EnvSetup.md](https://github.com/mathusummut/tender/blob/master/EnvSetup.md), one can simply launch `run-nethereum.bat` to deploy and test the smart contract.
+The easiest way to test the smart contracts using C# is by using the [Nethereum open-source library](https://nethereum.com), wrapped by the [ContractUtils open-source wrapper](https://github.com/mathusummut/ContractUtils). After installing the necessary dependencies outlined in [EnvSetup.md](https://github.com/mathusummut/tender/blob/master/EnvSetup.md), one can simply launch `run-nethereum.bat` to deploy and test the smart contract.
 
 Testing steps and demo parameters are provided in [Testing.md](https://github.com/mathusummut/tender/blob/master/Testing.md).
 
