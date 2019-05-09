@@ -57,7 +57,7 @@
 
 **Warning: Deleting the files under `localhost` in Remix deletes the actual files permanently!!**
 
-13. You can compile and run from Remix at your own leisure. Testing steps and demo parameters are provided in `/test/remix_test.txt`.
+13. You can compile and run from Remix at your own leisure. Testing steps and demo parameters are provided in [Testing.md](https://github.com/mathusummut/tender/blob/master/Testing.md).
 
 #### iii. Running the smart contract using truffle (not working):
 

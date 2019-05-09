@@ -89,40 +89,9 @@ The smart contract is designed such that operations are to intended to follow th
 
 The easiest way to test the smart contracts using C# is by using the Nethereum open-source library. After installing the necessary dependencies outlined in [EnvSetup.md](https://github.com/mathusummut/tender/blob/master/EnvSetup.md), one can simply launch `run-nethereum.bat` to deploy and test the smart contract.
 
-Here are a few sample commands you can use to quickly interact with the smart contract:
+Testing steps and demo parameters are provided in [Testing.md](https://github.com/mathusummut/tender/blob/master/Testing.md).
 
-	//Gets the small server price for contract #123
-	TenderData.CallRead("getSmallServerPrice", 123).Await();
-
-	//Creates a new business contract instance within the smart contract
-	TenderLogic.CallWrite("createContract", Wallet, 123, ClientWallet,
-		new BigInteger[] {
-			10, 20, 30, //smallServerPrice, mediumServerPrice, largeServerPrice
-			2, //penaltyPerDay
-			1, //guaranteeRequired
-			ContractUtil.Utc, //start date in UTC time
-			ContractUtil.ToUtc(DateTime.UtcNow.AddYears(1)) //expiry date in UTC time
-		}, new uint[] {
-			30, 30, 30 //max small, medium, large
-		}
-	).Await();
-
-	//Creates a new order with ID #12 for contract #123 of 0 small servers, 3 medium servers and 1 large
-	TenderLogic.CallWrite("createOrder", Wallet, ContractUtil.Utc, 123, 12, 0, 3, 1, ContractUtil.Utc, ContractUtil.ToUtc(DateTime.UtcNow.AddYears(1)))
-
-	//Tops up the smart contract's balance by 1000000wei to be able to pay the client
-	TenderLogic.CallWrite("topUpPaymentsToClient", Wallet, ConfigParams.DefaultGas, ConfigParams.DefaultGasPrice, new HexBigInteger("1000000")).Await();
-
-	//Marks that 0 small, 3 medium and 1 large servers have been delivered and accepted for order #12 for contract #123, and to pay the client if the order is completed
-	TenderLogic.CallWrite("markServersDelivered", Wallet, 123, 12, 0, 3, 1, true).Await();
-
-	//Gets the state of order #12 for contract #123
-	TenderData.CallRead("getOrderState", 123, 12).Await();
-
-	//Marks order #12 for contract #123 as cancelled
-	TenderLogic.CallWrite("cancelOrder", ContractUtil.Utc, 123, 12, true).Await();
-
-**PS: For final deployment into the public Ethereum blockchain, it is recommended to use the Remix IDE as it is the simplest and most reliable way to deploy.**
+**For final deployment into the public Ethereum blockchain, it is recommended to use the Remix IDE as it is the simplest and most reliable way to deploy.**
 
 ## Appendix
 
