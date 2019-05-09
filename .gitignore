@@ -3,6 +3,7 @@
 *.orig
 *.log
 *.pdb
+launch.json
 ganache-output.txt
 init-tenderapi-address.js
-init-tender-address.js
+init-tenderbll-address.js
