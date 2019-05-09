@@ -136,7 +136,6 @@ contract TenderLogic {
 			safeMul256(tenderData.getSmallServerPrice(contractId), tenderData.getSmallServersOrdered(contractId, orderId)),
 			safeMul256(tenderData.getMediumServerPrice(contractId), tenderData.getMediumServersOrdered(contractId, orderId))),
 			safeMul256(tenderData.getLargeServerPrice(contractId), tenderData.getLargeServersOrdered(contractId, orderId)));
-		require(amount > 0, "Balance must be greater than 0");
 		ownerBalance = safeSub256(ownerBalance, amount);
 		tenderData.getClient(contractId).transfer(amount);
 	}
@@ -149,7 +148,6 @@ contract TenderLogic {
 
 	//Collects fees from the client's penalty balance
 	function collectFromClientPenaltyBalance(uint32 contractId, uint256 amount) public restricted {
-		require(amount > 0, "Cannot collect 0");
 		require(tenderData.getGuaranteePaid(contractId) || tenderData.getGuaranteeRequired(contractId) == 0, "Performance guarantee must be paid to collect from penalty balance");
 		tenderData.setClientPenaltyBalance(contractId, safeSub256(tenderData.getClientPenaltyBalance(contractId), amount));
 		owner.transfer(amount);
@@ -174,7 +172,6 @@ contract TenderLogic {
 			lastDate = currentUtcDate;
 		uint128 daysOverdue = safeDiv128(safeSub128(lastDate, tenderData.getOrderDeadline(contractId, orderId)), 86400);
 		uint128 daysUnpaidOverdue = safeSub128(daysOverdue, tenderData.getLastPenaltyDateCount(contractId, orderId));
-		require(daysUnpaidOverdue > 0, "At least 1 day must pass to collect penalty");
 		tenderData.setLastPenaltyDateCount(contractId, orderId, daysOverdue);
 		collectFromClientPenaltyBalance(contractId, safeMul256(tenderData.getPenaltyPerDay(contractId), daysUnpaidOverdue));
 	}

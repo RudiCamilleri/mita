@@ -25,7 +25,10 @@ Here are a few sample commands you can use to quickly interact with the smart co
 	).Await();
 
 	//Creates a new order with ID #12 for contract #123 of 0 small servers, 3 medium servers and 1 large
-	TenderLogic.CallWrite("createOrder", Wallet, ContractUtil.Utc, 123, 12, 0, 3, 1, ContractUtil.Utc, ContractUtil.ToUtc(DateTime.UtcNow.AddYears(1)))
+	TenderLogic.CallWrite("createOrder", Wallet, ContractUtil.Utc, 123, 12, 0, 3, 1, ContractUtil.Utc, ContractUtil.ToUtc(DateTime.UtcNow.AddYears(1)));
+
+	//Gets the current owner wallet balance
+	Wallet.Balance.Await()
 
 	//Tops up the smart contract's balance by 1000000wei to be able to pay the client
 	TenderLogic.CallWrite("topUpPaymentsToClient", Wallet, ConfigParams.DefaultGas, ConfigParams.DefaultGasPrice, new HexBigInteger("1000000")).Await();
