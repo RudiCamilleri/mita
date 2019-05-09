@@ -1,8 +1,10 @@
 # Testing
 
-### Nethereum
+Testing snippets are provided below for easy debugging and code demonstrations.
 
-1. Double-click run-nethereum.bat
+### i. Nethereum
+
+1. Double-click `run-nethereum.bat`
 2. If the script launches properly and a "Ready!" message appears, then one can start invoking smart contract functionality from the console.
 
 Here are a few sample commands you can use to quickly interact with the smart contract:
@@ -38,9 +40,9 @@ Here are a few sample commands you can use to quickly interact with the smart co
 	//Marks order #12 for contract #123 as cancelled
 	TenderLogic.CallWrite("cancelOrder", ContractUtil.Utc, 123, 12, true).Await();
 
-### Remix
+### ii. Remix
 
-1. Double-click run-remix.bat
+1. Double-click `run-remix.bat`
 2. Compile then deploy TenderData
 3. Compile then deploy TenderLogic
 4. Call the following functions in TenderLogic:
