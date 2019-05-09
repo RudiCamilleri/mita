@@ -71,9 +71,9 @@
 
 11. Run console commands through Truffle, to close it simply close the console window or press Ctrl+C twice.
 
-#### iv. Running the smart contract using geth (not working):
+#### iv. Running the smart contract using geth (deprecated):
 
-8. Simply double-click `run-geth.bat`. To re-run, simply close the current console window (or press Ctrl+Break, then 'Y' and Enter) and re-open.
+8. Double-click `run-geth.bat`, which is in the `/deprecated/geth` directory. To re-run, simply close the current console window (or press Ctrl+Break, then 'Y' and Enter) and re-open.
 
 ## Additional Info
 
@@ -86,7 +86,7 @@ Read-only executes the function and reads the return value of functions, but doe
 
 Write-only executes the function, modifying the state if the function does so, but return value is not computed.
 
-Type `eth` to see what's available.
+Type `eth` to see what's available if using truffle.
 
 ## Git Cheat Sheet
 
