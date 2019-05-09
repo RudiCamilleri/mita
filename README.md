@@ -42,7 +42,7 @@ On public deployment, reason strings should be removed to reduce contract size. 
 The smart contract is designed such that operations are to intended to follow the sequence outlined below, which should reflect a similar flow to the current business process. The steps for interacting with the smart contract are:
 
 1. First, the TenderLogic and TenderData contracts have to be deployed
-2. The replaceTenderData(TenderDataAddress, false, false) function in TenderLogic should be called to point to the address of TenderData, immediately after deployment
+2. The replaceTenderData(TenderData.Address, false, false) function in TenderLogic should be called to point to the address of TenderData, immediately after deployment
 3. To create a new business contract instance, call createContract() in TenderLogic with the appropriate parameters, whose description is outlined in the addContract() function in TenderData
 4. Then, the client is to call payGuarantee() with a transfer of the Ether required by the contract
 5. Then, the owner can call createOrder() to create an order. createOrder() cannot be called unless the client has paid the performance guarantee
