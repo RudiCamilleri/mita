@@ -62,6 +62,8 @@ The smart contract is designed such that operations are to intended to follow th
 - collectFromClientPenaltyBalance: Collects fees from the client's penalty balance
 - collectFromClientGuaranteeBalance: Collects fees from the client's performance guarantee
 - refundOwnerBalance: Refunds the specified amount back to the owner
+- refundClientGuaranteeBalance: Refunds the remaining performance guarantee balance to the client if the contract is expired or terminated
+- refundClientPenaltyBalance: Refunds the remaining pending penalty balance to the client
 - payClientForOrder: Pays the client for the specified order delivery
 - payClient: Pays the client the specified amount (use only for special cases)
 - topUpPenalty: The client calls this function to top up the penalty balance

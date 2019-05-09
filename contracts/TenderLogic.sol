@@ -177,13 +177,6 @@ contract TenderLogic {
 		owner.transfer(amount);
 	}
 
-	//Refunds the specified amount back to the owner
-	function refundOwnerBalance(uint256 amount) external restricted {
-		require(amount > 0, "Cannot collect 0");
-		ownerBalance = safeSub256(ownerBalance, amount);
-		owner.transfer(amount);
-	}
-
 	//Collects the due penalty fees from the client balance for an order that has its deadline due
 	function collectDuePenaltyFromClient(uint128 currentUtcDate, uint32 contractId, uint32 orderId) public restricted {
 		ITenderData.OrderState state = tenderData.getOrderState(contractId, orderId);
@@ -270,7 +263,23 @@ contract TenderLogic {
 		tenderData.setContractDeadline(contractId, newUtcDeadline);
 	}
 
-	//Refunds the specfied penalty pending balance to the client
+	//Refunds the specified amount back to the owner
+	function refundOwnerBalance(uint256 amount) external restricted {
+		require(amount > 0, "Cannot collect 0");
+		ownerBalance = safeSub256(ownerBalance, amount);
+		owner.transfer(amount);
+	}
+
+	//Refunds the remaining performance guarantee balance to the client if the contract is expired or terminated
+	function refundClientGuaranteeBalance(uint32 contractId) public restricted {
+		ITenderData.ContractState state = tenderData.getContractState(contractId);
+		require(state == ITenderData.ContractState.Expired || state == ITenderData.ContractState.Terminated, "Guarantee can be refunded only if contract is expired");
+		uint256 balance = tenderData.getClientGuaranteeBalance(contractId);
+		tenderData.setClientGuaranteeBalance(contractId, 0);
+		tenderData.getClient(contractId).transfer(balance);
+	}
+
+	//Refunds the remaining pending penalty balance to the client
 	function refundClientPenaltyBalance(uint32 contractId) public restricted {
 		uint256 balance = tenderData.getClientPenaltyBalance(contractId);
 		tenderData.setClientPenaltyBalance(contractId, 0);
@@ -278,21 +287,27 @@ contract TenderLogic {
 	}
 
 	//Marks the contract as expired (only if it is already expired)
-	function markContractExpired(uint128 currentUtcDate, uint32 contractId, bool refundPenaltyBalance) external restricted
+	function markContractExpired(uint128 currentUtcDate, uint32 contractId, bool refundGuarantee, bool refundPenaltyBalance) external restricted
 	contractActive(contractId) {
 		require(tenderData.getContractDeadline(contractId) <= currentUtcDate, "Contract can be marked as expired only if deadline is reached");
 		tenderData.setContractState(contractId, ITenderData.ContractState.Expired);
 		uint256 balance = tenderData.getClientGuaranteeBalance(contractId);
 		tenderData.setClientGuaranteeBalance(contractId, 0);
 		tenderData.getClient(contractId).transfer(balance);
+		if (refundGuarantee)
+			refundClientGuaranteeBalance(contractId);
 		if (refundPenaltyBalance)
 			refundClientPenaltyBalance(contractId);
 	}
 
 	//Terminates the contract abnormally (possibly due to breach)
-	function terminateContract(uint128 currentUtcDate, uint32 contractId) external restricted
+	function terminateContract(uint128 currentUtcDate, uint32 contractId, bool refundGuarantee, bool refundPenaltyBalance) external restricted
 	contractActiveCheckDate(currentUtcDate, contractId) {
 		tenderData.setContractState(contractId, ITenderData.ContractState.Terminated);
+		if (refundGuarantee)
+			refundClientGuaranteeBalance(contractId);
+		if (refundPenaltyBalance)
+			refundClientPenaltyBalance(contractId);
 	}
 
 	//Kills the current TenderData contract and transfers its Ether to the owner
