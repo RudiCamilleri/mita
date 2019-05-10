@@ -31,13 +31,13 @@ Here are a few sample commands you can use to quickly interact with the smart co
 	Wallet.Balance.Await()
 
 	//Tops up the smart contract's balance by 1000000wei to be able to pay the client
-	TenderLogic.CallWrite("topUpPaymentsToClient", Wallet, ConfigParams.DefaultGas, ConfigParams.DefaultGasPrice, new HexBigInteger("1000000")).Await();
+	TenderLogic.CallWrite("topUpPaymentsToClient", Wallet, ConfigParams.DefaultGas, ConfigParams.DefaultGasPrice, new HexBigInteger("0xf4240")).Await();
 
 	//Marks that 0 small, 3 medium and 1 large servers have been delivered and accepted for order #12 for contract #123, and to pay the client if the order is completed
 	TenderLogic.CallWrite("markServersDelivered", Wallet, 123, 12, 0, 3, 1, true).Await();
 
 	//Marks order #12 for contract #123 as cancelled
-	TenderLogic.CallWrite("cancelOrder", ContractUtil.Utc, 123, 12, true).Await();
+	TenderLogic.CallWrite("cancelOrder", Wallet, ContractUtil.Utc, 123, 12, true).Await();
 
 	Read Functions:
 

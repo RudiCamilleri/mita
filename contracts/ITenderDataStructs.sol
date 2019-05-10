@@ -35,26 +35,26 @@ interface ITenderDataStructs {
 
 	//Defines a legal contract instance
 	struct Contract {
-		address payable client;
-		ITenderData.ContractState state;
-		uint128 smallServerPrice;
-		uint128 mediumServerPrice;
-		uint128 largeServerPrice;
-		uint128 penaltyPerDay;
-		uint128 guaranteeRequired;
-		uint256 clientGuaranteeBalance;
-		uint256 clientPenaltyBalance;
-		bool guaranteePaid;
-		Attributes attr;
-		mapping(uint32 => Order) orders;
+		address payable client; //the address of the client
+		ITenderData.ContractState state; //the current state of the contract
+		uint128 smallServerPrice; //the stipulated price of a small server
+		uint128 mediumServerPrice; //the stipulated price of a medium server
+		uint128 largeServerPrice; //the stipulated price of a large server
+		uint128 penaltyPerDay; //the penalty required per day overdue of an order deadline
+		uint128 guaranteeRequired; //the performance guarantee required from the client
+		uint256 clientGuaranteeBalance; //the client's current performance guarantee balance
+		uint256 clientPenaltyBalance; //the client's current penalty balance
+		bool guaranteePaid; //whether the performance guarantee was paid
+		Attributes attr; //common attributes
+		mapping(uint32 => Order) orders; //the orders that were made for a contract
 	}
 
 	//Defines an order for a contract
 	struct Order {
-		ITenderData.OrderState state;
-		uint128 cancelledDate;
-		uint128 lastPenaltyDateCount;
-		bool orderPaid;
-		Attributes attr;
+		ITenderData.OrderState state; //the current state of the order
+		uint128 cancelledDate; //the UTC date when the order was cancelled (used for penalty calculations)
+		uint128 lastPenaltyDateCount; ///the last number of days overdue at which the penalty was affected
+		bool orderPaid; //whether the order was already paid
+		Attributes attr; //common attributes
 	}
 }

@@ -63,12 +63,12 @@ static string GetReceipt(Task<string> transactionHash) {
 	return GetReceipt(transactionHash.Await());
 }
 
-static void PrintTransaction(Task<string> transactionHash) {
+static void ShowTransaction(Task<string> transactionHash) {
 	Console.Write("Transaction receipt: ");
 	Console.WriteLine(GetReceipt(transactionHash));
 }
 
-static void ViewGanacheLog() {
+static void ShowGanacheLog() {
 	Process.Start(GanacheLogPath);
 }
 
@@ -110,6 +110,50 @@ static void ViewGanacheLog() {
 	var TenderDataReceipt = TenderDataDeployment.Receipt;
 	Console.WriteLine("TenderDataReceipt: " + ToJson(TenderDataReceipt));
 
+	string GetContractState(int contractId) {
+		return ToJson(new {
+			client = TenderData.CallRead("getClient", contractId).Await(),
+			state = TenderData.CallRead("getContractState", contractId).Await(),
+			smallServerPrice = TenderData.CallRead("getSmallServerPrice", contractId).Await(),
+			mediumServerPrice = TenderData.CallRead("getMediumServerPrice", contractId).Await(),
+			largeServerPrice = TenderData.CallRead("getLargeServerPrice", contractId).Await(),
+			penaltyPerDay = TenderData.CallRead("getPenaltyPerDay", contractId).Await(),
+			guaranteeRequired = TenderData.CallRead("getGuaranteeRequired", contractId).Await(),
+			clientGuaranteeBalance = TenderData.CallRead("getClientGuaranteeBalance", contractId).Await(),
+			clientPenaltyBalance = TenderData.CallRead("getClientPenaltyBalance", contractId).Await(),
+			guaranteePaid = (bool) TenderData.CallRead("getGuaranteePaid", contractId).Await() ? true : false,
+			attributes = new {
+				small = TenderData.CallRead("getTotalSmallServersOrdered", contractId).Await(),
+				medium = TenderData.CallRead("getTotalMediumServersOrdered", contractId).Await(),
+				large = TenderData.CallRead("getTotalLargeServersOrdered", contractId).Await(),
+				maxSmall = TenderData.CallRead("getMaxSmallServers", contractId).Await(),
+				maxMedium = TenderData.CallRead("getMaxMediumServers", contractId).Await(),
+				maxLarge = TenderData.CallRead("getMaxLargeServers", contractId).Await(),
+				startDate = TenderData.CallRead("getContractStartDate", contractId).Await(),
+				deadline = TenderData.CallRead("getContractDeadline", contractId).Await(),
+			}
+		});
+	}
+
+	string GetOrderState(int contractId, int orderId) {
+		return ToJson(new {
+			state = TenderData.CallRead("getOrderState", contractId, orderId).Await(),
+			cancelledDate = TenderData.CallRead("getOrderCancelledDate", contractId, orderId).Await(),
+			lastPenaltyDateCount = TenderData.CallRead("getLastPenaltyDateCount", contractId, orderId).Await(),
+			orderPaid = (bool) TenderData.CallRead("getOrderPaid", contractId, orderId).Await() ? true : false,
+			attributes = new {
+				small = TenderData.CallRead("getSmallServersDelivered", contractId, orderId).Await(),
+				medium = TenderData.CallRead("getMediumServersDelivered", contractId, orderId).Await(),
+				large = TenderData.CallRead("getLargeServersDelivered", contractId, orderId).Await(),
+				maxSmall = TenderData.CallRead("getSmallServersOrdered", contractId, orderId).Await(),
+				maxMedium = TenderData.CallRead("getMediumServersOrdered", contractId, orderId).Await(),
+				maxLarge = TenderData.CallRead("getLargeServersOrdered", contractId, orderId).Await(),
+				startDate = TenderData.CallRead("getOrderCreationDate", contractId, orderId).Await(),
+				deadline = TenderData.CallRead("getOrderDeadline", contractId, orderId).Await(),
+			}
+		});
+	}
+
 	/*if (Environment.GetEnvironmentVariable("VERBOSE") != null)
 		ShowFullReceipt = true;
 	else if (Environment.GetEnvironmentVariable("SILENT") == null) {
@@ -129,10 +173,10 @@ static void ViewGanacheLog() {
 	}*/
 
 	Console.WriteLine("\nCalling TenderLogic.replaceTenderData(TenderData, false, false)...");
-	PrintTransaction(TenderLogic.CallWrite("replaceTenderData", Wallet, TenderData, false, false));
+	ShowTransaction(TenderLogic.CallWrite("replaceTenderData", Wallet, TenderData, false, false));
 
 	Console.WriteLine("\nCalling TenderLogic.createContract(123, ClientWallet, [10, 20, 30, 2, 1, 1555337743, 1655337743], [30, 30, 30])...");
-	PrintTransaction(TenderLogic.CallWrite("createContract", Wallet, 123, ClientWallet,
+	ShowTransaction(TenderLogic.CallWrite("createContract", Wallet, 123, ClientWallet,
 		new BigInteger[] {
 			10, 20, 30, //smallServerPrice, mediumServerPrice, largeServerPrice
 			2, //penaltyPerDay
@@ -144,12 +188,12 @@ static void ViewGanacheLog() {
 		}
 	));
 
-	Console.WriteLine("\nCalling TenderLogic.payGuarantee(ContractUtil.Utc, 123) with value 0x1 wei...");
-	PrintTransaction(TenderLogic.CallWrite("payGuarantee", ClientWallet, ConfigParams.DefaultGas, ConfigParams.DefaultGasPrice, new HexBigInteger("0x1"), ContractUtil.Utc, 123));
+	Console.WriteLine("\nCalling TenderLogic.payGuarantee(ContractUtil.Utc, 123) with value 1 wei...");
+	ShowTransaction(TenderLogic.CallWrite("payGuarantee", ClientWallet, ConfigParams.DefaultGas, ConfigParams.DefaultGasPrice, new HexBigInteger("0x1"), ContractUtil.Utc, 123));
 
 	Console.WriteLine("\nCalling TenderLogic.createOrder(ContractUtil.Utc, 123, 12, 0, 3, 1, ContractUtil.Utc, ContractUtil.ToUtc(DateTime.UtcNow.AddYears(1)))...");
 	//uint128 currentUtcDate, uint32 contractId, uint32 orderId, uint32 small, uint32 medium, uint32 large, uint128 startDate, uint128 deadline
-	PrintTransaction(TenderLogic.CallWrite("createOrder", Wallet, ContractUtil.Utc, 123, 12, 0, 3, 1, ContractUtil.Utc, ContractUtil.ToUtc(DateTime.UtcNow.AddYears(1))));
+	ShowTransaction(TenderLogic.CallWrite("createOrder", Wallet, ContractUtil.Utc, 123, 12, 0, 3, 1, ContractUtil.Utc, ContractUtil.ToUtc(DateTime.UtcNow.AddYears(1))));
 
 	Console.WriteLine("\nReady!\n");
 //} catch (Exception ex) {
