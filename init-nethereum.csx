@@ -121,7 +121,7 @@ static void ShowGanacheLog() {
 			guaranteeRequired = TenderData.CallRead("getGuaranteeRequired", contractId).Await(),
 			clientGuaranteeBalance = TenderData.CallRead("getClientGuaranteeBalance", contractId).Await(),
 			clientPenaltyBalance = TenderData.CallRead("getClientPenaltyBalance", contractId).Await(),
-			guaranteePaid = (bool) TenderData.CallRead("getGuaranteePaid", contractId).Await() ? true : false,
+			guaranteePaid = (bool) TenderData.CallRead("getGuaranteePaid", contractId).Await(),
 			attributes = new {
 				small = TenderData.CallRead("getTotalSmallServersOrdered", contractId).Await(),
 				medium = TenderData.CallRead("getTotalMediumServersOrdered", contractId).Await(),
@@ -140,7 +140,7 @@ static void ShowGanacheLog() {
 			state = TenderData.CallRead("getOrderState", contractId, orderId).Await(),
 			cancelledDate = TenderData.CallRead("getOrderCancelledDate", contractId, orderId).Await(),
 			lastPenaltyDateCount = TenderData.CallRead("getLastPenaltyDateCount", contractId, orderId).Await(),
-			orderPaid = (bool) TenderData.CallRead("getOrderPaid", contractId, orderId).Await() ? true : false,
+			orderPaid = (bool) TenderData.CallRead("getOrderPaid", contractId, orderId).Await(),
 			attributes = new {
 				small = TenderData.CallRead("getSmallServersDelivered", contractId, orderId).Await(),
 				medium = TenderData.CallRead("getMediumServersDelivered", contractId, orderId).Await(),
