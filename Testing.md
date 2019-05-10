@@ -41,6 +41,12 @@ Here are a few sample commands you can use to quickly interact with the smart co
 
 	Read Functions:
 
+	//Shows the full state of contract #123
+	GetContractState(123);
+
+	//Shows the full state of order #12 in contract #123
+	GetOrderState(123, 12);
+
 	//Gets the state of order #12 for contract #123
 	TenderData.CallRead("getOrderState", 123, 12).Await();
 
