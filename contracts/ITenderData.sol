@@ -102,6 +102,9 @@ interface ITenderData {
 	//Sets whether the order was paid
 	function setOrderPaid(uint32 contractId, uint32 orderId, bool paid) external;
 
+	//Adjusts the server prices (for inflation)
+	function adjustValues(uint32 contractId, uint128 small, uint128 medium, uint128 large, uint128 penaltyPerDay) external;
+
 	//Sets the date when the order was cancelled
 	function setOrderCancelledDate(uint32 contractId, uint32 orderId, uint128 cancelledDate) external;
 

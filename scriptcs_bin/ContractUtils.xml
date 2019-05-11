@@ -397,16 +397,16 @@
             Gets the address of the wallet
             </summary>
         </member>
-        <member name="P:ContractUtils.Wallet.Balance">
-            <summary>
-            Gets the balance of the current wallet
-            </summary>
-        </member>
         <member name="M:ContractUtils.Wallet.#ctor(System.String)">
             <summary>
             Initializes a new wallet
             </summary>
             <param name="address">The address of the wallet</param>
+        </member>
+        <member name="M:ContractUtils.Wallet.GetBalance">
+            <summary>
+            Gets the balance of the current wallet
+            </summary>
         </member>
         <member name="M:ContractUtils.Wallet.Send(System.String,Nethereum.Hex.HexTypes.HexBigInteger)">
             <summary>

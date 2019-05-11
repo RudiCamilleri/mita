@@ -71,6 +71,7 @@ The smart contract is designed such that operations are to intended to follow th
 - replaceTenderData: Sets or replaces the ITenderData smart contract implementation (for initialization or upgrading)
 - changeClient: Changes the client wallet address of a contract to a new address
 - updateContractMax: Increases the min, medium and max server limits of the contract to the specified amount
+- adjustValues: Adjusts the server prices (for inflation)
 - extendOrderDeadline: Extends the order deadline to the specified date
 - extendContractDeadline: Extends the contract deadline to the specified date
 

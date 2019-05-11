@@ -274,6 +274,14 @@ contract TenderData is ITenderData {
 		contracts[contractId].orders[orderId].orderPaid = paid;
 	}
 
+	//Adjusts the server prices (for inflation)
+	function adjustValues(uint32 contractId, uint128 small, uint128 medium, uint128 large, uint128 penaltyPerDay) external restricted {
+		contracts[contractId].smallServerPrice = small;
+		contracts[contractId].mediumServerPrice = medium;
+		contracts[contractId].largeServerPrice = large;
+		contracts[contractId].penaltyPerDay = penaltyPerDay;
+	}
+
 	//Sets the date when the order was cancelled
 	function setOrderCancelledDate(uint32 contractId, uint32 orderId, uint128 cancelledDate) external restricted {
 		contracts[contractId].orders[orderId].cancelledDate = cancelledDate;
